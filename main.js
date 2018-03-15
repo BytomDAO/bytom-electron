@@ -1,15 +1,24 @@
 const {app, BrowserWindow} = require('electron')
 
+const url = require('url')
+const path = require('path')
+
 let win
 
 function createWindow () {
   // 创建浏览器窗口。
   win = new BrowserWindow({
-    width: 1024,
+    width: 1024 + 208,
     height: 768,
     'webPreferences': {'webSecurity': false}})
 
-  win.loadURL('http://localhost:3000');
+  const startUrl = process.env.DEV_URL ||
+    url.format({
+      pathname: path.join(__dirname, '/public/index.html'),
+      protocol: 'file:',
+      slashes: true
+    })
+  win.loadURL(startUrl)
 
 
   win.on('closed', () => {

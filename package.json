@@ -1,16 +1,21 @@
 {
-  "name": "dashboard",
+  "name": "BytomDashboard",
   "version": "1.0.0",
   "description": "",
+  "main": "main.js",
   "scripts": {
     "build:dll": "node ./bin/dependencies.js",
     "postinstall": "npm run build:dll",
-    "build": "NODE_ENV=production webpack --config webpack/webpack.app.js",
+    "electron-dev": "DEV_URL=http://localhost:3000  electron .",
+    "build": "NODE_ENV=production webpack --config webpack/webpack.app.js ",
     "lint": "eslint \"src/**\"",
     "start": "hjs-dev-server webpack/webpack.app.js --hot --host 0.0.0.0",
-    "generate-component": "babel-node bin/generate.js component"
+    "start-dev": " npm start && wait-on http://localhost:3000/ && npm run electron-dev",
+    "generate-component": "babel-node bin/generate.js component",
+    "package:mac": "electron-packager . Bytom --overwrite --platform=darwin --arch=x64 --out=desktop --icon=./static/images/app-icon/mac/app.icns",
+    "package:win": "electron-packager . Bytom --overwrite  --platform=win32 --arch=x64 --out=desktop --icon=./static/images/app-icon/win/app.ico"
   },
-  "author": "Chain",
+  "author": "Bytom",
   "license": "",
   "browserslist": [
     "> 1%",
@@ -62,6 +67,8 @@
     "command-line-args": "~3.0.1",
     "command-line-commands": "~1.0.4",
     "css-loader": "0.14.5",
+    "electron": "~1.8.3",
+    "electron-packager": "^8.6.0",
     "eslint": "~3.7.0",
     "eslint-plugin-react": "~6.4.0",
     "file-loader": "~0.9.0",
