@@ -18,6 +18,7 @@ function createWindow () {
       protocol: 'file:',
       slashes: true
     })
+  // const startUrl = 'http://localhost:3000/'
   win.loadURL(startUrl)
 
 
