@@ -1,43 +1,91 @@
 const {app, BrowserWindow} = require('electron')
+const autoUpdater = require('./auto-updater')
+const glob = require('glob')
 
 const url = require('url')
 const path = require('path')
 
 let win
 
-function createWindow () {
-  // 创建浏览器窗口。
-  win = new BrowserWindow({
-    width: 1024 + 208,
-    height: 768,
-    'webPreferences': {'webSecurity': false}})
+function initialize () {
+  // const shouldQuit = makeSingleInstance()
+  // if (shouldQuit) return app.quit()
 
-  const startUrl = process.env.DEV_URL ||
-    url.format({
-      pathname: path.join(__dirname, '/public/index.html'),
-      protocol: 'file:',
-      slashes: true
+  loadDemos()
+
+  function createWindow() {
+    // 创建浏览器窗口。
+    win = new BrowserWindow({
+      width: 1024 + 208,
+      height: 768,
+      'webPreferences': {'webSecurity': false}
     })
-  // const startUrl = 'http://localhost:3000/'
-  win.loadURL(startUrl)
+
+    const startUrl = process.env.DEV_URL ||
+      url.format({
+        pathname: path.join(__dirname, '/public/index.html'),
+        protocol: 'file:',
+        slashes: true
+      })
+    // const startUrl = 'http://localhost:3000/'
+    win.loadURL(startUrl)
 
 
-  win.on('closed', () => {
-    win = null
+    win.on('closed', () => {
+      win = null
+    })
+  }
+
+  // app.on('ready', createWindow)
+  app.on('ready', () => {
+    createWindow()
+    autoUpdater.initialize()
+  })
+
+// 当全部窗口关闭时退出。
+  app.on('window-all-closed', () => {
+    if (process.platform !== 'darwin') {
+      app.quit()
+    }
+  })
+
+  app.on('activate', () => {
+    if (win === null) {
+      createWindow()
+    }
   })
 }
 
-app.on('ready', createWindow)
+function makeSingleInstance () {
+  if (process.mas) return false
 
-// 当全部窗口关闭时退出。
-app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') {
+  return app.makeSingleInstance(() => {
+    if (win) {
+      if (win.isMinimized()) win.restore()
+      win.focus()
+    }
+  })
+}
+
+// Require each JS file in the main-process dir
+function loadDemos () {
+  const files = glob.sync(path.join(__dirname, 'main-process/**/*.js'))
+  files.forEach((file) => { require(file) })
+  autoUpdater.updateMenu()
+}
+
+// Handle Squirrel on Windows startup events
+switch (process.argv[1]) {
+  case '--squirrel-install':
+    autoUpdater.createShortcut(() => { app.quit() })
+    break
+  case '--squirrel-uninstall':
+    autoUpdater.removeShortcut(() => { app.quit() })
+    break
+  case '--squirrel-obsolete':
+  case '--squirrel-updated':
     app.quit()
-  }
-})
-
-app.on('activate', () => {
-  if (win === null) {
-    createWindow()
-  }
-})
+    break
+  default:
+    initialize()
+}

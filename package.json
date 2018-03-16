@@ -1,5 +1,5 @@
 {
-  "name": "BytomDashboard",
+  "name": "Bytom",
   "version": "1.0.0",
   "description": "",
   "main": "main.js",
@@ -29,6 +29,7 @@
     "babel-polyfill": "~6.16.0",
     "bootstrap-sass": "~3.3.7",
     "classnames": "~2.2.5",
+    "glob": "^7.1.0",
     "lodash": "~4.17.4",
     "moment": "~2.14.1",
     "moment-timezone": "~0.5.5",
