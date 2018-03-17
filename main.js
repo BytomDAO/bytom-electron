@@ -18,7 +18,10 @@ function initialize () {
     win = new BrowserWindow({
       width: 1024 + 208,
       height: 768,
-      'webPreferences': {'webSecurity': false}
+      'webPreferences': {
+        'webSecurity': false,
+        'preload': path.join(__dirname, '/main-process/preload.js')
+      }
     })
 
     const startUrl = process.env.DEV_URL ||
@@ -29,7 +32,6 @@ function initialize () {
       })
     // const startUrl = 'http://localhost:3000/'
     win.loadURL(startUrl)
-
 
     win.on('closed', () => {
       win = null
@@ -69,7 +71,7 @@ function makeSingleInstance () {
 
 // Require each JS file in the main-process dir
 function loadDemos () {
-  const files = glob.sync(path.join(__dirname, 'main-process/**/*.js'))
+  const files = glob.sync(path.join(__dirname, 'main-process/menus/*.js'))
   files.forEach((file) => { require(file) })
   autoUpdater.updateMenu()
 }

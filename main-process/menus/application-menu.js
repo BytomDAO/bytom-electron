@@ -1,4 +1,5 @@
 const {BrowserWindow, Menu, app, shell, dialog} = require('electron')
+const url  = require('url')
 
 let template = [{
   label: 'Account',
@@ -7,7 +8,7 @@ let template = [{
     accelerator: 'CommandOrControl+N',
     click: (item, focusedWindow) => {
       if (focusedWindow) {
-        focusedWindow.loadURL('')
+        focusedWindow.webContents.send('redirect', '/accounts/create')
       }
     }
   }, {

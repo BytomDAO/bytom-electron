@@ -32,6 +32,13 @@ class Container extends React.Component {
       this.props.showConfiguration()
     }
   }
+  componentDidMount() {
+    if(window.ipcRenderer){
+      window.ipcRenderer.on('redirect', (event, arg) => {
+        this.props.history.push(arg)
+      })
+    }
+  }
 
   componentWillMount() {
     this.props.fetchInfo().then(() => {
