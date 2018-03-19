@@ -8,8 +8,6 @@ import styles from './CoreIndex.scss'
 import testnetUtils from 'features/testnet/utils'
 import { docsRoot } from 'utility/environment'
 import actions from 'actions'
-import {navAdvancedState} from '../../../app/reducers'
-
 
 class CoreIndex extends React.Component {
   constructor(props) {
