@@ -6,7 +6,7 @@
   "scripts": {
     "build:dll": "node ./bin/dependencies.js",
     "postinstall": "npm run build:dll",
-    "electron-dev": "DEV_URL=http://localhost:3000  electron .",
+    "electron-dev": "DEV_URL=http://localhost:3000  electron --inspect=5858 main.js .",
     "build": "NODE_ENV=production webpack --config webpack/webpack.app.js ",
     "lint": "eslint \"src/**\"",
     "start": "hjs-dev-server webpack/webpack.app.js --hot --host 0.0.0.0",
@@ -29,6 +29,7 @@
     "babel-polyfill": "~6.16.0",
     "bootstrap-sass": "~3.3.7",
     "classnames": "~2.2.5",
+    "electron-settings": "^3.1.4",
     "glob": "^7.1.0",
     "lodash": "~4.17.4",
     "moment": "~2.14.1",
