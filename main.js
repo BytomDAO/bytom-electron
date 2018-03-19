@@ -7,6 +7,7 @@ const path = require('path')
 
 let win
 
+
 function initialize () {
   // const shouldQuit = makeSingleInstance()
   // if (shouldQuit) return app.quit()
@@ -32,6 +33,8 @@ function initialize () {
       })
     // const startUrl = 'http://localhost:3000/'
     win.loadURL(startUrl)
+
+    win.webContents.openDevTools()
 
     win.on('closed', () => {
       win = null

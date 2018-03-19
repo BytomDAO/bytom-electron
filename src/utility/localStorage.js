@@ -1,3 +1,5 @@
+const settings = window.settings
+
 export const clear = () => {
   try {
     localStorage.clear()
@@ -27,9 +29,19 @@ export const exportState = (store) => () => {
     },
     tutorial: state.tutorial
   }
+  const browserSetting = {
+    core:{
+      btmAmountUnit: state.core.btmAmountUnit,
+      lang: state.core.lang
+    },
+    app:{
+      navAdvancedState : state.app.navAdvancedState,
+    }
+  }
 
   try {
     localStorage.setItem('reduxState', JSON.stringify(exportable))
+    settings.set('browserSetting', browserSetting)
   } catch (err) { /* localstorage not available */ }
 }
 

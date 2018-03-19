@@ -1,5 +1,8 @@
 const {BrowserWindow, Menu, app, shell, dialog} = require('electron')
+const settings = require('electron-settings')
 const url  = require('url')
+
+let advNav = settings.get('browserSetting.app.navAdvancedState') || 'normal'
 
 let template = [{
   label: 'Account',
@@ -40,7 +43,29 @@ let template = [{
       }
     }
   }]
-},  {
+}, {
+  label: 'View',
+  submenu: [{
+    label: 'BTM Amount Unit',
+  }, {
+    label: 'Advanced Navigation',
+    type: 'checkbox',
+    checked: advNav === 'advance',
+    click: (item, focusedWindow) => {
+      if (focusedWindow) {
+        if(advNav === 'advance'){
+          focusedWindow.webContents.send('toggleNavState', 'normal')
+        }else{
+          focusedWindow.webContents.send('toggleNavState', 'advance')
+        }
+      }
+    }
+  },{
+    type: 'separator'
+  },{
+    label: 'Lanugage'
+  }]
+}, {
   label: 'Help',
   role: 'help',
   submenu: [{
@@ -153,6 +178,12 @@ if (process.platform === 'win32') {
 app.on('ready', () => {
   const menu = Menu.buildFromTemplate(template)
   Menu.setApplicationMenu(menu)
+
+  settings.watch('browserSetting.app.navAdvancedState', newValue => {
+    advNav = newValue
+    menu.items[2].submenu.items[1].checked = ( advNav === 'advance' )
+  })
+
 })
 
 app.on('browser-window-created', () => {
