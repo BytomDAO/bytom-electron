@@ -3,6 +3,7 @@ const settings = require('electron-settings')
 const url  = require('url')
 
 let advNav = settings.get('browserSetting.app.navAdvancedState') || 'normal'
+let btmAmountUnit = settings.get('browserSetting.core.btmAmountUnit') || 'BTM'
 
 let template = [{
   label: 'Account',
@@ -47,6 +48,34 @@ let template = [{
   label: 'View',
   submenu: [{
     label: 'BTM Amount Unit',
+    submenu:[{
+      label: 'BTM',
+      type: 'checkbox',
+      checked: btmAmountUnit === 'BTM',
+      click: (item, focusedWindow) => {
+        if (focusedWindow) {
+          focusedWindow.webContents.send('btmAmountUnitState', 'BTM')
+        }
+      }
+    },{
+      label: 'mBTM',
+      type: 'checkbox',
+      checked: btmAmountUnit === 'mBTM',
+      click: (item, focusedWindow) => {
+        if (focusedWindow) {
+          focusedWindow.webContents.send('btmAmountUnitState', 'mBTM')
+        }
+      }
+    },{
+      label: 'NEU',
+      type: 'checkbox',
+      checked: btmAmountUnit === 'NEU',
+      click: (item, focusedWindow) => {
+        if (focusedWindow) {
+          focusedWindow.webContents.send('btmAmountUnitState', 'NEU')
+        }
+      }
+    }]
   }, {
     label: 'Advanced Navigation',
     type: 'checkbox',
@@ -182,6 +211,13 @@ app.on('ready', () => {
   settings.watch('browserSetting.app.navAdvancedState', newValue => {
     advNav = newValue
     menu.items[2].submenu.items[1].checked = ( advNav === 'advance' )
+  })
+
+  settings.watch('browserSetting.core.btmAmountUnit', newValue => {
+    btmAmountUnit = newValue
+    menu.items[2].submenu.items[0].submenu.items[0].checked = ( btmAmountUnit === 'BTM' )
+    menu.items[2].submenu.items[0].submenu.items[1].checked = ( btmAmountUnit === 'mBTM' )
+    menu.items[2].submenu.items[0].submenu.items[2].checked = ( btmAmountUnit === 'NEU' )
   })
 
 })

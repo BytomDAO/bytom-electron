@@ -37,6 +37,9 @@ class Container extends React.Component {
       window.ipcRenderer.on('redirect', (event, arg) => {
         this.props.history.push(arg)
       })
+      window.ipcRenderer.on('btmAmountUnitState', (event, arg) => {
+        this.props.uptdateBtmAmountUnit(arg)
+      })
     }
   }
 
@@ -96,5 +99,6 @@ export default connect(
     fetchInfo: options => dispatch(actions.core.fetchCoreInfo(options)),
     showRoot: () => dispatch(actions.app.showRoot),
     showConfiguration: () => dispatch(actions.app.showConfiguration()),
+    uptdateBtmAmountUnit: (param) => dispatch(actions.core.updateBTMAmountUnit(param))
   })
 )(Container)

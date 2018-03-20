@@ -29,6 +29,13 @@ class CoreIndex extends React.Component {
       }
     }
     setInterval(fetchInfo.bind(this), 2 * 1000)
+
+
+    if(window.ipcRenderer){
+      window.ipcRenderer.on('btmAmountUnitState', (event, arg) => {
+        this.props.uptdateBtmAmountUnit(arg)
+      })
+    }
   }
 
   deleteClick() {
