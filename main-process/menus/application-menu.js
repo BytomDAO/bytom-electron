@@ -1,144 +1,227 @@
 const {BrowserWindow, Menu, app, shell, dialog} = require('electron')
 const settings = require('electron-settings')
-const url  = require('url')
 
 let advNav = settings.get('browserSetting.app.navAdvancedState') || 'normal'
 let btmAmountUnit = settings.get('browserSetting.core.btmAmountUnit') || 'BTM'
+let menu = null
+const i18n = global.i18n
 
-let template = [{
-  label: 'Account',
-  submenu: [{
-    label: 'new Account',
-    accelerator: 'CommandOrControl+N',
-    click: (item, focusedWindow) => {
-      if (focusedWindow) {
-        focusedWindow.webContents.send('redirect', '/accounts/create')
+let menuTempl = function () {
+  const menu = []
+
+  // APP
+  const fileMenu = []
+  const name = app.getName()
+
+  if (process.platform === 'darwin') {
+    fileMenu.push(
+      {
+        label: i18n.t('desktop.applicationMenu.app.about', { name }),
+        role: 'about'
+      },
+      {
+        type: 'separator',
+      },
+      {
+        label: i18n.t('desktop.applicationMenu.app.services', { name }),
+        role: 'services',
+        submenu: [],
+      },
+      {
+        type: 'separator',
+      },
+      {
+        label: i18n.t('desktop.applicationMenu.app.hide', { name }),
+        accelerator: 'Command+H',
+        role: 'hide',
+      },
+      {
+        label: i18n.t('desktop.applicationMenu.app.hideOthers', { name }),
+        accelerator: 'Command+Alt+H',
+        role: 'hideothers',
+      },
+      {
+        label: i18n.t('desktop.applicationMenu.app.showAll', { name }),
+        role: 'unhide',
+      },
+      {
+        type: 'separator',
       }
-    }
-  }, {
-    label: 'Toggle Full Screen',
-    accelerator: (() => {
-      if (process.platform === 'darwin') {
-        return 'Ctrl+Command+F'
-      } else {
-        return 'F11'
-      }
-    })(),
-    click: (item, focusedWindow) => {
-      if (focusedWindow) {
-        focusedWindow.setFullScreen(!focusedWindow.isFullScreen())
-      }
-    }
-  }, {
-    label: 'Toggle Developer Tools',
-    accelerator: (() => {
-      if (process.platform === 'darwin') {
-        return 'Alt+Command+I'
-      } else {
-        return 'Ctrl+Shift+I'
-      }
-    })(),
-    click: (item, focusedWindow) => {
-      if (focusedWindow) {
-        focusedWindow.toggleDevTools()
-      }
-    }
-  }]
-}, {
-  label: 'View',
-  submenu: [{
-    label: 'BTM Amount Unit',
-    submenu:[{
-      label: 'BTM',
-      type: 'checkbox',
-      checked: btmAmountUnit === 'BTM',
+    )
+  }
+
+  fileMenu.push({
+    label: i18n.t('desktop.applicationMenu.app.quit', { name }),
+    accelerator: 'CommandOrControl+Q',
+    click() {
+      app.quit()
+    },
+  })
+
+  menu.push({
+    label: i18n.t('desktop.applicationMenu.app.label', { name }),
+    submenu: fileMenu,
+  })
+
+
+  // View Account
+  menu.push({
+    label: 'Account',
+    submenu: [{
+      label: 'new Account',
+      accelerator: 'CommandOrControl+N',
       click: (item, focusedWindow) => {
         if (focusedWindow) {
-          focusedWindow.webContents.send('btmAmountUnitState', 'BTM')
+          focusedWindow.webContents.send('redirect', '/accounts/create')
         }
       }
-    },{
-      label: 'mBTM',
-      type: 'checkbox',
-      checked: btmAmountUnit === 'mBTM',
+    }, {
+      label: 'Toggle Full Screen',
+      accelerator: (() => {
+        if (process.platform === 'darwin') {
+          return 'Ctrl+Command+F'
+        } else {
+          return 'F11'
+        }
+      })(),
       click: (item, focusedWindow) => {
         if (focusedWindow) {
-          focusedWindow.webContents.send('btmAmountUnitState', 'mBTM')
+          focusedWindow.setFullScreen(!focusedWindow.isFullScreen())
         }
       }
-    },{
-      label: 'NEU',
-      type: 'checkbox',
-      checked: btmAmountUnit === 'NEU',
+    }, {
+      label: 'Toggle Developer Tools',
+      accelerator: (() => {
+        if (process.platform === 'darwin') {
+          return 'Alt+Command+I'
+        } else {
+          return 'Ctrl+Shift+I'
+        }
+      })(),
       click: (item, focusedWindow) => {
         if (focusedWindow) {
-          focusedWindow.webContents.send('btmAmountUnitState', 'NEU')
+          focusedWindow.toggleDevTools()
         }
       }
     }]
-  }, {
-    label: 'Advanced Navigation',
+  })
+
+
+  // LANGUAGE (VIEW)
+  const LanguageMenu = [{
+    label: 'Default',
     type: 'checkbox',
-    checked: advNav === 'advance',
+    // checked: btmAmountUnit === 'BTM',
     click: (item, focusedWindow) => {
       if (focusedWindow) {
-        if(advNav === 'advance'){
-          focusedWindow.webContents.send('toggleNavState', 'normal')
-        }else{
-          focusedWindow.webContents.send('toggleNavState', 'advance')
-        }
       }
     }
   },{
     type: 'separator'
   },{
-    label: 'Lanugage'
+    label: '中文',
+    type: 'checkbox',
+    // checked: btmAmountUnit === 'mBTM',
+    click: (item, focusedWindow) => {
+      if (focusedWindow) {
+        i18n.changeLanguage('zh', (err, t) => {
+          if (err) return console.log('something went wrong loading', err)
+          createMenu()
+        })
+
+      }
+    }
+  },{
+    label: 'English',
+    type: 'checkbox',
+    // checked: btmAmountUnit === 'NEU',
+    click: (item, focusedWindow) => {
+      if (focusedWindow) {
+        // debugger
+        i18n.changeLanguage('en', (err, t) => {
+          if (err) return console.log('something went wrong loading', err)
+          createMenu()
+        })
+      }
+    }
   }]
-}, {
-  label: 'Help',
-  role: 'help',
-  submenu: [{
-    label: 'Troubleshooting and Help',
+
+
+
+  menu.push({
+    label: 'View',
+    submenu: [{
+      label: 'BTM Amount Unit',
+      submenu:[{
+        label: 'BTM',
+        type: 'checkbox',
+        checked: btmAmountUnit === 'BTM',
+        click: (item, focusedWindow) => {
+          if (focusedWindow) {
+            focusedWindow.webContents.send('btmAmountUnitState', 'BTM')
+          }
+        }
+      },{
+        label: 'mBTM',
+        type: 'checkbox',
+        checked: btmAmountUnit === 'mBTM',
+        click: (item, focusedWindow) => {
+          if (focusedWindow) {
+            focusedWindow.webContents.send('btmAmountUnitState', 'mBTM')
+          }
+        }
+      },{
+        label: 'NEU',
+        type: 'checkbox',
+        checked: btmAmountUnit === 'NEU',
+        click: (item, focusedWindow) => {
+          if (focusedWindow) {
+            focusedWindow.webContents.send('btmAmountUnitState', 'NEU')
+          }
+        }
+      }]
+    }, {
+      label: 'Advanced Navigation',
+      type: 'checkbox',
+      checked: advNav === 'advance',
+      click: (item, focusedWindow) => {
+        if (focusedWindow) {
+          if(advNav === 'advance'){
+            focusedWindow.webContents.send('toggleNavState', 'normal')
+          }else{
+            focusedWindow.webContents.send('toggleNavState', 'advance')
+          }
+        }
+      }
+    },{
+      type: 'separator'
+    },{
+      label: 'Lanugage',
+      submenu: LanguageMenu
+    }]
+  })
+
+  // HELP
+  const helpMenu = []
+  helpMenu.push({
+    label: i18n.t('desktop.applicationMenu.help.desktopWiki'),
     click() {
       shell.openExternal('https://github.com/bytom/bytom/wiki')
     },
   }, {
-    label: 'Report an issue on Github',
+    label: i18n.t('desktop.applicationMenu.help.reportBug'),
     click() {
       shell.openExternal('https://github.com/bytom/bytom/issues')
     },
-  }]
-}]
+  })
 
-function addUpdateMenuItems (items, position) {
-  if (process.mas) return
+  menu.push({
+    label: i18n.t('desktop.applicationMenu.help.label'),
+    role: 'help',
+    submenu: helpMenu,
+  })
 
-  const version = app.getVersion()
-  let updateItems = [{
-    label: `Version ${version}`,
-    enabled: false
-  }, {
-    label: 'Checking for Update',
-    enabled: false,
-    key: 'checkingForUpdate'
-  }, {
-    label: 'Check for Update',
-    visible: false,
-    key: 'checkForUpdate',
-    click: () => {
-      require('electron').autoUpdater.checkForUpdates()
-    }
-  }, {
-    label: 'Restart and Install Update',
-    enabled: true,
-    visible: false,
-    key: 'restartToUpdate',
-    click: () => {
-      require('electron').autoUpdater.quitAndInstall()
-    }
-  }]
-
-  items.splice.apply(items, [position, 0].concat(updateItems))
+  return menu
 }
 
 function findReopenMenuItem () {
@@ -158,55 +241,14 @@ function findReopenMenuItem () {
   return reopenMenuItem
 }
 
-if (process.platform === 'darwin') {
-  const name = app.getName()
-  template.unshift({
-    label: name,
-    submenu: [{
-      label: `About ${name}`,
-      role: 'about'
-    }, {
-      type: 'separator'
-    }, {
-      label: 'Services',
-      role: 'services',
-      submenu: []
-    }, {
-      type: 'separator'
-    }, {
-      label: `Hide ${name}`,
-      accelerator: 'Command+H',
-      role: 'hide'
-    }, {
-      label: 'Hide Others',
-      accelerator: 'Command+Alt+H',
-      role: 'hideothers'
-    }, {
-      label: 'Show All',
-      role: 'unhide'
-    }, {
-      type: 'separator'
-    }, {
-      label: 'Quit',
-      accelerator: 'Command+Q',
-      click: () => {
-        app.quit()
-      }
-    }]
-  })
 
-
-  addUpdateMenuItems(template[0].submenu, 1)
-}
-
-if (process.platform === 'win32') {
-  const helpMenu = template[template.length - 1].submenu
-  addUpdateMenuItems(helpMenu, 0)
+const createMenu = function () {
+  menu = Menu.buildFromTemplate(menuTempl())
+  Menu.setApplicationMenu(menu)
 }
 
 app.on('ready', () => {
-  const menu = Menu.buildFromTemplate(template)
-  Menu.setApplicationMenu(menu)
+  createMenu()
 
   settings.watch('browserSetting.app.navAdvancedState', newValue => {
     advNav = newValue

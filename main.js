@@ -1,12 +1,13 @@
 const {app, BrowserWindow} = require('electron')
 const autoUpdater = require('./auto-updater')
 const glob = require('glob')
-
+const i18n = require('./main-process/i18n.js')
 const url = require('url')
 const path = require('path')
 
 let win
 
+global.i18n = i18n
 
 function initialize () {
   // const shouldQuit = makeSingleInstance()
