@@ -66,9 +66,9 @@ let menuTempl = function () {
 
   // View Account
   menu.push({
-    label: 'Account',
+    label: i18n.t('desktop.applicationMenu.account.label'),
     submenu: [{
-      label: 'new Account',
+      label:  i18n.t('desktop.applicationMenu.account.new'),
       accelerator: 'CommandOrControl+N',
       click: (item, focusedWindow) => {
         if (focusedWindow) {
@@ -109,7 +109,7 @@ let menuTempl = function () {
 
   // LANGUAGE (VIEW)
   const LanguageMenu = [{
-    label: 'Default',
+    label: i18n.t('desktop.applicationMenu.view.default'),
     type: 'checkbox',
     // checked: btmAmountUnit === 'BTM',
     click: (item, focusedWindow) => {
@@ -119,7 +119,7 @@ let menuTempl = function () {
   },{
     type: 'separator'
   },{
-    label: '中文',
+    label: i18n.t('desktop.applicationMenu.view.langCodes.zh'),
     type: 'checkbox',
     // checked: btmAmountUnit === 'mBTM',
     click: (item, focusedWindow) => {
@@ -132,7 +132,7 @@ let menuTempl = function () {
       }
     }
   },{
-    label: 'English',
+    label: i18n.t('desktop.applicationMenu.view.langCodes.en'),
     type: 'checkbox',
     // checked: btmAmountUnit === 'NEU',
     click: (item, focusedWindow) => {
@@ -149,9 +149,9 @@ let menuTempl = function () {
 
 
   menu.push({
-    label: 'View',
+    label: i18n.t('desktop.applicationMenu.view.label'),
     submenu: [{
-      label: 'BTM Amount Unit',
+      label: i18n.t('desktop.applicationMenu.view.btmAmountUnit'),
       submenu:[{
         label: 'BTM',
         type: 'checkbox',
@@ -181,7 +181,7 @@ let menuTempl = function () {
         }
       }]
     }, {
-      label: 'Advanced Navigation',
+      label: i18n.t('desktop.applicationMenu.view.advNav'),
       type: 'checkbox',
       checked: advNav === 'advance',
       click: (item, focusedWindow) => {
@@ -196,7 +196,7 @@ let menuTempl = function () {
     },{
       type: 'separator'
     },{
-      label: 'Lanugage',
+      label: i18n.t('desktop.applicationMenu.view.languages'),
       submenu: LanguageMenu
     }]
   })
@@ -204,7 +204,7 @@ let menuTempl = function () {
   // HELP
   const helpMenu = []
   helpMenu.push({
-    label: i18n.t('desktop.applicationMenu.help.desktopWiki'),
+    label: i18n.t('desktop.applicationMenu.help.bytomWiki'),
     click() {
       shell.openExternal('https://github.com/bytom/bytom/wiki')
     },
