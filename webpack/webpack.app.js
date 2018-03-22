@@ -12,7 +12,7 @@ var path = require('path')
 let publicPath = '/'
 let outPath = 'public'
 if (process.env.NODE_ENV === 'production') {
-  publicPath = '/dashboard/'
+  publicPath = ( process.env.MODE === 'electron' )? '' : '/dashboard/'
 } else {
   outPath = 'node_modules/dashboard-dlls'
 }
@@ -111,6 +111,7 @@ config.module.noParse = /node_modules\/json-schema\/lib\/validate\.js/
 config.plugins.push(new webpack.DefinePlugin({
   'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development'),
   'process.env.API_URL': JSON.stringify(process.env.API_URL),
+  'process.env.MODE': JSON.stringify(process.env.MODE),
   'process.env.PROXY_API_HOST': JSON.stringify(process.env.PROXY_API_HOST),
   'process.env.TESTNET_INFO_URL': JSON.stringify(process.env.TESTNET_INFO_URL),
   'process.env.TESTNET_GENERATOR_URL': JSON.stringify(process.env.TESTNET_GENERATOR_URL),

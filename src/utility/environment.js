@@ -7,7 +7,7 @@ import { useRouterHistory } from 'react-router'
 import { createHistory } from 'history'
 
 let apiHost, basename
-if (process.env.NODE_ENV === 'production') {
+if ( process.env.NODE_ENV==='production' &&  process.env.MODE!=='electron' ) {
   apiHost = window.location.origin
   basename = '/dashboard'
 } else {

@@ -8,6 +8,9 @@ const CORE_POLLING_TIME = 2 * 1000
 class Container extends React.Component {
   constructor(props) {
     super(props)
+    if(props.location.pathname.includes('index.html')){
+      this.props.showRoot()
+    }
     this.redirectRoot = this.redirectRoot.bind(this)
   }
 

@@ -8,9 +8,9 @@
     "postinstall": "npm run build:dll",
     "electron-dev": "DEV_URL=http://localhost:3000  electron --inspect=5858 main.js .",
     "build": "NODE_ENV=production webpack --config webpack/webpack.app.js ",
+    "build-electron": "NODE_ENV=production MODE=electron webpack --config webpack/webpack.app.js ",
     "lint": "eslint \"src/**\"",
     "start": "hjs-dev-server webpack/webpack.app.js --hot --host 0.0.0.0",
-    "start-dev": " npm start && wait-on http://localhost:3000/ && npm run electron-dev",
     "generate-component": "babel-node bin/generate.js component",
     "package:mac": "electron-packager . Bytom --overwrite --platform=darwin --arch=x64 --out=desktop --icon=./static/images/app-icon/mac/app.icns",
     "package:win": "electron-packager . Bytom --overwrite  --platform=win32 --arch=ia32 --out=desktop --icon=./static/images/app-icon/win/app.ico"
