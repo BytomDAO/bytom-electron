@@ -47,7 +47,7 @@ function initialize () {
   }
 
   app.on('ready', () => {
-    fs.stat('$GOPATH/src/github.com/bytom/cmd/bytomd/.bytomd/genesis.json', function(err) {
+    fs.stat(`${process.env.GOPATH}/src/github.com/bytom/cmd/bytomd/.bytomd/genesis.json`, function(err) {
       if(err == null) {
         console.log('File exists')
       } else if(err.code == 'ENOENT') {
@@ -61,10 +61,19 @@ function initialize () {
             console.log(`bytomd init stdout: ${stdout}`)
             console.log(`bytomd init stderr: ${stderr}`)
           })
+        bytomdInit.stdout.on('data', function(data) {
+          console.log(`bytomd init stdout: ${data}`)
+        })
+        bytomdInit.stderr.on('data', function(data) {
+          console.log(`bytomd init stderr: ${data}`)
+        })
+
       } else {
         console.log('Some other error: ', err.code)
       }
     })
+
+
 
 
     bytomdMining = exec('cd $GOPATH/src/github.com/bytom/cmd/bytomd/ && ./bytomd node --mining' ,
@@ -76,6 +85,14 @@ function initialize () {
         console.log(`bytomd mining stdout: ${stdout}`)
         console.log(`bytomd mining stderr: ${stderr}`)
       })
+
+    bytomdMining.stdout.on('data', function(data) {
+      console.log(`bytomd mining stdout: ${data}`)
+    })
+
+    bytomdMining.stderr.on('data', function(data) {
+      console.log(`bytomd mining stdout: ${data}`)
+    })
 
     createWindow()
     autoUpdater.initialize()
