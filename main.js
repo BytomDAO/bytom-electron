@@ -2,19 +2,19 @@ const {app, BrowserWindow} = require('electron')
 const autoUpdater = require('./auto-updater')
 const exec = require('child_process').exec
 const glob = require('glob')
-const fs = require('fs')
 const i18n = require('./main-process/i18n.js')
 const url = require('url')
 const path = require('path')
+const fs = require('fs')
+const logger = require('./main-process/logger')
+const log = logger.create('main')
 
 let win, bytomdInit, bytomdMining
 
 global.i18n = i18n
 
-function initialize () {
-  // const shouldQuit = makeSingleInstance()
-  // if (shouldQuit) return app.quit()
 
+function initialize () {
   loadMenu()
 
   function createWindow() {
@@ -43,59 +43,48 @@ function initialize () {
       win = null
       quitApp('closed')
     })
-
   }
 
   app.on('ready', () => {
+    const logFolder = {logFolder: path.join(app.getPath('userData'), 'logs')}
+    const loggerOptions = Object.assign(logFolder)
+    logger.setup(loggerOptions)
+
+    // callStat()
     fs.stat(`${process.env.GOPATH}/src/github.com/bytom/cmd/bytomd/.bytomd/genesis.json`, function(err) {
       if(err == null) {
-        console.log('File exists')
+        log.info('Genesis File exists')
+        setBytomMining()
       } else if(err.code == 'ENOENT') {
         // file does not exist
         bytomdInit = exec('cd $GOPATH/src/github.com/bytom/cmd/bytomd/ && ./bytomd init --chain_id mainnet' ,
           (error, stdout, stderr) => {
             if (error) {
-              console.error(`bytomd init exec error: ${error}`)
+              log.error(`bytomd init exec error: ${error}`)
               return
             }
-            console.log(`bytomd init stdout: ${stdout}`)
-            console.log(`bytomd init stderr: ${stderr}`)
+            // log.info(`bytomd init stdout: ${stdout}`)
+            // log.info(`bytomd init stderr: ${stderr}`)
           })
         bytomdInit.stdout.on('data', function(data) {
-          console.log(`bytomd init stdout: ${data}`)
+          log.info(`bytomd init stdout: ${data}`)
         })
         bytomdInit.stderr.on('data', function(data) {
-          console.log(`bytomd init stderr: ${data}`)
+          log.info(`bytomd init stderr: ${data}`)
+        })
+        bytomdInit.on('exit', function (code) {
+          setBytomMining()
+          log.info('bytom init exited with code ' + code)
         })
 
       } else {
-        console.log('Some other error: ', err.code)
+        log.error('Some other error: ', err.code)
       }
-    })
 
-
-
-
-    bytomdMining = exec('cd $GOPATH/src/github.com/bytom/cmd/bytomd/ && ./bytomd node --mining' ,
-      (error, stdout, stderr) => {
-        if (error) {
-          console.error(`bytomd mining exec error: ${error}`)
-          return
-        }
-        console.log(`bytomd mining stdout: ${stdout}`)
-        console.log(`bytomd mining stderr: ${stderr}`)
-      })
-
-    bytomdMining.stdout.on('data', function(data) {
-      console.log(`bytomd mining stdout: ${data}`)
-    })
-
-    bytomdMining.stderr.on('data', function(data) {
-      console.log(`bytomd mining stdout: ${data}`)
     })
 
     createWindow()
-    autoUpdater.initialize()
+    // autoUpdater.initialize()
   })
 
   app.on('before-quit',() => {
@@ -121,14 +110,28 @@ function initialize () {
   })
 }
 
-function makeSingleInstance () {
-  if (process.mas) return false
+function setBytomMining() {
+  bytomdMining = exec('cd $GOPATH/src/github.com/bytom/cmd/bytomd/ && ./bytomd node --mining' ,
+    (error, stdout, stderr) => {
+      if (error) {
+        log.error(`bytomd mining exec error: ${error}`)
+      }
+      log.info(`bytomd mining stdout: ${stdout}`)
+      log.info(`bytomd mining stderr: ${stderr}`)
+      // createWindow()
+    })
 
-  return app.makeSingleInstance(() => {
-    if (win) {
-      if (win.isMinimized()) win.restore()
-      win.focus()
-    }
+  bytomdMining.stdout.on('data', function(data) {
+    log.info(`bytomd mining stdout: ${data}`)
+  })
+
+  bytomdMining.stderr.on('data', function(data) {
+
+    log.info(`bytomd mining stderr: ${data}`)
+  })
+
+  bytomdMining.on('exit', function (code) {
+    log.info('bytom Mining exited with code ' + code)
   })
 }
 
@@ -156,10 +159,11 @@ switch (process.argv[1]) {
 }
 
 
-function quitApp (type) {
+function quitApp () {
   if(bytomdInit != null){
     bytomdInit.kill()
   }
   bytomdMining.kill()
   app.quit()
 }
+

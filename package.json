@@ -33,6 +33,7 @@
     "glob": "~7.1.2",
     "i18next": "~10.5.1",
     "lodash": "~4.17.4",
+    "log4js": "^2.5.3",
     "moment": "~2.14.1",
     "moment-timezone": "~0.5.5",
     "pluralize": "~3.0.0",
