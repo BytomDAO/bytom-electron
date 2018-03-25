@@ -12,7 +12,7 @@
   justify-content: space-between;
 
   > div {
-    width: 30%;
+    width: 50%;
     min-height: 100%;
   }
 }
@@ -25,6 +25,8 @@
     display: flex;
     min-height:100%;
     font-weight: normal;
+    //width: 100%;
+    //padding-right: 10px;
   }
 }
 
@@ -34,11 +36,12 @@
 }
 
 .choice {
+  //width: 100%;
   border: 1px solid $table-border-color;
   border-radius: $border-radius-base;
   cursor: pointer;
   min-height: 100%;
-  padding: 20px $grid-gutter-width;
+  padding: 20px 65px;
   padding-top: 110px;
   text-align: center;
 
@@ -141,6 +144,10 @@ input[type=radio]:checked ~ .choice {
       margin-bottom: 20px;
     }
   }
+}
+
+.flexCenter{
+  justify-content: center;
 }
 
 .submitWrapper {

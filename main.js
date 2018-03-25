@@ -1,4 +1,4 @@
-const {app, BrowserWindow} = require('electron')
+const {app, BrowserWindow, ipcMain} = require('electron')
 const autoUpdater = require('./auto-updater')
 const exec = require('child_process').exec
 const glob = require('glob')
@@ -12,6 +12,7 @@ const log = logger.create('main')
 let win, bytomdInit, bytomdMining
 
 global.i18n = i18n
+global.fileExist = false
 
 
 function initialize () {
@@ -50,31 +51,16 @@ function initialize () {
     const loggerOptions = Object.assign(logFolder)
     logger.setup(loggerOptions)
 
-    // callStat()
     fs.stat(`${process.env.GOPATH}/src/github.com/bytom/cmd/bytomd/.bytomd/genesis.json`, function(err) {
       if(err == null) {
         log.info('Genesis File exists')
+        global.fileExist = true
+        // win.webContents.send('FileExist','true')
         setBytomMining()
       } else if(err.code == 'ENOENT') {
-        // file does not exist
-        bytomdInit = exec('cd $GOPATH/src/github.com/bytom/cmd/bytomd/ && ./bytomd init --chain_id mainnet' ,
-          (error, stdout, stderr) => {
-            if (error) {
-              log.error(`bytomd init exec error: ${error}`)
-              return
-            }
-            // log.info(`bytomd init stdout: ${stdout}`)
-            // log.info(`bytomd init stderr: ${stderr}`)
-          })
-        bytomdInit.stdout.on('data', function(data) {
-          log.info(`bytomd init stdout: ${data}`)
-        })
-        bytomdInit.stderr.on('data', function(data) {
-          log.info(`bytomd init stderr: ${data}`)
-        })
-        bytomdInit.on('exit', function (code) {
-          setBytomMining()
-          log.info('bytom init exited with code ' + code)
+        //wait for the int network call
+        ipcMain.on('bytomdInitNetwork', (event, arg) => {
+          setBytomInit( event,  arg )
         })
 
       } else {
@@ -85,13 +71,6 @@ function initialize () {
 
     createWindow()
     // autoUpdater.initialize()
-  })
-
-  app.on('before-quit',() => {
-    if(bytomdInit != null){
-      bytomdInit.kill()
-    }
-    bytomdMining.kill()
   })
 
 
@@ -135,6 +114,32 @@ function setBytomMining() {
   })
 }
 
+function setBytomInit(event, bytomNetwork) {
+
+  // file does not exist
+  bytomdInit = exec(`cd $GOPATH/src/github.com/bytom/cmd/bytomd/ && ./bytomd init --chain_id ${bytomNetwork}` ,
+    (error, stdout, stderr) => {
+      if (error) {
+        log.error(`bytomd init exec error: ${error}`)
+        return
+      }
+      // log.info(`bytomd init stdout: ${stdout}`)
+      // log.info(`bytomd init stderr: ${stderr}`)
+    })
+  bytomdInit.stdout.on('data', function(data) {
+    log.info(`bytomd init stdout: ${data}`)
+  })
+  bytomdInit.stderr.on('data', function(data) {
+    log.info(`bytomd init stderr: ${data}`)
+  })
+  bytomdInit.on('exit', function (code) {
+    // global.fileExist = true
+    event.sender.send('FileExist','true')
+    setBytomMining()
+    log.info('bytom init exited with code ' + code)
+  })
+}
+
 // Require each JS file in the main-process dir
 function loadMenu () {
   const files = glob.sync(path.join(__dirname, 'main-process/menus/*.js'))
@@ -163,7 +168,9 @@ function quitApp () {
   if(bytomdInit != null){
     bytomdInit.kill()
   }
-  bytomdMining.kill()
+  if(bytomdMining != null){
+    bytomdMining.kill()
+  }
   app.quit()
 }
 

@@ -9,7 +9,7 @@ class Container extends React.Component {
   constructor(props) {
     super(props)
     if(props.location.pathname.includes('index.html')){
-      this.props.showRoot()
+      this.redirectRoot(props)
     }
     this.redirectRoot = this.redirectRoot.bind(this)
   }
@@ -42,6 +42,12 @@ class Container extends React.Component {
       })
       window.ipcRenderer.on('btmAmountUnitState', (event, arg) => {
         this.props.uptdateBtmAmountUnit(arg)
+      })
+      window.ipcRenderer.on('FileExist', (event, arg) => {
+        debugger
+        if(arg === 'true'){
+          this.props.updateConfiguredStatus()
+        }
       })
     }
   }
@@ -95,13 +101,14 @@ export default connect(
   (state) => ({
     authOk: !state.core.requireClientToken || state.core.validToken,
     configKnown: true,
-    configured: true,
+    configured: state.core.configured,
     onTestnet: state.core.onTestnet,
   }),
   (dispatch) => ({
     fetchInfo: options => dispatch(actions.core.fetchCoreInfo(options)),
     showRoot: () => dispatch(actions.app.showRoot),
     showConfiguration: () => dispatch(actions.app.showConfiguration()),
-    uptdateBtmAmountUnit: (param) => dispatch(actions.core.updateBTMAmountUnit(param))
+    uptdateBtmAmountUnit: (param) => dispatch(actions.core.updateBTMAmountUnit(param)),
+    updateConfiguredStatus: () => dispatch(actions.core.updateConfiguredStatus)
   })
 )(Container)

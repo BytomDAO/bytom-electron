@@ -28,8 +28,10 @@ const configKnown = (state = false, action) => {
   return state
 }
 
-export const configured = (state, action) =>
-  coreConfigReducer('isConfigured', state, false, action)
+// export const configured = (state, action) =>
+//   coreConfigReducer('isConfigured', state, false, action)
+
+
 export const configuredAt = (state, action) => {
   let value = coreConfigReducer('configuredAt', state, '', action)
   if (action.type == 'UPDATE_CORE_INFO' && value != '') {
@@ -200,6 +202,17 @@ export const connected = (state = true, action) => {
 export const btmAmountUnit = (state = 'BTM' , action) => {
   if (action.type == 'UPDATE_BTM_AMOUNT_UNIT') {
     return action.param
+  }
+  return state
+}
+
+let configuredState = false
+if(window.remote){
+  configuredState = window.remote.getGlobal('fileExist')
+}
+export const configured = (state = configuredState, action) => {
+  if (action.type == 'SET_CONFIGURED') {
+    return true
   }
   return state
 }

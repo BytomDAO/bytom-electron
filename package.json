@@ -6,7 +6,7 @@
   "scripts": {
     "build:dll": "node ./bin/dependencies.js",
     "postinstall": "npm run build:dll",
-    "electron-dev": "DEV_URL=http://localhost:3000  electron --inspect=5858 main.js .",
+    "electron-dev": "DEV_URL=http://localhost:3000/configuration  electron --inspect=5858 main.js .",
     "build": "NODE_ENV=production webpack --config webpack/webpack.app.js ",
     "build-electron": "NODE_ENV=production MODE=electron webpack --config webpack/webpack.app.js ",
     "lint": "eslint \"src/**\"",
