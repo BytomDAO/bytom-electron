@@ -20,6 +20,7 @@
 .choice_wrapper {
   display: flex;
   min-height: 100%;
+  justify-content: center;
 
   > label {
     display: flex;
