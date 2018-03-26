@@ -1,5 +1,5 @@
 import { combineReducers } from 'redux'
-import { testnetUrl } from 'utility/environment'
+import { testnetUrl, mode } from 'utility/environment'
 import moment from 'moment'
 import { DeltaSampler } from 'utility/time'
 
@@ -211,10 +211,14 @@ if(window.remote){
   configuredState = window.remote.getGlobal('fileExist')
 }
 export const configured = (state = configuredState, action) => {
-  if (action.type == 'SET_CONFIGURED') {
+  if( mode === 'electron'){
+    if (action.type == 'SET_CONFIGURED') {
+      return true
+    }
+    return state
+  }else{
     return true
   }
-  return state
 }
 
 const defaultLang = window.navigator.language.startsWith('zh') ? 'zh' : 'en'

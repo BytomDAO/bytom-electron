@@ -28,7 +28,7 @@ class Container extends React.Component {
 
     if (configured) {
       if (location.pathname === '/' ||
-          location.pathname.indexOf('configuration') >= 0) {
+          location.pathname.indexOf('configuration') >= 0 || location.pathname.includes('index.html')) {
         this.props.showRoot()
       }
     } else {

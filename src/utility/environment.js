@@ -27,6 +27,7 @@ export const history = useRouterHistory(createHistory)({
   basename: basename
 })
 
+export const mode = process.env.MODE || 'browser'
 export const pageSize = 25
 export const UTXOpageSize = 4
 
