@@ -2,6 +2,10 @@ const {app, BrowserWindow, ipcMain} = require('electron')
 const autoUpdater = require('./auto-updater')
 const exec = require('child_process').exec
 const glob = require('glob')
+const settings = require('electron-settings')
+
+global.language = settings.get('browserSetting.core.lang')
+
 const i18n = require('./main-process/i18n.js')
 const url = require('url')
 const path = require('path')
@@ -11,11 +15,13 @@ const log = logger.create('main')
 
 let win, bytomdInit, bytomdMining
 
-global.i18n = i18n
+
 global.fileExist = false
+global.i18n = i18n
 
 
 function initialize () {
+
   loadMenu()
 
   function createWindow() {
@@ -47,6 +53,11 @@ function initialize () {
   }
 
   app.on('ready', () => {
+    // init i18n
+    if(!settings.get('browserSetting.core.lang')){
+      i18n.init({lng: app.getLocale()})
+    }
+
     const logFolder = {logFolder: path.join(app.getPath('userData'), 'logs')}
     const loggerOptions = Object.assign(logFolder)
     logger.setup(loggerOptions)
@@ -70,7 +81,6 @@ function initialize () {
     })
 
     createWindow()
-    // autoUpdater.initialize()
   })
 
 
@@ -144,7 +154,7 @@ function setBytomInit(event, bytomNetwork) {
 function loadMenu () {
   const files = glob.sync(path.join(__dirname, 'main-process/menus/*.js'))
   files.forEach((file) => { require(file) })
-  autoUpdater.updateMenu()
+  // autoUpdater.updateMenu()
 }
 
 // Handle Squirrel on Windows startup events

@@ -43,8 +43,10 @@ class Container extends React.Component {
       window.ipcRenderer.on('btmAmountUnitState', (event, arg) => {
         this.props.uptdateBtmAmountUnit(arg)
       })
+      window.ipcRenderer.on('lang', (event, arg) => {
+        this.props.uptdateLang(arg)
+      })
       window.ipcRenderer.on('FileExist', (event, arg) => {
-        debugger
         if(arg === 'true'){
           this.props.updateConfiguredStatus()
         }
@@ -109,6 +111,7 @@ export default connect(
     showRoot: () => dispatch(actions.app.showRoot),
     showConfiguration: () => dispatch(actions.app.showConfiguration()),
     uptdateBtmAmountUnit: (param) => dispatch(actions.core.updateBTMAmountUnit(param)),
+    uptdateLang: (param) => dispatch(actions.core.updateLang(param)),
     updateConfiguredStatus: () => dispatch(actions.core.updateConfiguredStatus)
   })
 )(Container)

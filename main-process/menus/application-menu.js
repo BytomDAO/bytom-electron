@@ -1,14 +1,20 @@
-const {BrowserWindow, Menu, app, shell, dialog} = require('electron')
+const {Menu, app, shell} = require('electron')
 const settings = require('electron-settings')
+const i18n = global.i18n
+const path = require('path')
+const logger = require('../logger')
+const log = logger.create('menu')
 
 let advNav = settings.get('browserSetting.app.navAdvancedState') || 'normal'
 let btmAmountUnit = settings.get('browserSetting.core.btmAmountUnit') || 'BTM'
 let menu = null
-const i18n = global.i18n
+
+const logFolder = {logFolder: path.join(app.getPath('userData'), 'logs')}
+const loggerOptions = Object.assign(logFolder)
+logger.setup(loggerOptions)
 
 let menuTempl = function () {
   const menu = []
-
   // APP
   const fileMenu = []
   const name = app.getName()
@@ -108,12 +114,18 @@ let menuTempl = function () {
 
 
   // LANGUAGE (VIEW)
+  const defaultLanguage = i18n.getBestMatchedLangCode(app.getLocale())
+  let currentLanguage = settings.get('browserSetting.core.lang') || defaultLanguage
   const LanguageMenu = [{
     label: i18n.t('desktop.applicationMenu.view.default'),
     type: 'checkbox',
-    // checked: btmAmountUnit === 'BTM',
     click: (item, focusedWindow) => {
       if (focusedWindow) {
+        i18n.changeLanguage(defaultLanguage, (err, t) => {
+          if (err) return log.error('something went wrong loading', err)
+          focusedWindow.webContents.send('lang', defaultLanguage)
+          createMenu()
+        })
       }
     }
   },{
@@ -121,11 +133,12 @@ let menuTempl = function () {
   },{
     label: i18n.t('desktop.applicationMenu.view.langCodes.zh'),
     type: 'checkbox',
-    // checked: btmAmountUnit === 'mBTM',
+    checked: currentLanguage === 'zh',
     click: (item, focusedWindow) => {
       if (focusedWindow) {
         i18n.changeLanguage('zh', (err, t) => {
-          if (err) return console.log('something went wrong loading', err)
+          if (err) return log.error('something went wrong loading', err)
+          focusedWindow.webContents.send('lang', 'zh')
           createMenu()
         })
 
@@ -134,12 +147,12 @@ let menuTempl = function () {
   },{
     label: i18n.t('desktop.applicationMenu.view.langCodes.en'),
     type: 'checkbox',
-    // checked: btmAmountUnit === 'NEU',
+    checked: currentLanguage === 'en',
     click: (item, focusedWindow) => {
       if (focusedWindow) {
-        // debugger
         i18n.changeLanguage('en', (err, t) => {
-          if (err) return console.log('something went wrong loading', err)
+          if (err) return log.error('something went wrong loading', err)
+          focusedWindow.webContents.send('lang', 'en')
           createMenu()
         })
       }
@@ -243,6 +256,7 @@ function findReopenMenuItem () {
 
 
 const createMenu = function () {
+  log.info('Create Menu')
   menu = Menu.buildFromTemplate(menuTempl())
   Menu.setApplicationMenu(menu)
 }
@@ -260,6 +274,13 @@ app.on('ready', () => {
     menu.items[2].submenu.items[0].submenu.items[0].checked = ( btmAmountUnit === 'BTM' )
     menu.items[2].submenu.items[0].submenu.items[1].checked = ( btmAmountUnit === 'mBTM' )
     menu.items[2].submenu.items[0].submenu.items[2].checked = ( btmAmountUnit === 'NEU' )
+  })
+
+  settings.watch('browserSetting.core.lang', newValue => {
+    i18n.changeLanguage(newValue, (err, t) => {
+      if (err) return log.error('i18n: something went wrong loading', err)
+      createMenu()
+    })
   })
 
 })

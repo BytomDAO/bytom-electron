@@ -41,12 +41,12 @@ i18n.getBestMatchedLangCode = (langCode) => {
   return bestMatchedCode
 }
 
-
-// init i18n
 i18n.init({
-  lng: global.language || 'en',
+  lng:   global.language || 'en',
+  fallbackLng: 'en',
   resources,
   interpolation: { prefix: '__', suffix: '__' },
 })
+
 
 module.exports = i18n

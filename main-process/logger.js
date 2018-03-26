@@ -22,14 +22,14 @@ exports.setup = function (options) {
         filename: `${logFolder}/category/main.log`,
 
       },
-      swarm: {
+      menu: {
         type: 'file',
-        filename: `${logFolder}/category/swarm.log`
+        filename: `${logFolder}/category/menu.log`
       }
     },
     categories: {
       default: { appenders: [ 'out', 'all', 'main' ], level },
-      swarm: { appenders: [ 'out', 'all', 'swarm' ], level }
+      menu: { appenders: [ 'out', 'all', 'menu' ], level }
     }
   }
 
