@@ -1,4 +1,5 @@
 node_modules
+bytomd
 npm-debug.log
 .env
 public
