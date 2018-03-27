@@ -62,11 +62,10 @@ function initialize () {
     const loggerOptions = Object.assign(logFolder)
     logger.setup(loggerOptions)
 
-    fs.stat(`${process.env.GOPATH}/src/github.com/bytom/cmd/bytomd/.bytomd/genesis.json`, function(err) {
+    fs.stat(`${path.join(app.getPath('home'), '/.bytomd/genesis.json')}`, function(err) {
       if(err == null) {
         log.info('Genesis File exists')
         global.fileExist = true
-        // win.webContents.send('FileExist','true')
         setBytomMining()
       } else if(err.code == 'ENOENT') {
         //wait for the int network call
@@ -100,14 +99,14 @@ function initialize () {
 }
 
 function setBytomMining() {
-  bytomdMining = exec('cd $GOPATH/src/github.com/bytom/cmd/bytomd/ && ./bytomd node --mining' ,
+  bytomdMining = exec( `cd ${app.getPath('home')} \
+    && ${path.join(__dirname, '/bytomd/bytomd').replace('app.asar', 'app.asar.unpacked')} node --mining` ,
     (error, stdout, stderr) => {
       if (error) {
         log.error(`bytomd mining exec error: ${error}`)
       }
       log.info(`bytomd mining stdout: ${stdout}`)
       log.info(`bytomd mining stderr: ${stderr}`)
-      // createWindow()
     })
 
   bytomdMining.stdout.on('data', function(data) {
@@ -125,16 +124,15 @@ function setBytomMining() {
 }
 
 function setBytomInit(event, bytomNetwork) {
-
-  // file does not exist
-  bytomdInit = exec(`cd $GOPATH/src/github.com/bytom/cmd/bytomd/ && ./bytomd init --chain_id ${bytomNetwork}` ,
+  // Init bytomd
+  bytomdInit = exec(`cd ${app.getPath('home')} \
+    && ${path.join(__dirname, '/bytomd/bytomd').replace('app.asar', 'app.asar.unpacked')} init --chain_id  ${bytomNetwork}` ,
     (error, stdout, stderr) => {
       if (error) {
         log.error(`bytomd init exec error: ${error}`)
-        return
       }
-      // log.info(`bytomd init stdout: ${stdout}`)
-      // log.info(`bytomd init stderr: ${stderr}`)
+      log.info(`bytomd init stdout: ${stdout}`)
+      log.info(`bytomd init stderr: ${stderr}`)
     })
   bytomdInit.stdout.on('data', function(data) {
     log.info(`bytomd init stdout: ${data}`)
@@ -143,7 +141,6 @@ function setBytomInit(event, bytomNetwork) {
     log.info(`bytomd init stderr: ${data}`)
   })
   bytomdInit.on('exit', function (code) {
-    // global.fileExist = true
     event.sender.send('FileExist','true')
     setBytomMining()
     log.info('bytom init exited with code ' + code)

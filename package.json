@@ -12,8 +12,8 @@
     "lint": "eslint \"src/**\"",
     "start": "hjs-dev-server webpack/webpack.app.js --hot --host 0.0.0.0",
     "generate-component": "babel-node bin/generate.js component",
-    "package:mac": "electron-packager . Bytom --overwrite --platform=darwin --arch=x64 --out=desktop --icon=./static/images/app-icon/mac/app.icns",
-    "package:win": "electron-packager . Bytom --overwrite  --platform=win32 --arch=ia32 --out=desktop --icon=./static/images/app-icon/win/app.ico"
+    "package:mac": "electron-packager . Bytom --overwrite --asar.unpackDir=bytomd --platform=darwin --arch=x64 --out=desktop --icon=./static/images/app-icon/mac/app.icns",
+    "package:win": "electron-packager . Bytom --overwrite --asar.unpackDir=bytomd --platform=win32 --arch=ia32 --out=desktop --icon=./static/images/app-icon/win/app.ico"
   },
   "author": "Bytom",
   "license": "",
