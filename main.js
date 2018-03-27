@@ -1,9 +1,7 @@
 const {app, BrowserWindow, ipcMain} = require('electron')
-const autoUpdater = require('./auto-updater')
 const exec = require('child_process').exec
 const glob = require('glob')
 const settings = require('electron-settings')
-
 global.language = settings.get('browserSetting.core.lang')
 
 const i18n = require('./main-process/i18n.js')
@@ -25,7 +23,7 @@ function initialize () {
   loadMenu()
 
   function createWindow() {
-    // 创建浏览器窗口。
+    // Create browser Window
     win = new BrowserWindow({
       width: 1024 + 208,
       height: 768,
@@ -72,18 +70,15 @@ function initialize () {
         ipcMain.on('bytomdInitNetwork', (event, arg) => {
           setBytomInit( event,  arg )
         })
-
       } else {
         log.error('Some other error: ', err.code)
       }
-
     })
-
     createWindow()
   })
 
 
-// 当全部窗口关闭时退出。
+//All window Closed
   app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') {
       quitApp('window-all-closed')
@@ -151,17 +146,12 @@ function setBytomInit(event, bytomNetwork) {
 function loadMenu () {
   const files = glob.sync(path.join(__dirname, 'main-process/menus/*.js'))
   files.forEach((file) => { require(file) })
-  // autoUpdater.updateMenu()
 }
 
 // Handle Squirrel on Windows startup events
 switch (process.argv[1]) {
   case '--squirrel-install':
-    autoUpdater.createShortcut(() => { app.quit() })
-    break
   case '--squirrel-uninstall':
-    autoUpdater.removeShortcut(() => { app.quit() })
-    break
   case '--squirrel-obsolete':
   case '--squirrel-updated':
     app.quit()
