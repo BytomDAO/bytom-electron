@@ -85,15 +85,15 @@
 }
 
 .new {
-  background-image: url('images/config/new.png')
+  background-image: url('images/config/new.svg')
 }
 
 .join {
-  background-image: url('images/config/join.png')
+  background-image: url('images/config/join.svg')
 }
 
 .testnet {
-  background-image: url('images/config/testnet.png')
+  background-image: url('images/config/testnet.svg')
 }
 
 input[type=radio]:checked ~ .choice {
@@ -106,15 +106,15 @@ input[type=radio]:checked ~ .choice {
   }
 
   &.new {
-    background-image: url('images/config/new-active.png')
+    background-image: url('images/config/new-active.svg')
   }
 
   &.join {
-    background-image: url('images/config/join-active.png')
+    background-image: url('images/config/join-active.svg')
   }
 
   &.testnet {
-    background-image: url('images/config/testnet-active.png')
+    background-image: url('images/config/testnet-active.svg')
   }
 
 
