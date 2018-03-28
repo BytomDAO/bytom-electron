@@ -33,6 +33,10 @@ function initialize () {
       }
     })
 
+    if (process.platform === 'linux') {
+      win.icon = path.join(__dirname, '/static/images/app-icon/png/app.png')
+    }
+
 
     const startUrl = process.env.DEV_URL ||
       url.format({

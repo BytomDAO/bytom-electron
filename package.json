@@ -12,8 +12,11 @@
     "lint": "eslint \"src/**\"",
     "start": "hjs-dev-server webpack/webpack.app.js --hot --host 0.0.0.0",
     "generate-component": "babel-node bin/generate.js component",
+    "package": "npm-run-all package:* ",
     "package:mac": "electron-packager . Bytom --overwrite --asar.unpackDir=bytomd --platform=darwin --arch=x64 --out=desktop --icon=./static/images/app-icon/mac/app.icns",
-    "package:win": "electron-packager . Bytom --overwrite --asar.unpackDir=bytomd --platform=win32 --arch=ia32 --out=desktop --icon=./static/images/app-icon/win/app.ico"
+    "package:win": "electron-packager . Bytom --overwrite --asar.unpackDir=bytomd --platform=win32 --arch=all --out=desktop --icon=./static/images/app-icon/win/app.ico",
+    "package:linux-32": "electron-packager . Bytom --overwrite --asar.unpackDir=bytomd --platform=linux --arch=ia32 --out=desktop",
+    "package:linux-64": "electron-packager . Bytom --overwrite --asar.unpackDir=bytomd --platform=linux --arch=x64 --out=desktop"
   },
   "author": "Bytom",
   "license": "",
@@ -81,6 +84,7 @@
     "mocha": "~2.2.0",
     "nock": "~4.0.0",
     "node-sass": "~3.8.0",
+    "npm-run-all": "^4.1.2",
     "postcss-loader": "~1.1.0",
     "react-hot-loader": "~1.3.0",
     "resolve-url-loader": "~1.6.0",
