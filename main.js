@@ -64,7 +64,7 @@ function initialize () {
     const loggerOptions = Object.assign(logFolder)
     logger.setup(loggerOptions)
 
-    fs.stat(`${path.join(app.getPath('home'), '/.bytomd/genesis.json')}`, function(err) {
+    fs.stat(`${path.join(app.getPath('userData'), '/.bytomd/genesis.json')}`, function(err) {
       if(err == null) {
         log.info('Genesis File exists')
         global.fileExist = true
@@ -97,8 +97,8 @@ function initialize () {
   })
 }
 
-function setBytomMining() {
-  bytomdMining = exec( `cd ${app.getPath('home')} \
+function setBytomMining(event) {
+  bytomdMining = exec( `cd "${app.getPath('userData')}" \
     && ${path.join(__dirname, '/bytomd/bytomd').replace('app.asar', 'app.asar.unpacked')} node --mining` ,
     (error, stdout, stderr) => {
       if (error) {
@@ -113,8 +113,10 @@ function setBytomMining() {
   })
 
   bytomdMining.stderr.on('data', function(data) {
-
     log.info(`bytomd mining stderr: ${data}`)
+    if(data.includes('msg="Started node"') && event){
+      event.sender.send('ConfiguredNetwork','starNode')
+    }
   })
 
   bytomdMining.on('exit', function (code) {
@@ -124,7 +126,7 @@ function setBytomMining() {
 
 function setBytomInit(event, bytomNetwork) {
   // Init bytomd
-  bytomdInit = exec(`cd ${app.getPath('home')} \
+  bytomdInit = exec(`cd "${app.getPath('userData')}" \
     && ${path.join(__dirname, '/bytomd/bytomd').replace('app.asar', 'app.asar.unpacked')} init --chain_id  ${bytomNetwork}` ,
     (error, stdout, stderr) => {
       if (error) {
@@ -140,8 +142,8 @@ function setBytomInit(event, bytomNetwork) {
     log.info(`bytomd init stderr: ${data}`)
   })
   bytomdInit.on('exit', function (code) {
-    event.sender.send('FileExist','true')
-    setBytomMining()
+    event.sender.send('ConfiguredNetwork','init')
+    setBytomMining(event)
     log.info('bytom init exited with code ' + code)
   })
 }

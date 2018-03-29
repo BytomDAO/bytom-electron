@@ -17,12 +17,11 @@ class Container extends React.Component {
   redirectRoot(props) {
     const {
       authOk,
-      configKnown,
       configured,
       location
     } = props
 
-    if (!authOk || !configKnown) {
+    if (!authOk) {
       return
     }
 
@@ -46,8 +45,11 @@ class Container extends React.Component {
       window.ipcRenderer.on('lang', (event, arg) => {
         this.props.uptdateLang(arg)
       })
-      window.ipcRenderer.on('FileExist', (event, arg) => {
-        if(arg === 'true'){
+      window.ipcRenderer.on('ConfiguredNetwork', (event, arg) => {
+        if(arg === 'starNode'){
+          this.props.showRoot()
+        }
+        if(arg === 'init'){
           this.props.updateConfiguredStatus()
         }
       })
@@ -76,10 +78,10 @@ class Container extends React.Component {
 
     if (!this.props.authOk) {
       layout = <Login/>
-    } else if (!this.props.configKnown) {
-      return <Loading>Connecting to Bytom Core...</Loading>
     } else if (!this.props.configured) {
       layout = <Config>{this.props.children}</Config>
+    } else if (!this.props.configKnown) {
+      return <Loading>Connecting to Bytom Core...</Loading>
     } else {
       layout = <Main>{this.props.children}</Main>
     }
@@ -102,7 +104,8 @@ class Container extends React.Component {
 export default connect(
   (state) => ({
     authOk: !state.core.requireClientToken || state.core.validToken,
-    configKnown: true,
+    // configKnown: true,
+    configKnown: state.core.configKnown,
     configured: state.core.configured,
     onTestnet: state.core.onTestnet,
   }),
