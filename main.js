@@ -2,9 +2,7 @@ const {app, BrowserWindow, ipcMain} = require('electron')
 const exec = require('child_process').exec
 const glob = require('glob')
 const settings = require('electron-settings')
-global.language = settings.get('browserSetting.core.lang')
 
-const i18n = require('./main-process/i18n.js')
 const url = require('url')
 const path = require('path')
 const fs = require('fs')
@@ -15,12 +13,9 @@ let win, bytomdInit, bytomdMining
 
 
 global.fileExist = false
-global.i18n = i18n
 
 
 function initialize () {
-
-  loadMenu()
 
   function createWindow() {
     // Create browser Window
@@ -46,7 +41,9 @@ function initialize () {
       })
     win.loadURL(startUrl)
 
-    win.webContents.openDevTools()
+    if(process.env.DEV){
+      win.webContents.openDevTools()
+    }
 
     win.on('closed', () => {
       win = null
@@ -55,14 +52,10 @@ function initialize () {
   }
 
   app.on('ready', () => {
-    // init i18n
-    if(!settings.get('browserSetting.core.lang')){
-      i18n.init({lng: app.getLocale()})
-    }
 
-    const logFolder = {logFolder: path.join(app.getPath('userData'), 'logs')}
-    const loggerOptions = Object.assign(logFolder)
-    logger.setup(loggerOptions)
+    loadMenu()
+
+    setupConfigure()
 
     fs.stat(`${path.join(app.getPath('userData'), '/.bytomd/genesis.json')}`, function(err) {
       if(err == null) {
@@ -96,10 +89,13 @@ function initialize () {
 
   })
 }
+const bytomdPath = process.env.DEV?
+  path.join(__dirname, '/bytomd/bytomd-darwin_amd64'):
+  glob.sync( path.join(__dirname, '/bytomd/bytomd*').replace('app.asar', 'app.asar.unpacked'))
 
+const bytomdDataPath = path.join(app.getPath('userData'), '/.bytomd')
 function setBytomMining(event) {
-  bytomdMining = exec( `cd "${app.getPath('userData')}" \
-    && ${path.join(__dirname, '/bytomd/bytomd').replace('app.asar', 'app.asar.unpacked')} node --mining` ,
+  bytomdMining = exec( `${bytomdPath} node --mining --home "${bytomdDataPath}" --web.closed` ,
     (error, stdout, stderr) => {
       if (error) {
         log.error(`bytomd mining exec error: ${error}`)
@@ -126,8 +122,7 @@ function setBytomMining(event) {
 
 function setBytomInit(event, bytomNetwork) {
   // Init bytomd
-  bytomdInit = exec(`cd "${app.getPath('userData')}" \
-    && ${path.join(__dirname, '/bytomd/bytomd').replace('app.asar', 'app.asar.unpacked')} init --chain_id  ${bytomNetwork}` ,
+  bytomdInit = exec(`${bytomdPath} init --chain_id  ${bytomNetwork} --home "${bytomdDataPath}"` ,
     (error, stdout, stderr) => {
       if (error) {
         log.error(`bytomd init exec error: ${error}`)
@@ -152,6 +147,12 @@ function setBytomInit(event, bytomNetwork) {
 function loadMenu () {
   const files = glob.sync(path.join(__dirname, 'main-process/menus/*.js'))
   files.forEach((file) => { require(file) })
+}
+
+function setupConfigure(){
+  const logFolder = {logFolder: path.join(app.getPath('userData'), 'logs')}
+  const loggerOptions = Object.assign(logFolder)
+  logger.setup(loggerOptions)
 }
 
 // Handle Squirrel on Windows startup events

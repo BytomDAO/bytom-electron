@@ -1,6 +1,8 @@
 const {Menu, app, shell} = require('electron')
 const settings = require('electron-settings')
-const i18n = global.i18n
+global.language = settings.get('browserSetting.core.lang') || app.getLocale()
+const i18n = require('../i18n.js')
+global.i18n = i18n
 const path = require('path')
 const logger = require('../logger')
 const log = logger.create('menu')
@@ -236,23 +238,23 @@ let menuTempl = function () {
 
   return menu
 }
-
-function findReopenMenuItem () {
-  const menu = Menu.getApplicationMenu()
-  if (!menu) return
-
-  let reopenMenuItem
-  menu.items.forEach(item => {
-    if (item.submenu) {
-      item.submenu.items.forEach(item => {
-        if (item.key === 'reopenMenuItem') {
-          reopenMenuItem = item
-        }
-      })
-    }
-  })
-  return reopenMenuItem
-}
+//
+// function findReopenMenuItem () {
+//   const menu = Menu.getApplicationMenu()
+//   if (!menu) return
+//
+//   let reopenMenuItem
+//   menu.items.forEach(item => {
+//     if (item.submenu) {
+//       item.submenu.items.forEach(item => {
+//         if (item.key === 'reopenMenuItem') {
+//           reopenMenuItem = item
+//         }
+//       })
+//     }
+//   })
+//   return reopenMenuItem
+// }
 
 
 const createMenu = function () {
@@ -261,36 +263,59 @@ const createMenu = function () {
   Menu.setApplicationMenu(menu)
 }
 
-app.on('ready', () => {
-  createMenu()
 
-  settings.watch('browserSetting.app.navAdvancedState', newValue => {
-    advNav = newValue
-    menu.items[2].submenu.items[1].checked = ( advNav === 'advance' )
-  })
-
-  settings.watch('browserSetting.core.btmAmountUnit', newValue => {
-    btmAmountUnit = newValue
-    menu.items[2].submenu.items[0].submenu.items[0].checked = ( btmAmountUnit === 'BTM' )
-    menu.items[2].submenu.items[0].submenu.items[1].checked = ( btmAmountUnit === 'mBTM' )
-    menu.items[2].submenu.items[0].submenu.items[2].checked = ( btmAmountUnit === 'NEU' )
-  })
-
-  settings.watch('browserSetting.core.lang', newValue => {
-    i18n.changeLanguage(newValue, (err, t) => {
-      if (err) return log.error('i18n: something went wrong loading', err)
-      createMenu()
-    })
-  })
-
+settings.watch('browserSetting.app.navAdvancedState', newValue => {
+  advNav = newValue
+  menu.items[2].submenu.items[1].checked = ( advNav === 'advance' )
 })
 
-app.on('browser-window-created', () => {
-  let reopenMenuItem = findReopenMenuItem()
-  if (reopenMenuItem) reopenMenuItem.enabled = false
+settings.watch('browserSetting.core.btmAmountUnit', newValue => {
+  btmAmountUnit = newValue
+  menu.items[2].submenu.items[0].submenu.items[0].checked = ( btmAmountUnit === 'BTM' )
+  menu.items[2].submenu.items[0].submenu.items[1].checked = ( btmAmountUnit === 'mBTM' )
+  menu.items[2].submenu.items[0].submenu.items[2].checked = ( btmAmountUnit === 'NEU' )
 })
 
-app.on('window-all-closed', () => {
-  let reopenMenuItem = findReopenMenuItem()
-  if (reopenMenuItem) reopenMenuItem.enabled = true
+settings.watch('browserSetting.core.lang', newValue => {
+  i18n.changeLanguage(newValue, (err, t) => {
+    if (err) return log.error('i18n: something went wrong loading', err)
+    createMenu()
+  })
 })
+
+module.exports = createMenu()
+
+
+// app.on('ready', () => {
+//   // createMenu()
+//
+//   settings.watch('browserSetting.app.navAdvancedState', newValue => {
+//     advNav = newValue
+//     menu.items[2].submenu.items[1].checked = ( advNav === 'advance' )
+//   })
+//
+//   settings.watch('browserSetting.core.btmAmountUnit', newValue => {
+//     btmAmountUnit = newValue
+//     menu.items[2].submenu.items[0].submenu.items[0].checked = ( btmAmountUnit === 'BTM' )
+//     menu.items[2].submenu.items[0].submenu.items[1].checked = ( btmAmountUnit === 'mBTM' )
+//     menu.items[2].submenu.items[0].submenu.items[2].checked = ( btmAmountUnit === 'NEU' )
+//   })
+//
+//   settings.watch('browserSetting.core.lang', newValue => {
+//     i18n.changeLanguage(newValue, (err, t) => {
+//       if (err) return log.error('i18n: something went wrong loading', err)
+//       createMenu()
+//     })
+//   })
+//
+// })
+//
+// app.on('browser-window-created', () => {
+//   let reopenMenuItem = findReopenMenuItem()
+//   if (reopenMenuItem) reopenMenuItem.enabled = false
+// })
+
+// app.on('window-all-closed', () => {
+//   let reopenMenuItem = findReopenMenuItem()
+//   if (reopenMenuItem) reopenMenuItem.enabled = true
+// })

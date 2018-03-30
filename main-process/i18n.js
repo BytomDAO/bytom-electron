@@ -5,6 +5,15 @@ The i18n module, loads the language files and initializes i18next
 */
 const fs = require('fs')
 const i18n = require('i18next')
+// const path = require('path')
+// const settings = require('electron-settings')
+// const { app } = require('electron')
+//
+// fs.stat(`${path.join(app.getPath('userData'), '/Settings')}`, function(err) {
+//   if(err == null) {
+//     global.language = settings.get('browserSetting.core.lang')
+//   }
+// })
 
 let i18nConf = fs.readFileSync(`${__dirname}/interface/project-tap.i18n`)
 i18nConf = JSON.parse(i18nConf)
