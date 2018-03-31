@@ -84,7 +84,7 @@ class Navigation extends React.Component {
         <Sync/>
 
         <ul className={`${styles.navigation} ${styles.networkStatus}`}>
-          <li className={`${styles.navigationTitle} ${styles.networkWord}`}>Test Net</li>
+          <li className={`${styles.navigationTitle} ${styles.networkWord}`}>{window.remote? window.remote.getGlobal('networkStatus'): null}</li>
         </ul>
 
       </div>

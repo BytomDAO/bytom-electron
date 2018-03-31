@@ -57,20 +57,8 @@ function initialize () {
 
     setupConfigure()
 
-    fs.stat(`${path.join(app.getPath('userData'), '/.bytomd/genesis.json')}`, function(err) {
-      if(err == null) {
-        log.info('Genesis File exists')
-        global.fileExist = true
-        setBytomMining()
-      } else if(err.code == 'ENOENT') {
-        //wait for the int network call
-        ipcMain.on('bytomdInitNetwork', (event, arg) => {
-          setBytomInit( event,  arg )
-        })
-      } else {
-        log.error('Some other error: ', err.code)
-      }
-    })
+    bytomd()
+
     createWindow()
   })
 
@@ -140,6 +128,32 @@ function setBytomInit(event, bytomNetwork) {
     event.sender.send('ConfiguredNetwork','init')
     setBytomMining(event)
     log.info('bytom init exited with code ' + code)
+  })
+}
+
+function bytomd(){
+  const filePath = path.join(app.getPath('userData'), '/.bytomd/genesis.json')
+
+  fs.stat(`${filePath}`, function(err) {
+    if(err == null) {
+      log.info('Genesis File exists')
+      global.fileExist = true
+      setBytomMining()
+
+      let genesisFile = fs.readFileSync(filePath)
+      genesisFile = JSON.parse(genesisFile)
+
+      global.networkStatus = genesisFile.chain_id
+
+    } else if(err.code == 'ENOENT') {
+      //wait for the int network call
+      ipcMain.on('bytomdInitNetwork', (event, arg) => {
+        setBytomInit( event,  arg )
+        global.networkStatus = arg
+      })
+    } else {
+      log.error('Some other error: ', err.code)
+    }
   })
 }
 
