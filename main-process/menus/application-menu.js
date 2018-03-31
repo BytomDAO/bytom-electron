@@ -1,4 +1,4 @@
-const {Menu, app, shell} = require('electron')
+const { Menu, app, shell } = require('electron')
 const settings = require('electron-settings')
 global.language = settings.get('browserSetting.core.lang') || app.getLocale()
 const i18n = require('../i18n.js')
@@ -81,34 +81,6 @@ let menuTempl = function () {
       click: (item, focusedWindow) => {
         if (focusedWindow) {
           focusedWindow.webContents.send('redirect', '/accounts/create')
-        }
-      }
-    }, {
-      label: 'Toggle Full Screen',
-      accelerator: (() => {
-        if (process.platform === 'darwin') {
-          return 'Ctrl+Command+F'
-        } else {
-          return 'F11'
-        }
-      })(),
-      click: (item, focusedWindow) => {
-        if (focusedWindow) {
-          focusedWindow.setFullScreen(!focusedWindow.isFullScreen())
-        }
-      }
-    }, {
-      label: 'Toggle Developer Tools',
-      accelerator: (() => {
-        if (process.platform === 'darwin') {
-          return 'Alt+Command+I'
-        } else {
-          return 'Ctrl+Shift+I'
-        }
-      })(),
-      click: (item, focusedWindow) => {
-        if (focusedWindow) {
-          focusedWindow.toggleDevTools()
         }
       }
     }]
@@ -216,6 +188,51 @@ let menuTempl = function () {
     }]
   })
 
+  const devToolsMenu =[]
+  devToolsMenu.push({
+    label: i18n.t('desktop.applicationMenu.develop.devTools'),
+    accelerator: (() => {
+      if (process.platform === 'darwin') {
+        return 'Alt+Command+I'
+      } else {
+        return 'Ctrl+Shift+I'
+      }
+    })(),
+    click: (item, focusedWindow) => {
+      if (focusedWindow) {
+        focusedWindow.toggleDevTools()
+      }
+    }
+  },{
+    label: i18n.t('desktop.applicationMenu.develop.fullScreen'),
+    accelerator: (() => {
+      if (process.platform === 'darwin') {
+        return 'Ctrl+Command+F'
+      } else {
+        return 'F11'
+      }
+    })(),
+    click: (item, focusedWindow) => {
+      if (focusedWindow) {
+        focusedWindow.setFullScreen(!focusedWindow.isFullScreen())
+      }
+    }
+  },{
+    label: i18n.t('desktop.applicationMenu.develop.logFiles'),
+    click() {
+      try {
+        shell.showItemInFolder(path.join(app.getPath('userData'), 'logs', 'all.log'))
+      } catch (error) {
+        log.error(error)
+      }
+    },
+  })
+
+  menu.push({
+    label: i18n.t('desktop.applicationMenu.develop.label'),
+    submenu: devToolsMenu,
+  })
+
   // HELP
   const helpMenu = []
   helpMenu.push({
@@ -284,38 +301,3 @@ settings.watch('browserSetting.core.lang', newValue => {
 })
 
 module.exports = createMenu()
-
-
-// app.on('ready', () => {
-//   // createMenu()
-//
-//   settings.watch('browserSetting.app.navAdvancedState', newValue => {
-//     advNav = newValue
-//     menu.items[2].submenu.items[1].checked = ( advNav === 'advance' )
-//   })
-//
-//   settings.watch('browserSetting.core.btmAmountUnit', newValue => {
-//     btmAmountUnit = newValue
-//     menu.items[2].submenu.items[0].submenu.items[0].checked = ( btmAmountUnit === 'BTM' )
-//     menu.items[2].submenu.items[0].submenu.items[1].checked = ( btmAmountUnit === 'mBTM' )
-//     menu.items[2].submenu.items[0].submenu.items[2].checked = ( btmAmountUnit === 'NEU' )
-//   })
-//
-//   settings.watch('browserSetting.core.lang', newValue => {
-//     i18n.changeLanguage(newValue, (err, t) => {
-//       if (err) return log.error('i18n: something went wrong loading', err)
-//       createMenu()
-//     })
-//   })
-//
-// })
-//
-// app.on('browser-window-created', () => {
-//   let reopenMenuItem = findReopenMenuItem()
-//   if (reopenMenuItem) reopenMenuItem.enabled = false
-// })
-
-// app.on('window-all-closed', () => {
-//   let reopenMenuItem = findReopenMenuItem()
-//   if (reopenMenuItem) reopenMenuItem.enabled = true
-// })

@@ -23,6 +23,12 @@
                 "btmAmountUnit": "BTM数量单位",
                 "advNav" : "高级导航"
             },
+            "develop": {
+                "label": "开发",
+                "devTools": "切换开发者工具",
+                "fullScreen": "切换全屏",
+                "logFiles": "显示日志文件"
+            },
             "help": {
                 "label": "帮助"
             }

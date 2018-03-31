@@ -27,6 +27,12 @@
                 "btmAmountUnit": "BTM Amount Unit",
                 "advNav" : "Advanced Navigation"
             },
+            "develop": {
+                "label": "Develop",
+                "devTools": "Toggle developer tools",
+                "fullScreen": "Toggle full screen",
+                "logFiles": "Show log files"
+            },
             "help": {
                 "label": "Help",
                 "bytomWiki": "Troubleshooting and Help",
