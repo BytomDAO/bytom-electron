@@ -71,3 +71,12 @@
     margin-top: -2px;
   }
 }
+
+.networkStatus{
+  position: absolute;
+  bottom: 18px;
+}
+
+.networkWord{
+  color: $highlight-label;
+}

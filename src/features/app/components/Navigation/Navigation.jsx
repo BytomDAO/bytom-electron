@@ -82,6 +82,11 @@ class Navigation extends React.Component {
         </ul>}
 
         <Sync/>
+
+        <ul className={`${styles.navigation} ${styles.networkStatus}`}>
+          <li className={`${styles.navigationTitle} ${styles.networkWord}`}>Test Net</li>
+        </ul>
+
       </div>
     )
   }
