@@ -1,5 +1,5 @@
 const {app, BrowserWindow, ipcMain} = require('electron')
-const exec = require('child_process').exec
+const spawn = require('child_process').spawn
 const glob = require('glob')
 const url = require('url')
 const path = require('path')
@@ -43,7 +43,7 @@ function initialize () {
 
     win.on('closed', () => {
       win = null
-      quitApp()
+      app.quit()
     })
   }
 
@@ -61,7 +61,7 @@ function initialize () {
 //All window Closed
   app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') {
-      quitApp()
+      app.quit()
     }
   })
 
@@ -72,12 +72,21 @@ function initialize () {
   })
 
   app.on('before-quit', () => {
-    if(bytomdInit != null){
-      bytomdInit.kill()
+    if(bytomdInit){
+      bytomdInit.kill('SIGINT')
       log.info('Kill bytomd Init command...')
     }
-    if(bytomdMining != null){
-      bytomdMining.kill()
+    if(bytomdMining){
+      bytomdMining.kill('SIGINT')
+      const killTimeout = setTimeout(() => {
+        bytomdMining.kill('SIGKILL')
+      }, 8000 /* 8 seconds */)
+
+      bytomdMining.once('close', () => {
+        clearTimeout(killTimeout)
+        bytomdMining = null
+      })
+
       log.info('Kill bytomd Mining command...')
     }
   })
@@ -88,14 +97,7 @@ const bytomdPath = process.env.DEV?
 
 const bytomdDataPath = path.join(app.getPath('userData'), '/.bytomd')
 function setBytomMining(event) {
-  bytomdMining = exec( `${bytomdPath} node --mining --home "${bytomdDataPath}" --web.closed` ,
-    (error, stdout, stderr) => {
-      if (error) {
-        bytomdLog.error(`bytomd mining exec error: ${error}`)
-      }
-      bytomdLog.info(`bytomd mining stdout: ${stdout}`)
-      bytomdLog.info(`bytomd mining stderr: ${stderr}`)
-    })
+  bytomdMining = spawn( `${bytomdPath}`, ['node', '--mining', '--home' , `${bytomdDataPath}`, '--web.closed'] )
 
   bytomdMining.stdout.on('data', function(data) {
     bytomdLog.info(`bytomd mining stdout: ${data}`)
@@ -115,20 +117,16 @@ function setBytomMining(event) {
 
 function setBytomInit(event, bytomNetwork) {
   // Init bytomd
-  bytomdInit = exec(`${bytomdPath} init --chain_id  ${bytomNetwork} --home "${bytomdDataPath}"` ,
-    (error, stdout, stderr) => {
-      if (error) {
-        bytomdLog.error(`bytomd init exec error: ${error}`)
-      }
-      bytomdLog.info(`bytomd init stdout: ${stdout}`)
-      bytomdLog.info(`bytomd init stderr: ${stderr}`)
-    })
+  bytomdInit = spawn(`${bytomdPath}`, ['init', '--chain_id',  `${bytomNetwork}`, '--home' , `${bytomdDataPath}`] )
+
   bytomdInit.stdout.on('data', function(data) {
     bytomdLog.info(`bytomd init stdout: ${data}`)
   })
+
   bytomdInit.stderr.on('data', function(data) {
     bytomdLog.info(`bytomd init stderr: ${data}`)
   })
+
   bytomdInit.on('exit', function (code) {
     event.sender.send('ConfiguredNetwork','init')
     setBytomMining(event)
@@ -184,17 +182,5 @@ switch (process.argv[1]) {
     break
   default:
     initialize()
-}
-
-function quitApp () {
-  if(bytomdInit != null){
-    bytomdInit.kill()
-    log.info('Kill bytomd Init command...')
-  }
-  if(bytomdMining != null){
-    bytomdMining.kill()
-    log.info('Kill bytomd Mining command...')
-  }
-  app.quit()
 }
 
