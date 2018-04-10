@@ -1,8 +1,6 @@
 const {app, BrowserWindow, ipcMain} = require('electron')
 const exec = require('child_process').exec
 const glob = require('glob')
-const settings = require('electron-settings')
-
 const url = require('url')
 const path = require('path')
 const fs = require('fs')
@@ -11,9 +9,7 @@ const log = logger.create('main')
 
 let win, bytomdInit, bytomdMining
 
-
 global.fileExist = false
-
 
 function initialize () {
 
@@ -31,7 +27,6 @@ function initialize () {
     if (process.platform === 'linux') {
       win.icon = path.join(__dirname, '/static/images/app-icon/png/app.png')
     }
-
 
     const startUrl = process.env.DEV_URL ||
       url.format({
@@ -61,7 +56,6 @@ function initialize () {
 
     createWindow()
   })
-
 
 //All window Closed
   app.on('window-all-closed', () => {
@@ -99,7 +93,7 @@ function setBytomMining(event) {
   bytomdMining.stderr.on('data', function(data) {
     log.info(`bytomd mining stderr: ${data}`)
     if(data.includes('msg="Started node"') && event){
-      event.sender.send('ConfiguredNetwork','starNode')
+      event.sender.send('ConfiguredNetwork','startNode')
     }
   })
 
@@ -180,7 +174,6 @@ switch (process.argv[1]) {
   default:
     initialize()
 }
-
 
 function quitApp () {
   if(bytomdInit != null){

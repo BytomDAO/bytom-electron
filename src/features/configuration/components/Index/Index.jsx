@@ -110,7 +110,7 @@ const mapDispatchToProps = (dispatch) => ({
 })
 
 const config = {
-  form: 'cotareConfigurationForm',
+  form: 'coreConfigurationForm',
   fields: [
     'type'
   ]
