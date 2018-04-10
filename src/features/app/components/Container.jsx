@@ -46,7 +46,10 @@ class Container extends React.Component {
         this.props.uptdateLang(arg)
       })
       window.ipcRenderer.on('ConfiguredNetwork', (event, arg) => {
-        if(arg === 'starNode'){
+        if(arg === 'startNode'){
+          Object.keys(this.props.flashMessages).forEach(key => {
+            delete this.props.flashMessages[key]
+          })
           this.props.showRoot()
         }
         if(arg === 'init'){
@@ -108,6 +111,7 @@ export default connect(
     configKnown: state.core.configKnown,
     configured: state.core.configured,
     onTestnet: state.core.onTestnet,
+    flashMessages: state.app.flashMessages,
   }),
   (dispatch) => ({
     fetchInfo: options => dispatch(actions.core.fetchCoreInfo(options)),
@@ -115,6 +119,7 @@ export default connect(
     showConfiguration: () => dispatch(actions.app.showConfiguration()),
     uptdateBtmAmountUnit: (param) => dispatch(actions.core.updateBTMAmountUnit(param)),
     uptdateLang: (param) => dispatch(actions.core.updateLang(param)),
-    updateConfiguredStatus: () => dispatch(actions.core.updateConfiguredStatus)
+    updateConfiguredStatus: () => dispatch(actions.core.updateConfiguredStatus),
+    markFlashDisplayed: (key) => dispatch(actions.app.displayedFlash(key)),
   })
 )(Container)
