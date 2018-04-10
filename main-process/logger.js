@@ -19,17 +19,22 @@ exports.setup = function (options) {
       },
       main: {
         type: 'file',
-        filename: `${logFolder}/category/main.log`,
+        filename: `${logFolder}/electron/main.log`,
 
       },
       menu: {
         type: 'file',
-        filename: `${logFolder}/category/menu.log`
+        filename: `${logFolder}/electron/menu.log`
+      },
+      bytomd: {
+        type: 'file',
+        filename: `${logFolder}/bytomd/bytomd.log`
       }
     },
     categories: {
       default: { appenders: [ 'out', 'all', 'main' ], level },
-      menu: { appenders: [ 'out', 'all', 'menu' ], level }
+      menu: { appenders: [ 'out', 'all', 'menu' ], level },
+      bytomd: { appenders: [ 'out', 'all', 'bytomd' ], level }
     }
   }
 

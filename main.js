@@ -6,6 +6,7 @@ const path = require('path')
 const fs = require('fs')
 const logger = require('./main-process/logger')
 const log = logger.create('main')
+const bytomdLog = logger.create('bytomd')
 
 let win, bytomdInit, bytomdMining
 
@@ -42,7 +43,7 @@ function initialize () {
 
     win.on('closed', () => {
       win = null
-      quitApp('closed')
+      quitApp()
     })
   }
 
@@ -60,7 +61,7 @@ function initialize () {
 //All window Closed
   app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') {
-      quitApp('window-all-closed')
+      quitApp()
     }
   })
 
@@ -68,7 +69,17 @@ function initialize () {
     if (win === null) {
       createWindow()
     }
+  })
 
+  app.on('before-quit', () => {
+    if(bytomdInit != null){
+      bytomdInit.kill()
+      log.info('Kill bytomd Init command...')
+    }
+    if(bytomdMining != null){
+      bytomdMining.kill()
+      log.info('Kill bytomd Mining command...')
+    }
   })
 }
 const bytomdPath = process.env.DEV?
@@ -80,25 +91,25 @@ function setBytomMining(event) {
   bytomdMining = exec( `${bytomdPath} node --mining --home "${bytomdDataPath}" --web.closed` ,
     (error, stdout, stderr) => {
       if (error) {
-        log.error(`bytomd mining exec error: ${error}`)
+        bytomdLog.error(`bytomd mining exec error: ${error}`)
       }
-      log.info(`bytomd mining stdout: ${stdout}`)
-      log.info(`bytomd mining stderr: ${stderr}`)
+      bytomdLog.info(`bytomd mining stdout: ${stdout}`)
+      bytomdLog.info(`bytomd mining stderr: ${stderr}`)
     })
 
   bytomdMining.stdout.on('data', function(data) {
-    log.info(`bytomd mining stdout: ${data}`)
+    bytomdLog.info(`bytomd mining stdout: ${data}`)
   })
 
   bytomdMining.stderr.on('data', function(data) {
-    log.info(`bytomd mining stderr: ${data}`)
+    bytomdLog.info(`bytomd mining stderr: ${data}`)
     if(data.includes('msg="Started node"') && event){
       event.sender.send('ConfiguredNetwork','startNode')
     }
   })
 
   bytomdMining.on('exit', function (code) {
-    log.info('bytom Mining exited with code ' + code)
+    bytomdLog.info('bytom Mining exited with code ' + code)
   })
 }
 
@@ -107,21 +118,21 @@ function setBytomInit(event, bytomNetwork) {
   bytomdInit = exec(`${bytomdPath} init --chain_id  ${bytomNetwork} --home "${bytomdDataPath}"` ,
     (error, stdout, stderr) => {
       if (error) {
-        log.error(`bytomd init exec error: ${error}`)
+        bytomdLog.error(`bytomd init exec error: ${error}`)
       }
-      log.info(`bytomd init stdout: ${stdout}`)
-      log.info(`bytomd init stderr: ${stderr}`)
+      bytomdLog.info(`bytomd init stdout: ${stdout}`)
+      bytomdLog.info(`bytomd init stderr: ${stderr}`)
     })
   bytomdInit.stdout.on('data', function(data) {
-    log.info(`bytomd init stdout: ${data}`)
+    bytomdLog.info(`bytomd init stdout: ${data}`)
   })
   bytomdInit.stderr.on('data', function(data) {
-    log.info(`bytomd init stderr: ${data}`)
+    bytomdLog.info(`bytomd init stderr: ${data}`)
   })
   bytomdInit.on('exit', function (code) {
     event.sender.send('ConfiguredNetwork','init')
     setBytomMining(event)
-    log.info('bytom init exited with code ' + code)
+    bytomdLog.info('bytom init exited with code ' + code)
   })
 }
 
@@ -178,9 +189,11 @@ switch (process.argv[1]) {
 function quitApp () {
   if(bytomdInit != null){
     bytomdInit.kill()
+    log.info('Kill bytomd Init command...')
   }
   if(bytomdMining != null){
     bytomdMining.kill()
+    log.info('Kill bytomd Mining command...')
   }
   app.quit()
 }

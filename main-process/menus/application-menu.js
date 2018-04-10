@@ -221,7 +221,7 @@ let menuTempl = function () {
     label: i18n.t('desktop.applicationMenu.develop.logFiles'),
     click() {
       try {
-        shell.showItemInFolder(path.join(app.getPath('userData'), 'logs', 'all.log'))
+        shell.showItemInFolder(path.join(app.getPath('userData'), 'logs', 'bytomd', 'bytomd.log'))
       } catch (error) {
         log.error(error)
       }
