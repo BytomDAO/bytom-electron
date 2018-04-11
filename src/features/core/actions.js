@@ -7,6 +7,20 @@ const updateBTMAmountUnit = (param) => ({type: 'UPDATE_BTM_AMOUNT_UNIT', param})
 const updateConfiguredStatus = ({ type: 'SET_CONFIGURED' })
 const updateLang = (param) => ({type: 'UPDATE_CORE_LANGUAGE', lang:param})
 
+const updateMiningState = (param) => {
+  return (dispatch) => {
+    return chainClient().config.mining(param)
+      .then(() => {
+        dispatch({type: 'UPDATE_MINING_STATE', param})
+      })
+      .catch((err) => {
+        if (!err.status) {
+          throw err
+        }
+      })
+  }
+}
+
 const fetchCoreInfo = (options = {}) => {
   return (dispatch) => {
     return chainClient().config.info()
@@ -33,6 +47,7 @@ let actions = {
   updateBTMAmountUnit,
   updateLang,
   updateConfiguredStatus,
+  updateMiningState,
   fetchCoreInfo,
   clearSession,
   logIn: (token) => (dispatch) => {
