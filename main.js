@@ -4,6 +4,7 @@ const glob = require('glob')
 const url = require('url')
 const path = require('path')
 const fs = require('fs')
+const toml = require('toml')
 const logger = require('./main-process/logger')
 const log = logger.create('main')
 const bytomdLog = logger.create('bytomd')
@@ -133,24 +134,29 @@ function setBytomInit(event, bytomNetwork) {
     setBytomMining(event)
     bytomdLog.info('bytom init exited with code ' + code)
   })
+
+  bytomdInit.once('close', () => {
+    bytomdInit = null
+  })
 }
 
 function bytomd(){
-  const filePath = path.join(app.getPath('userData'), '/.bytomd/genesis.json')
+  const filePath = path.join(app.getPath('userData'), '/.bytomd/config.toml')
 
   fs.stat(`${filePath}`, function(err) {
     if(err == null) {
-      log.info('Genesis File exists')
+      log.info('Bytomd Network has been inited')
       global.fileExist = true
       setBytomMining()
 
       let genesisFile = fs.readFileSync(filePath)
-      genesisFile = JSON.parse(genesisFile)
+      genesisFile = toml.parse(genesisFile)
 
       global.networkStatus = genesisFile.chain_id
 
     } else if(err.code == 'ENOENT') {
       //wait for the int network call
+      log.info('Init Bytomd Network')
       ipcMain.on('bytomdInitNetwork', (event, arg) => {
         setBytomInit( event,  arg )
         global.networkStatus = arg
