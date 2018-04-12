@@ -56,6 +56,10 @@ class Container extends React.Component {
           this.props.updateConfiguredStatus()
         }
       })
+      window.ipcRenderer.on('mining', (event, arg) => {
+        let isMining = (arg == 'true')
+        this.props.updateMiningState(isMining)
+      })
     }
   }
 
@@ -115,6 +119,7 @@ export default connect(
   }),
   (dispatch) => ({
     fetchInfo: options => dispatch(actions.core.fetchCoreInfo(options)),
+    updateMiningState: param => dispatch(actions.core.updateMiningState(param)),
     showRoot: () => dispatch(actions.app.showRoot),
     showConfiguration: () => dispatch(actions.app.showConfiguration()),
     uptdateBtmAmountUnit: (param) => dispatch(actions.core.updateBTMAmountUnit(param)),

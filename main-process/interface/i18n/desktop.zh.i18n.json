@@ -27,7 +27,9 @@
                 "label": "开发",
                 "devTools": "切换开发者工具",
                 "fullScreen": "切换全屏",
-                "logFiles": "显示日志文件"
+                "logFiles": "显示日志文件",
+                "startMining": "⛏ 开启挖矿",
+                "stopMining": "⛏ 停止挖矿"
             },
             "help": {
                 "label": "帮助"

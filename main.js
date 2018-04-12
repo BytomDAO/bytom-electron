@@ -11,6 +11,7 @@ const bytomdLog = logger.create('bytomd')
 let win, bytomdInit, bytomdMining
 
 global.fileExist = false
+global.mining = {isMining: false}
 
 function initialize () {
 
@@ -97,7 +98,7 @@ const bytomdPath = process.env.DEV?
 
 const bytomdDataPath = path.join(app.getPath('userData'), '/.bytomd')
 function setBytomMining(event) {
-  bytomdMining = spawn( `${bytomdPath}`, ['node', '--mining', '--home' , `${bytomdDataPath}`, '--web.closed'] )
+  bytomdMining = spawn( `${bytomdPath}`, ['node', '--home' , `${bytomdDataPath}`, '--web.closed'] )
 
   bytomdMining.stdout.on('data', function(data) {
     bytomdLog.info(`bytomd mining stdout: ${data}`)

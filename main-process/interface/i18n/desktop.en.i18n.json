@@ -31,7 +31,9 @@
                 "label": "Develop",
                 "devTools": "Toggle developer tools",
                 "fullScreen": "Toggle full screen",
-                "logFiles": "Show log files"
+                "logFiles": "Show log files",
+                "startMining": "⛏ Start mining",
+                "stopMining": "⛏ Stop mining"
             },
             "help": {
                 "label": "Help",

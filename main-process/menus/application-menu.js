@@ -1,4 +1,4 @@
-const { Menu, app, shell } = require('electron')
+const { Menu, app, shell, ipcMain } = require('electron')
 const settings = require('electron-settings')
 global.language = settings.get('browserSetting.core.lang') || app.getLocale()
 const i18n = require('../i18n.js')
@@ -226,6 +226,21 @@ let menuTempl = function () {
         log.error(error)
       }
     },
+  },{
+    type: 'separator'
+  },{
+    label: (global.mining.isMining) ? i18n.t('desktop.applicationMenu.develop.stopMining') : i18n.t('desktop.applicationMenu.develop.startMining'),
+    accelerator: 'CommandOrControl+Shift+M',
+    enabled: true,
+    click: (item, focusedWindow) => {
+      if (focusedWindow) {
+        if (global.mining.isMining) {
+          stopMining(focusedWindow)
+        } else {
+          startMining(focusedWindow)
+        }
+      }
+    }
   })
 
   menu.push({
@@ -255,31 +270,24 @@ let menuTempl = function () {
 
   return menu
 }
-//
-// function findReopenMenuItem () {
-//   const menu = Menu.getApplicationMenu()
-//   if (!menu) return
-//
-//   let reopenMenuItem
-//   menu.items.forEach(item => {
-//     if (item.submenu) {
-//       item.submenu.items.forEach(item => {
-//         if (item.key === 'reopenMenuItem') {
-//           reopenMenuItem = item
-//         }
-//       })
-//     }
-//   })
-//   return reopenMenuItem
-// }
 
+const startMining = (focusedWindow) => {
+  focusedWindow.webContents.send('mining', 'true')
+  global.mining.isMining = true
+  createMenu()
+}
+
+const stopMining = (focusedWindow) => {
+  focusedWindow.webContents.send('mining', 'false')
+  global.mining.isMining = false
+  createMenu()
+}
 
 const createMenu = function () {
   log.info('Create Menu')
   menu = Menu.buildFromTemplate(menuTempl())
   Menu.setApplicationMenu(menu)
 }
-
 
 settings.watch('browserSetting.app.navAdvancedState', newValue => {
   advNav = newValue
@@ -298,6 +306,10 @@ settings.watch('browserSetting.core.lang', newValue => {
     if (err) return log.error('i18n: something went wrong loading', err)
     createMenu()
   })
+})
+
+ipcMain.on('refresh-menu', function() {
+  createMenu()
 })
 
 module.exports = createMenu()

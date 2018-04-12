@@ -231,6 +231,10 @@ const lang = (state = defaultLang, action) => {
 
 const mingStatus = (state = false, action) => {
   if (action.type == 'UPDATE_CORE_INFO') {
+    if(window.remote && window.remote.getGlobal('mining').isMining!= action.param.data.mining){
+      window.remote.getGlobal('mining').isMining = action.param.data.mining
+      window.ipcRenderer.send('refresh-menu')
+    }
     return action.param.data.mining
   }
   return state
