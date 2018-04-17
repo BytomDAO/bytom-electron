@@ -9,7 +9,7 @@ import makeRoutes from './routes'
 
 export default class Root extends React.Component {
   componentWillMount() {
-    document.title = 'Bytom'
+    document.title = 'Bytom Wallet'
   }
 
   render() {
