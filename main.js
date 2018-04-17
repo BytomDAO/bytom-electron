@@ -1,4 +1,4 @@
-const {app, BrowserWindow, ipcMain} = require('electron')
+const {app, BrowserWindow, ipcMain, shell} = require('electron')
 const spawn = require('child_process').spawn
 const glob = require('glob')
 const url = require('url')
@@ -41,6 +41,12 @@ function initialize () {
     if(process.env.DEV){
       win.webContents.openDevTools()
     }
+
+    win.webContents.on('new-window', function(e, url) {
+      e.preventDefault()
+      shell.openExternal(url)
+    })
+
 
     win.on('closed', () => {
       win = null
