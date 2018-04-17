@@ -97,9 +97,20 @@ const bytomdPath = process.env.DEV?
   path.join(__dirname, '/bytomd/bytomd-darwin_amd64'):
   glob.sync( path.join(__dirname, '/bytomd/bytomd*').replace('app.asar', 'app.asar.unpacked'))
 
-const bytomdDataPath = path.join(app.getPath('userData'), '/.bytomd')
+let bytomdDataPath
+switch (process.platform){
+  case 'win32':
+    bytomdDataPath = `${app.getPath('appData')}/Bytom`
+    break
+  case 'darwin':
+    bytomdDataPath = `${app.getPath('home')}/Library/Bytom`
+    break
+  case 'linux':
+    bytomdDataPath = `${app.getPath('home')}/.bytom`
+}
+
 function setBytomMining(event) {
-  bytomdMining = spawn( `${bytomdPath}`, ['node', '--home' , `${bytomdDataPath}`, '--web.closed'] )
+  bytomdMining = spawn( `${bytomdPath}`, ['node', '--web.closed'] )
 
   bytomdMining.stdout.on('data', function(data) {
     bytomdLog.info(`bytomd mining stdout: ${data}`)
@@ -119,7 +130,7 @@ function setBytomMining(event) {
 
 function setBytomInit(event, bytomNetwork) {
   // Init bytomd
-  bytomdInit = spawn(`${bytomdPath}`, ['init', '--chain_id',  `${bytomNetwork}`, '--home' , `${bytomdDataPath}`] )
+  bytomdInit = spawn(`${bytomdPath}`, ['init', '--chain_id',  `${bytomNetwork}`] )
 
   bytomdInit.stdout.on('data', function(data) {
     bytomdLog.info(`bytomd init stdout: ${data}`)
@@ -141,7 +152,7 @@ function setBytomInit(event, bytomNetwork) {
 }
 
 function bytomd(){
-  const filePath = path.join(app.getPath('userData'), '/.bytomd/config.toml')
+  const filePath = path.join(`${bytomdDataPath}/config.toml`)
 
   fs.stat(`${filePath}`, function(err) {
     if(err == null) {
