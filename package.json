@@ -1,7 +1,7 @@
 {
-  "name": "Bytom",
+  "name": "BytomWallet",
   "version": "1.0.0",
-  "description": "",
+  "description": "AGPL-3.0-only",
   "main": "main.js",
   "scripts": {
     "build:dll": "node ./bin/dependencies.js",
@@ -13,11 +13,11 @@
     "start": "hjs-dev-server webpack/webpack.app.js --hot --host 0.0.0.0",
     "generate-component": "babel-node bin/generate.js component",
     "package": "npm-run-all package:* ",
-    "package:mac": "electron-packager . Bytom --overwrite --asar.unpackDir=bytomd --platform=darwin --arch=x64 --ignore='bytomd/bytomd-(?!darwin)' --out=desktop --icon=./static/images/app-icon/mac/app.icns",
-    "package:win-32": "electron-packager . Bytom --overwrite --asar.unpackDir=bytomd --platform=win32 --arch=ia32 --ignore='bytomd/bytomd-(?!windows_386)' --out=desktop --icon=./static/images/app-icon/win/app.ico",
-    "package:win-64": "electron-packager . Bytom --overwrite --asar.unpackDir=bytomd --platform=win32 --arch=x64 --ignore='bytomd/bytomd-(?!windows_amd64)' --out=desktop --icon=./static/images/app-icon/win/app.ico",
-    "package:linux-32": "electron-packager . Bytom --overwrite --asar.unpackDir=bytomd --platform=linux --arch=ia32  --ignore='bytomd/bytomd-(?!linux_386)' --out=desktop",
-    "package:linux-64": "electron-packager . Bytom --overwrite --asar.unpackDir=bytomd --platform=linux --arch=x64 --ignore='bytomd/bytomd-(?!linux_amd64)' --out=desktop"
+    "package:mac": "electron-packager . 'Bytom Wallet' --overwrite --asar.unpackDir=bytomd --platform=darwin --arch=x64 --ignore='bytomd/bytomd-(?!darwin)' --out=desktop --icon=./static/images/app-icon/mac/app.icns",
+    "package:win-32": "electron-packager . 'Bytom Wallet' --overwrite --asar.unpackDir=bytomd --platform=win32 --arch=ia32 --ignore='bytomd/bytomd-(?!windows_386)' --out=desktop --icon=./static/images/app-icon/win/app.ico",
+    "package:win-64": "electron-packager . 'Bytom Wallet' --overwrite --asar.unpackDir=bytomd --platform=win32 --arch=x64 --ignore='bytomd/bytomd-(?!windows_amd64)' --out=desktop --icon=./static/images/app-icon/win/app.ico",
+    "package:linux-32": "electron-packager . 'Bytom Wallet' --overwrite --asar.unpackDir=bytomd --platform=linux --arch=ia32  --ignore='bytomd/bytomd-(?!linux_386)' --out=desktop",
+    "package:linux-64": "electron-packager . 'Bytom Wallet' --overwrite --asar.unpackDir=bytomd --platform=linux --arch=x64 --ignore='bytomd/bytomd-(?!linux_amd64)' --out=desktop"
   },
   "author": "Bytom",
   "license": "",

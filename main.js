@@ -18,18 +18,17 @@ function initialize () {
 
   function createWindow() {
     // Create browser Window
+
+    const icon_path = path.join(__dirname, '/static/images/app-icon/png/app.png')
     win = new BrowserWindow({
       width: 1024 + 208,
       height: 768,
       'webPreferences': {
         'webSecurity': !process.env.DEV_URL,
         'preload': path.join(__dirname, '/main-process/preload.js')
-      }
+      },
+      icon: icon_path
     })
-
-    if (process.platform === 'linux') {
-      win.icon = path.join(__dirname, '/static/images/app-icon/png/app.png')
-    }
 
     const startUrl = process.env.DEV_URL ||
       url.format({
