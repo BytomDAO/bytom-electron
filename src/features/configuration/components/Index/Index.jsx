@@ -77,7 +77,7 @@ class Index extends React.Component {
                 <span className={styles.choice_title}>{lang === 'zh' ? '加入 Bytom 主网' : 'Join the Bytom Main Net'}</span>
 
                 <p>
-                  {lang === 'zh' ? '链接 Bytom Core 到 Bytom 主网' : 'Connect this Bytom Core to the Bytom MainNet.'}
+                  {lang === 'zh' ? '连接 Bytom Core 到 Bytom 主网' : 'Connect this Bytom Core to the Bytom MainNet.'}
                 </p>
               </div>
             </label>
@@ -93,7 +93,7 @@ class Index extends React.Component {
                   <span className={styles.choice_title}>{lang === 'zh' ? '加入 Bytom 测试网络' : 'Join the Bytom Testnet' }</span>
 
                   <p>
-                    {lang === 'zh' ? '链接 Bytom Core 到 Bytom 测试网' : 'Connect this Bytom Core to the Bytom Testnet.' }
+                    {lang === 'zh' ? '连接 Bytom Core 到 Bytom 测试网' : 'Connect this Bytom Core to the Bytom Testnet.' }
                   </p>
               </div>
             </label>
