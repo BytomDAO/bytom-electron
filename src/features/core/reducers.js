@@ -235,6 +235,7 @@ const mingStatus = (state = false, action) => {
       window.remote.getGlobal('mining').isMining = action.param.data.mining
       window.ipcRenderer.send('refresh-menu')
     }
+
     return action.param.data.mining
   }
   return state

@@ -1,8 +1,8 @@
 import uuid from 'uuid'
-import { chainClient } from 'utility/environment'
-import { parseNonblankJSON } from 'utility/string'
-import { push } from 'react-router-redux'
-import { baseCreateActions, baseListActions } from 'features/shared/actions'
+import {chainClient} from 'utility/environment'
+import {parseNonblankJSON} from 'utility/string'
+import {push} from 'react-router-redux'
+import {baseCreateActions, baseListActions} from 'features/shared/actions'
 
 const type = 'transaction'
 
@@ -19,10 +19,29 @@ function preprocessTransaction(formParams) {
   }
 
   const normalT = formParams.normalTransaction
-  if( builder.actions.length == 0){
-    builder.actions.push({accountAlias: normalT.accountAlias, accountId: normalT.accountId, assetAlias: 'BTM', amount: Number(normalT.gas.price), type: 'spend_account'})
-    builder.actions.push({accountAlias: normalT.accountAlias, accountId: normalT.accountId, assetAlias: normalT.assetAlias, assetId: normalT.assetId, amount: normalT.amount, type: 'spend_account'})
-    builder.actions.push({address: normalT.address, assetAlias: normalT.assetAlias, assetId: normalT.assetId, amount: normalT.amount, type: 'control_address'})
+  if (builder.actions.length == 0) {
+    builder.actions.push({
+      accountAlias: normalT.accountAlias,
+      accountId: normalT.accountId,
+      assetAlias: 'BTM',
+      amount: Number(normalT.gas.price),
+      type: 'spend_account'
+    })
+    builder.actions.push({
+      accountAlias: normalT.accountAlias,
+      accountId: normalT.accountId,
+      assetAlias: normalT.assetAlias,
+      assetId: normalT.assetId,
+      amount: normalT.amount,
+      type: 'spend_account'
+    })
+    builder.actions.push({
+      address: normalT.address,
+      assetAlias: normalT.assetAlias,
+      assetId: normalT.assetId,
+      amount: normalT.amount,
+      type: 'control_address'
+    })
   }
 
   if (builder.baseTransaction == '') {
@@ -40,10 +59,10 @@ function preprocessTransaction(formParams) {
     intFields.forEach(key => {
       const value = a[key]
       if (value) {
-        if ((parseInt(value)+'') == value) {
+        if ((parseInt(value) + '') == value) {
           a[key] = parseInt(value)
         } else {
-          throw new Error(`Action ${parseInt(i)+1} ${key} must be an integer.`)
+          throw new Error(`Action ${parseInt(i) + 1} ${key} must be an integer.`)
         }
       }
     })
@@ -51,20 +70,20 @@ function preprocessTransaction(formParams) {
     try {
       a.referenceData = parseNonblankJSON(a.referenceData)
     } catch (err) {
-      throw new Error(`Action ${parseInt(i)+1} reference data should be valid JSON, or blank.`)
+      throw new Error(`Action ${parseInt(i) + 1} reference data should be valid JSON, or blank.`)
     }
 
     try {
       a.receiver = parseNonblankJSON(a.receiver)
     } catch (err) {
-      throw new Error(`Action ${parseInt(i)+1} receiver should be valid JSON.`)
+      throw new Error(`Action ${parseInt(i) + 1} receiver should be valid JSON.`)
     }
   }
 
   return builder
 }
 
-form.submitForm = (formParams) => function(dispatch) {
+form.submitForm = (formParams) => function (dispatch) {
   const buildPromise = chainClient().transactions.build(builder => {
     const processed = preprocessTransaction(formParams)
 
@@ -91,6 +110,28 @@ form.submitForm = (formParams) => function(dispatch) {
     }
   })
 
+  const dealSignSubmitResp = resp => {
+    if (resp.status === 'fail') {
+      throw new Error(resp.msg)
+    }
+
+    dispatch(form.created())
+    dispatch(push({
+      pathname: '/transactions',
+      state: {
+        preserveFlash: true
+      }
+    }))
+  }
+
+  if (formParams.state.showAdvanceTx && formParams.state.showAdvanced && formParams.baseTransaction) {
+    const transaction = JSON.parse(formParams.baseTransaction)
+    return chainClient().connection.request('/sign-submit-transaction', {
+      password: formParams.password,
+      transaction
+    }, true).then(dealSignSubmitResp)
+  }
+
   if (formParams.submitAction == 'submit') {
     return buildPromise
       .then((resp) => {
@@ -98,24 +139,9 @@ form.submitForm = (formParams) => function(dispatch) {
           throw new Error(resp.msg)
         }
 
-        const tpl = resp.data
-        const password = (tpl.signing_instructions || []).map(() => '123456')
-        const client = chainClient()
-        const body = Object.assign({}, {password, 'transaction': tpl})
-        return client.connection.request('/sign-submit-transaction', body, true)
-      }).then(resp => {
-        if (resp.status === 'fail') {
-          throw new Error(resp.msg)
-        }
-
-        dispatch(form.created())
-        dispatch(push({
-          pathname: '/transactions',
-          state: {
-            preserveFlash: true
-          }
-        }))
-      })
+        const body = Object.assign({}, {password: formParams.password, 'transaction': resp.data})
+        return chainClient().connection.request('/sign-submit-transaction', body, true)
+      }).then(dealSignSubmitResp)
   }
 
   // submitAction == 'generate'
@@ -124,11 +150,8 @@ form.submitForm = (formParams) => function(dispatch) {
       throw new Error(resp.msg)
     }
 
-    const tpl = resp.data
-    const password = (tpl.signing_instructions || []).map(() => '123456')
-    const client = chainClient()
-    const body = Object.assign({}, {password, 'transaction': tpl})
-    return client.connection.request('/sign-transaction', body, true)
+    const body = Object.assign({}, {password: formParams.password, 'transaction': resp.data})
+    return chainClient().connection.request('/sign-transaction', body, true)
   }).then(resp => {
     if (resp.status === 'fail') {
       throw new Error(resp.msg)
@@ -138,7 +161,7 @@ form.submitForm = (formParams) => function(dispatch) {
       type: 'GENERATED_TX_HEX',
       generated: {
         id: id,
-        hex: resp.data.raw_transaction,
+        hex: JSON.stringify(resp.data.transaction),
       },
     })
     dispatch(push(`/transactions/generated/${id}`))

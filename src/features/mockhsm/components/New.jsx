@@ -46,7 +46,7 @@ class New extends React.Component {
 
   render() {
     const {
-      fields: { alias, password, accountAlias },
+      fields: { alias, password, confirmPassword, accountAlias },
       error,
       handleSubmit,
       submitting
@@ -82,16 +82,15 @@ class New extends React.Component {
                    onChange={this.handleFileChange.bind(this)}/>
           }
 
-          {false &&
-            <TextField title='Password' placeholder='Password' fieldProps={password} autoFocus={false} type={'password'} />
-          }
+          <TextField title='Password' placeholder='Password' fieldProps={password} autoFocus={false} type={'password'} />
+          <TextField title='Repeat Password' placeholder='Repeat Password' fieldProps={confirmPassword} autoFocus={false} type={'password'} />
         </FormSection>
       </FormContainer>
     )
   }
 }
 
-const fields = [ 'alias', 'password', 'accountAlias' ]
+const fields = [ 'alias', 'password', 'confirmPassword', 'accountAlias' ]
 export default BaseNew.connect(
   BaseNew.mapStateToProps('key'),
   BaseNew.mapDispatchToProps('key'),
@@ -104,9 +103,14 @@ export default BaseNew.connect(
       if (!values.alias) {
         errors.alias = 'Key alias is required'
       }
-      // if (!values.accountAlias) {
-      //   errors.accountAlias = 'Account alias is required'
-      // }
+      if (!values.password) {
+        errors.password = 'Password is required'
+      }else if( values.password.length < 5 ) {
+        errors.password = 'Please enter at least 5 characters password.'
+      }
+      if ( values.password !== values.confirmPassword ) {
+        errors.confirmPassword = 'Please match the repeat password.'
+      }
 
       return errors
     }

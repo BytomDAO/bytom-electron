@@ -14,6 +14,7 @@ const mappings = {
   accountAlias: 'Account Alias',
   accountTags: 'Account Tags',
   controlProgram: 'Control Program',
+  address: 'Address',
   programIndex: 'Program Index',
   spentOutputId: 'Spent Output ID',
   refData: 'Reference Data',
@@ -22,6 +23,7 @@ const mappings = {
   issuanceProgram: 'Issuance Program',
   isLocal: 'Local?',
   referenceData: 'Reference Data',
+  change: 'Change'
 }
 
 const txInputFields = [
@@ -36,6 +38,8 @@ const txInputFields = [
   'accountAlias',
   'accountTags',
   'issuanceProgram',
+  'controlProgram',
+  'address',
   'spentOutputId',
   'isLocal',
   'referenceData',
@@ -56,6 +60,7 @@ const txOutputFields = [
   'accountAlias',
   'accountTags',
   'controlProgram',
+  'address',
   'isLocal',
   'referenceData',
 ]
@@ -81,6 +86,7 @@ const unspentFields = [
   'sourcePos',
   'isLocal',
   'referenceData',
+  'change',
 ]
 
 const balanceFields = Object.keys(mappings)
@@ -127,7 +133,7 @@ const formatIntNumToPosDecimal = (neu,pos) => {
   return neu
 }
 
-const normalizeGlobalBTMAmount = (assetID, amount, btmAmountUnit) => {
+export const normalizeGlobalBTMAmount = (assetID, amount, btmAmountUnit) => {
   //normalize BTM Amount
   if (assetID === 'ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff') {
     switch (btmAmountUnit){
@@ -214,7 +220,7 @@ export function buildTxInputDisplay(input, btmAmountUnit) {
 }
 
 export function buildTxOutputDisplay(output, btmAmountUnit) {
-  return buildDisplay(output, txOutputFields,btmAmountUnit)
+  return buildDisplay(output, txOutputFields, btmAmountUnit)
 }
 
 export function buildUnspentDisplay(output, btmAmountUnit) {
@@ -227,7 +233,8 @@ export function buildUnspentDisplay(output, btmAmountUnit) {
     controlProgram: output.program,
     programIndex: output.controlProgramIndex,
     sourceId: output.sourceId,
-    sourcePos: output.sourcePos
+    sourcePos: output.sourcePos,
+    change: output.change + ''
   }
   return buildDisplay(normalized, unspentFields, btmAmountUnit)
 }

@@ -115,7 +115,7 @@ class Form extends React.Component {
 
   submitWithValidation(data) {
     return new Promise((resolve, reject) => {
-      this.props.submitForm(data)
+      this.props.submitForm(Object.assign({}, data, {state: this.state}))
         .catch((err) => {
           const response = {}
 
@@ -144,8 +144,9 @@ class Form extends React.Component {
     const lang = this.props.lang
 
     let submitLabel = lang === 'zh' ? '提交交易' : 'Submit transaction'
-    if (submitAction.value == 'generate') {
-      submitLabel = lang === 'zh' ? '生成交易hex' : 'Generate transaction hex'
+    const hasBaseTransaction = ((baseTransaction.value || '').trim()).length > 0
+    if (submitAction.value == 'generate' && !hasBaseTransaction) {
+      submitLabel = lang === 'zh' ? '生成交易JSON' : 'Generate transaction JSON'
     }
 
     const gasOnChange = event => {
@@ -257,6 +258,8 @@ class Form extends React.Component {
               )}
           </table>
 
+          <label className={styles.title}>Password</label>
+          <TextField placeholder='Password' fieldProps={password} autoFocus={false} type={'password'} />
         </FormSection>}
 
         { this.state.showAdvanceTx && <FormSection title='Actions'>
@@ -303,7 +306,7 @@ class Form extends React.Component {
         {this.state.showAdvanceTx && this.state.showAdvanced && <FormSection title={ lang === 'zh' ? '高级选项' :'Advanced Options' }>
           <div>
             <TextField
-              title='Base transaction'
+              title='To sign transaction'
               placeholder='Paste transaction hex here...'
               fieldProps={baseTransaction}
               autoFocus={true} />
@@ -325,14 +328,12 @@ class Form extends React.Component {
               <tr>
                 <td><input id='submit_action_generate' type='radio' {...submitAction} value='generate' checked={submitAction.value == 'generate'} /></td>
                 <td>
-                  <label htmlFor='submit_action_generate'>{ lang === 'zh' ? '允许更多actions' : 'Allow additional actions' }</label>
+                  <label htmlFor='submit_action_generate'>{ lang === 'zh' ? '需要更多签名' : 'Need more signature' }</label>
                   <br />
                   <label htmlFor='submit_action_generate' className={styles.submitDescription}>
-                    { lang === 'zh' ? '这些actions将通过密钥签名然后作为一个交易 hex 字符串返回， 字符串可以用做base transaction于 multi-party swap。' +
-                      '此次交易将持续有效一个小时。' :
-                      'These actions will be signed by the MockHSM and returned as a transaction hex string, ' +
-                      'which should be used as the base transaction in a multi-party swap. This transaction ' +
-                      'will be valid for one hour.'  }
+                    {lang === 'zh' ? '这些actions将通过密钥签名然后作为一个交易 JSON 字符串返回， 字符串可以用做To sign transaction于 multi-sign spend。' :
+                      'These actions will be signed by the Key and returned as a transaction JSON string, ' +
+                      'which should be used as the to sign transaction in a multi-sign spend.'}
                   </label>
                 </td>
               </tr>
@@ -340,6 +341,13 @@ class Form extends React.Component {
             </table>
           </div>
         </FormSection>}
+
+        {
+          this.state.showAdvanceTx && (actions.length > 0 || this.state.showAdvanced) && <FormSection>
+            <label className={styles.title}>Password</label>
+            <TextField placeholder='Password' fieldProps={password} autoFocus={false} type={'password'} />
+          </FormSection>
+        }
       </FormContainer>
     )
   }
@@ -349,9 +357,13 @@ const validate = values => {
   const errors = {actions: {}, normalTransaction:{gas:{}}}
 
   // Base transaction
-  let baseTx = values.baseTransaction || ''
-  if (baseTx.trim().match(/[^0-9a-fA-F]/)) {
-    errors.baseTransaction = 'Base transaction must be a hex string.'
+  let baseTx = (values.baseTransaction || '').trim()
+  try {
+    JSON.parse(baseTx)
+  } catch (e) {
+    if (baseTx && e) {
+      errors.baseTransaction = 'To sign transaction must be a JSON string.'
+    }
   }
 
   // Actions
