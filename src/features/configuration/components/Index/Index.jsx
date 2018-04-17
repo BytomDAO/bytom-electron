@@ -4,6 +4,7 @@ import pick from 'lodash/pick'
 import actions from 'actions'
 import React from 'react'
 import styles from './Index.scss'
+import {connect} from 'react-redux'
 
 class Index extends React.Component {
   constructor(props) {
@@ -27,6 +28,8 @@ class Index extends React.Component {
       handleSubmit,
       submitting
     } = this.props
+
+    const lang = this.props.lang
 
     const typeChange = (event) => {
       type.onChange(event).value
@@ -60,7 +63,7 @@ class Index extends React.Component {
 
     return (
       <form  onSubmit={handleSubmit(this.submitWithValidation)} >
-        <h2 className={styles.title}>Configure Bytom Core</h2>
+        <h2 className={styles.title}>{lang === 'zh' ? '配置 Bytom Core' : 'Configure Bytom Core' }</h2>
 
         <div className={styles.choices}>
 
@@ -71,10 +74,10 @@ class Index extends React.Component {
                     {...typeProps}
                     value='mainnet' />
               <div className={`${styles.choice} ${styles.join}`}>
-                <span className={styles.choice_title}>Join the Bytom Main Net</span>
+                <span className={styles.choice_title}>{lang === 'zh' ? '加入 Bytom 主网' : 'Join the Bytom Main Net'}</span>
 
                 <p>
-                  Connect this Bytom Core to the Bytom MainNet.
+                  {lang === 'zh' ? '链接 Bytom Core 到 Bytom 主网' : 'Connect this Bytom Core to the Bytom MainNet.'}
                 </p>
               </div>
             </label>
@@ -87,10 +90,10 @@ class Index extends React.Component {
                     {...typeProps}
                     value='testnet' />
               <div className={`${styles.choice} ${styles.testnet}`}>
-                  <span className={styles.choice_title}>Join the Bytom Testnet</span>
+                  <span className={styles.choice_title}>{lang === 'zh' ? '加入 Bytom 测试网络' : 'Join the Bytom Testnet' }</span>
 
                   <p>
-                    Connect this Bytom Core to the Bytom Testnet.
+                    {lang === 'zh' ? '链接 Bytom Core 到 Bytom 测试网' : 'Connect this Bytom Core to the Bytom Testnet.' }
                   </p>
               </div>
             </label>
@@ -109,6 +112,10 @@ const mapDispatchToProps = (dispatch) => ({
   submitForm: (data) => dispatch(actions.configuration.submitConfiguration(data))
 })
 
+const mapStateToProps = (state) => ({
+  lang: state.core.lang
+})
+
 const config = {
   form: 'coreConfigurationForm',
   fields: [
@@ -116,7 +123,7 @@ const config = {
   ]
 }
 
-export default reduxForm(
-  config,
+export default connect(
+  mapStateToProps,
   mapDispatchToProps
-)(Index)
+)(reduxForm(config)(Index))
