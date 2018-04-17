@@ -26,7 +26,8 @@
     display: flex;
     min-height:100%;
     font-weight: normal;
-    //width: 100%;
+    width: 100%;
+    margin: 0px 10px;
     //padding-right: 10px;
   }
 }
@@ -37,7 +38,7 @@
 }
 
 .choice {
-  //width: 100%;
+  width: 100%;
   border: 1px solid $table-border-color;
   border-radius: $border-radius-base;
   cursor: pointer;
