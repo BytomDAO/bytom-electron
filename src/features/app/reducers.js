@@ -1,5 +1,4 @@
 import React from 'react'
-import { Link } from 'react-router'
 import { combineReducers } from 'redux'
 import uuid from 'uuid'
 
@@ -105,12 +104,22 @@ export const flashMessages = (state = {}, action) => {
         </p>)
     }
 
+    case 'CREATE_REGISTER_ACCOUNT': {
+      return newSuccess(state, <p>
+          Default account and key have been initialized successfully.
+        </p>)
+    }
+
     case 'ERROR': {
       return newError(state, action.payload.message)
     }
 
     case 'USER_LOG_IN': {
       return {}
+    }
+
+    case 'RESTORE_SUCCESS': {
+      return newSuccess(state, <p>Wallet restore successfully</p>)
     }
 
     default: {

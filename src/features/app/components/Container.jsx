@@ -1,15 +1,18 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import actions from 'actions'
-import { Main, Config, Login, Loading, Modal } from './'
+import { Main, Config, Login, Loading, Register ,Modal } from './'
 
 const CORE_POLLING_TIME = 2 * 1000
 
 class Container extends React.Component {
   constructor(props) {
     super(props)
-    if(props.location.pathname.includes('index.html')){
+    if(props.location.pathname.includes('index.html')) {
       this.redirectRoot(props)
+    }
+    this.state = {
+      noAccountItem: false
     }
     this.redirectRoot = this.redirectRoot.bind(this)
   }
@@ -63,6 +66,14 @@ class Container extends React.Component {
     }
   }
 
+  componentDidMount() {
+    this.props.fetchAccountItem().then(resp => {
+      if (resp.data.length == 0) {
+        this.setState({noAccountItem: true})
+      }
+    })
+  }
+
   componentWillMount() {
     this.props.fetchInfo().then(() => {
       this.redirectRoot(this.props)
@@ -89,7 +100,9 @@ class Container extends React.Component {
       layout = <Config>{this.props.children}</Config>
     } else if (!this.props.configKnown) {
       return <Loading>Connecting to Bytom Core...</Loading>
-    } else {
+    } else if (!this.props.accountInit && this.state.noAccountItem){
+      layout = <Register>{this.props.children}</Register>
+    } else{
       layout = <Main>{this.props.children}</Main>
     }
 
@@ -116,6 +129,7 @@ export default connect(
     configured: state.core.configured,
     onTestnet: state.core.onTestnet,
     flashMessages: state.app.flashMessages,
+    accountInit: state.core.accountInit
   }),
   (dispatch) => ({
     fetchInfo: options => dispatch(actions.core.fetchCoreInfo(options)),
@@ -126,5 +140,6 @@ export default connect(
     uptdateLang: (param) => dispatch(actions.core.updateLang(param)),
     updateConfiguredStatus: () => dispatch(actions.core.updateConfiguredStatus),
     markFlashDisplayed: (key) => dispatch(actions.app.displayedFlash(key)),
+    fetchAccountItem: () => dispatch(actions.account.fetchItems())
   })
 )(Container)

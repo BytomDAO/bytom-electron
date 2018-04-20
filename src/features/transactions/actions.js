@@ -20,11 +20,25 @@ function preprocessTransaction(formParams) {
 
   const normalT = formParams.normalTransaction
   if (builder.actions.length == 0) {
+    let gasPrice = 0
+    switch (normalT.gas.type) {
+      case 'Fast':
+        gasPrice = formParams.state.estimateGas * 2
+        break
+      case 'Customize':
+        gasPrice = normalT.gas.price
+        break
+      case 'Standard':
+      default:
+        gasPrice = formParams.state.estimateGas * 1
+        break
+    }
+
     builder.actions.push({
       accountAlias: normalT.accountAlias,
       accountId: normalT.accountId,
       assetAlias: 'BTM',
-      amount: Number(normalT.gas.price),
+      amount: Number(gasPrice),
       type: 'spend_account'
     })
     builder.actions.push({
@@ -84,31 +98,24 @@ function preprocessTransaction(formParams) {
 }
 
 form.submitForm = (formParams) => function (dispatch) {
-  const buildPromise = chainClient().transactions.build(builder => {
-    const processed = preprocessTransaction(formParams)
+  const connection = chainClient().connection
 
-    builder.actions = processed.actions.map(action => {
-      let result = {
-        address: action.address,
-        amount: action.amount,
-        account_id: action.accountId,
-        account_alias: action.accountAlias,
-        asset_id: action.assetId,
-        asset_alias: action.assetAlias,
-        type: action.type,
+  const processed = preprocessTransaction(formParams)
+  const buildPromise = connection.request('/build-transaction', {actions: processed.actions})
+
+  const signAndSubmitTransaction = (transaction, password) => {
+    return connection.request('/sign-transaction', {
+      password,
+      transaction
+    }).then(resp => {
+      if (resp.status === 'fail') {
+        throw new Error(resp.msg)
       }
-      if (action.receiver) {
-        result.receiver = {
-          control_program: action.receiver.controlProgram,
-          expires_at: action.receiver.expiresAt
-        }
-      }
-      return result
-    })
-    if (processed.baseTransaction) {
-      builder.baseTransaction = processed.baseTransaction
-    }
-  })
+
+      const rawTransaction = resp.data.transaction.rawTransaction
+      return connection.request('/submit-transaction', {rawTransaction})
+    }).then(dealSignSubmitResp)
+  }
 
   const dealSignSubmitResp = resp => {
     if (resp.status === 'fail') {
@@ -126,10 +133,7 @@ form.submitForm = (formParams) => function (dispatch) {
 
   if (formParams.state.showAdvanceTx && formParams.state.showAdvanced && formParams.baseTransaction) {
     const transaction = JSON.parse(formParams.baseTransaction)
-    return chainClient().connection.request('/sign-submit-transaction', {
-      password: formParams.password,
-      transaction
-    }, true).then(dealSignSubmitResp)
+    return signAndSubmitTransaction(transaction, formParams.password)
   }
 
   if (formParams.submitAction == 'submit') {
@@ -139,9 +143,8 @@ form.submitForm = (formParams) => function (dispatch) {
           throw new Error(resp.msg)
         }
 
-        const body = Object.assign({}, {password: formParams.password, 'transaction': resp.data})
-        return chainClient().connection.request('/sign-submit-transaction', body, true)
-      }).then(dealSignSubmitResp)
+        return signAndSubmitTransaction(resp.data, formParams.password)
+      })
   }
 
   // submitAction == 'generate'
@@ -151,7 +154,7 @@ form.submitForm = (formParams) => function (dispatch) {
     }
 
     const body = Object.assign({}, {password: formParams.password, 'transaction': resp.data})
-    return chainClient().connection.request('/sign-transaction', body, true)
+    return connection.request('/sign-transaction', body)
   }).then(resp => {
     if (resp.status === 'fail') {
       throw new Error(resp.msg)

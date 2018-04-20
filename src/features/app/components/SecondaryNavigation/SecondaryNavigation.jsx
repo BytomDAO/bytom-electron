@@ -22,12 +22,12 @@ class SecondaryNavigation extends React.Component {
     return (
       <div className={styles.main}>
         <ul className={styles.navigation}>
-          <li className={styles.navigationTitle}>settings</li>
+          <li className={styles.navigationTitle}>{ lang === 'zh' ?  '设置' : 'settings'}</li>
 
           <li>
             <Link to='/core' activeClassName={styles.active}>
               {navIcon('core', styles)}
-              Core status
+              { lang === 'zh' ?  '核心状态' : 'Core status' }
             </Link>
           </li>
 
@@ -47,6 +47,13 @@ class SecondaryNavigation extends React.Component {
               { lang === 'zh' ?  '退出' : 'Log Out' }
             </a>
           </li>}
+
+          <li>
+            <Link to='/backup' activeClassName={styles.active}>
+              {navIcon('client', styles)}
+              { lang === 'zh' ?  '备份与恢复' : 'Backup and restore'}
+            </Link>
+          </li>
         </ul>
       </div>
     )

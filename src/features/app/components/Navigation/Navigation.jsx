@@ -29,11 +29,10 @@ class Navigation extends React.Component {
 
   render() {
     const lang = this.props.lang
-    const coreData = this.props.coreData
     return (
       <div className={styles.main}>
         <ul className={styles.navigation}>
-          <li className={styles.navigationTitle}>core data</li>
+          <li className={styles.navigationTitle}>{lang === 'zh' ? '核心数据' : 'core data'}</li>
           <li>
             <Link to='/transactions' activeClassName={styles.active}>
               {navIcon('transaction', styles)}
@@ -62,7 +61,7 @@ class Navigation extends React.Component {
         </ul>
 
         <ul className={styles.navigation}>
-          <li className={styles.navigationTitle}>services</li>
+          <li className={styles.navigationTitle}>{lang === 'zh' ? '服务' : 'services' }</li>
           {this.props.mockhsm &&
           <li>
             <Link to='/keys' activeClassName={styles.active}>
@@ -74,17 +73,17 @@ class Navigation extends React.Component {
         </ul>
 
         { this.props.showNavAdvance && <ul className={styles.navigation}>
-          <li className={styles.navigationTitle}>advanced</li>
+          <li className={styles.navigationTitle}>{lang === 'zh' ? '高级' : 'advanced' }</li>
           <li>
             <Link to='/unspents' activeClassName={styles.active}>
               {navIcon('unspent', styles)}
-              Unspent outputs
+              {lang === 'zh' ? '未花费输出' : 'Unspent outputs' }
             </Link>
           </li>
         </ul>}
 
         <ul className={styles.navigation}>
-          <li className={styles.navigationTitle}>developers</li>
+          <li className={styles.navigationTitle}>{lang === 'zh' ? '帮助' : 'help' }</li>
           <li>
             <a href={docsRoot} target='_blank'>
               {navIcon('docs', styles)}
@@ -96,11 +95,6 @@ class Navigation extends React.Component {
         <Sync
           lang={lang}
         />
-
-
-        <ul className={`${styles.navigation} ${styles.networkStatus}`}>
-          <li className={`${styles.navigationTitle} ${styles.networkWord}`}>{coreData? coreData['networkId']: ''}</li>
-        </ul>
 
       </div>
     )
