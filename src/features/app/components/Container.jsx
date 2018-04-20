@@ -64,9 +64,7 @@ class Container extends React.Component {
         this.props.updateMiningState(isMining)
       })
     }
-  }
 
-  componentDidMount() {
     this.props.fetchAccountItem().then(resp => {
       if (resp.data.length == 0) {
         this.setState({noAccountItem: true})

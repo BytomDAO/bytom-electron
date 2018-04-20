@@ -15,6 +15,15 @@
                 "label": "Account",
                 "new": "new Account"
             },
+            "edit": {
+                "label": "Edit",
+                "undo": "Undo",
+                "redo": "Redo",
+                "cut": "Cut",
+                "copy": "Copy",
+                "paste": "Paste",
+                "selectAll": "Select all"
+            },
             "view": {
                 "label": "View",
                 "fullscreen": "Toggle full screen",

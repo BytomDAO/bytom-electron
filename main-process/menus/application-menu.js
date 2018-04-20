@@ -87,6 +87,47 @@ let menuTempl = function () {
   })
 
 
+  //EDIT
+  menu.push({
+    label: i18n.t('desktop.applicationMenu.edit.label'),
+    submenu: [
+      {
+        label: i18n.t('desktop.applicationMenu.edit.undo'),
+        accelerator: 'CommandOrControl+Z',
+        role: 'undo',
+      },
+      {
+        label: i18n.t('desktop.applicationMenu.edit.redo'),
+        accelerator: 'Shift+CommandOrControl+Z',
+        role: 'redo',
+      },
+      {
+        type: 'separator',
+      },
+      {
+        label: i18n.t('desktop.applicationMenu.edit.cut'),
+        accelerator: 'CommandOrControl+X',
+        role: 'cut',
+      },
+      {
+        label: i18n.t('desktop.applicationMenu.edit.copy'),
+        accelerator: 'CommandOrControl+C',
+        role: 'copy',
+      },
+      {
+        label: i18n.t('desktop.applicationMenu.edit.paste'),
+        accelerator: 'CommandOrControl+V',
+        role: 'paste',
+      },
+      {
+        label: i18n.t('desktop.applicationMenu.edit.selectAll'),
+        accelerator: 'CommandOrControl+A',
+        role: 'selectall',
+      },
+    ],
+  })
+
+
   // LANGUAGE (VIEW)
   const defaultLanguage = i18n.getBestMatchedLangCode(app.getLocale())
   let currentLanguage = settings.get('browserSetting.core.lang') || defaultLanguage
@@ -291,14 +332,14 @@ const createMenu = function () {
 
 settings.watch('browserSetting.app.navAdvancedState', newValue => {
   advNav = newValue
-  menu.items[2].submenu.items[1].checked = ( advNav === 'advance' )
+  menu.items[3].submenu.items[1].checked = ( advNav === 'advance' )
 })
 
 settings.watch('browserSetting.core.btmAmountUnit', newValue => {
   btmAmountUnit = newValue
-  menu.items[2].submenu.items[0].submenu.items[0].checked = ( btmAmountUnit === 'BTM' )
-  menu.items[2].submenu.items[0].submenu.items[1].checked = ( btmAmountUnit === 'mBTM' )
-  menu.items[2].submenu.items[0].submenu.items[2].checked = ( btmAmountUnit === 'NEU' )
+  menu.items[3].submenu.items[0].submenu.items[0].checked = ( btmAmountUnit === 'BTM' )
+  menu.items[3].submenu.items[0].submenu.items[1].checked = ( btmAmountUnit === 'mBTM' )
+  menu.items[3].submenu.items[0].submenu.items[2].checked = ( btmAmountUnit === 'NEU' )
 })
 
 settings.watch('browserSetting.core.lang', newValue => {

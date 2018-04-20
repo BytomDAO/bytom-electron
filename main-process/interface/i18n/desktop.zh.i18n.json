@@ -15,6 +15,15 @@
                 "label": "账户",
                 "new": "新建账户"
             },
+            "edit": {
+                "label": "编辑",
+                "undo": "撤销",
+                "redo": "重做",
+                "cut": "剪切",
+                "copy": "复制",
+                "paste": "粘帖",
+                "selectAll": "全选"
+            },
             "view": {
                 "label": "视图",
                 "fullscreen": "全屏切换",
