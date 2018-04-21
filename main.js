@@ -130,6 +130,7 @@ function setBytomMining(event) {
 
   bytomdMining.on('exit', function (code) {
     bytomdLog.info('bytom Mining exited with code ' + code)
+    app.quit()
   })
 }
 
