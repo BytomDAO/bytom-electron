@@ -51,13 +51,13 @@ class Index extends React.Component {
         type='submit'
         className={`btn btn-primary btn-lg ${styles.submit}`}
         disabled={ !type.value || submitting}>
-          &nbsp;{'Join'} network
+          &nbsp;{lang === 'zh' ? '加入网络' :'Joining network'}
       </button>
     ]
 
     if (submitting) {
       configSubmit.push(<SubmitIndicator
-        text={'Joining network...'}
+        text={lang === 'zh' ? '加入网络...' :'Joining network...'}
       />)
     }
 
