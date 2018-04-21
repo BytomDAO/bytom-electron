@@ -54,6 +54,11 @@ class Container extends React.Component {
             delete this.props.flashMessages[key]
           })
           this.props.showRoot()
+          this.props.fetchAccountItem().then(resp => {
+            if (resp.data.length == 0) {
+              this.setState({noAccountItem: true})
+            }
+          })
         }
         if(arg === 'init'){
           this.props.updateConfiguredStatus()
