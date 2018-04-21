@@ -1,4 +1,4 @@
-const { Menu, app, shell, ipcMain } = require('electron')
+const { Menu, app, shell, ipcMain, dialog } = require('electron')
 const settings = require('electron-settings')
 global.language = settings.get('browserSetting.core.lang') || app.getLocale()
 const i18n = require('../i18n.js')
@@ -291,6 +291,25 @@ let menuTempl = function () {
 
   // HELP
   const helpMenu = []
+
+    if (process.platform === 'freebsd' || process.platform === 'linux' ||
+      process.platform === 'sunos' || process.platform === 'win32') {
+    helpMenu.push(
+      {
+        label: i18n.t('desktop.applicationMenu.app.about', { app: name }),
+        click() {
+          const options = {
+            type: 'info',
+            title: `${i18n.t('desktop.applicationMenu.app.about')} ${name}`,
+            message: `${name} \n\n${i18n.t('desktop.applicationMenu.help.version')}: ${app.getVersion()}\nLicense: AGPL-3.0-only`,
+            buttons: [i18n.t('desktop.global.ok')]
+          }
+          dialog.showMessageBox( options )
+        },
+      }
+    )
+  }
+
   helpMenu.push({
     label: i18n.t('desktop.applicationMenu.help.bytomWiki'),
     click() {
