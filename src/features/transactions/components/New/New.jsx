@@ -124,12 +124,15 @@ class Form extends React.Component {
   addActionItem(type) {
     this.props.fields.actions.addField({
       type: type,
-      referenceData: '{\n\t\n}'
     })
     this.closeDropdown()
   }
 
   disableSubmit(actions, normalTransaction) {
+    if (!this.state.showAdvanceTx) {
+      return !this.state.estimateGas
+    }
+
     if (this.state.showAdvanceTx) {
       return actions.length == 0 && !this.state.showAdvanced
     }
@@ -218,6 +221,7 @@ class Form extends React.Component {
     const body = {actions, ttl: 1}
     this.connection.request('/build-transaction', body).then(resp => {
       if (resp.status === 'fail') {
+        this.setState({estimateGas: null})
         this.props.showError(new Error(resp.msg))
         return
       }
@@ -226,6 +230,7 @@ class Form extends React.Component {
         transactionTemplate: resp.data
       }).then(resp => {
         if (resp.status === 'fail') {
+          this.setState({estimateGas: null})
           this.props.showError(new Error(resp.msg))
           return
         }
@@ -540,9 +545,7 @@ export default BaseNew.connect(
       'actions[].assetId',
       'actions[].assetAlias',
       'actions[].amount',
-      'actions[].receiver',
       'actions[].outputId',
-      'actions[].referenceData',
       'actions[].type',
       'actions[].address',
       'actions[].password',

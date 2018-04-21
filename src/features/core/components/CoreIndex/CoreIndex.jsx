@@ -51,6 +51,8 @@ class CoreIndex extends React.Component {
   render() {
     let navState = this.props.navAdvancedState === 'advance'
     let miningState = this.props.core.mingStatus
+    let coreData = this.props.core.coreData
+
     const lang = this.props.core.lang
 
     let configBlock = (
@@ -59,6 +61,10 @@ class CoreIndex extends React.Component {
           <h4>{lang === 'zh' ? '配置' : 'Configuration'}</h4>
           <table className={styles.table}>
             <tbody>
+            <tr>
+              <td className={styles.row_label}>{lang === 'zh' ? '核心版本号' : 'Core Versions'}:</td>
+              <td>{coreData['version']}</td>
+            </tr>
             <tr>
               <td className={styles.row_label}>{lang === 'zh' ? '语言' : 'Language'}:</td>
               <td>{lang === 'zh' ? '中文' : 'English'}</td>
@@ -113,7 +119,6 @@ class CoreIndex extends React.Component {
       </div>
     )
 
-    let coreData = this.props.core.coreData
     let requestStatusBlock
 
 
