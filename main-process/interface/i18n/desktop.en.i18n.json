@@ -1,5 +1,8 @@
 {
     "desktop": {
+        "global":{
+            "ok": "OK"
+        },
         "applicationMenu": {
             "app": {
                 "label": "__app__",
@@ -47,7 +50,8 @@
             "help": {
                 "label": "Help",
                 "bytomWiki": "Troubleshooting and Help",
-                "reportBug": "Report an issue on Github"
+                "reportBug": "Report an issue on Github",
+                "version": "Versions"
             }
         }
     }

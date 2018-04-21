@@ -1,5 +1,8 @@
 {
     "desktop": {
+        "global":{
+            "ok": "确定"
+        },
         "applicationMenu": {
             "app": {
                 "label": "__app__",
@@ -41,7 +44,10 @@
                 "stopMining": "⛏ 停止挖矿"
             },
             "help": {
-                "label": "帮助"
+                "label": "帮助",
+                "bytomWiki": "排除故障和帮助",
+                "reportBug": "在Github上提交issue",
+                "version": "版本号"
             }
         }
     }
