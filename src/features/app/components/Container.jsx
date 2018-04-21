@@ -107,13 +107,14 @@ class Container extends React.Component {
 
   render() {
     let layout
+    const lang = this.props.lang
 
     if (!this.props.authOk) {
       layout = <Login/>
     } else if (!this.props.configured) {
       layout = <Config>{this.props.children}</Config>
     } else if (!this.props.configKnown) {
-      return <Loading>Connecting to Bytom Core...</Loading>
+      return <Loading>{lang === 'zh'?  '正在连接到Bytom Core...' : 'Connecting to Bytom Core...'}</Loading>
     } else if (!this.props.accountInit && this.state.noAccountItem){
       layout = <Register>{this.props.children}</Register>
     } else{
@@ -138,7 +139,6 @@ class Container extends React.Component {
 export default connect(
   (state) => ({
     authOk: !state.core.requireClientToken || state.core.validToken,
-    // configKnown: true,
     configKnown: state.core.configKnown,
     configured: state.core.configured,
     onTestnet: state.core.onTestnet,
