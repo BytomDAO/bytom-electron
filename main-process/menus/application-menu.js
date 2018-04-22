@@ -345,7 +345,6 @@ const stopMining = (focusedWindow) => {
 }
 
 const createMenu = function () {
-  log.info('Create Menu')
   menu = Menu.buildFromTemplate(menuTempl())
   Menu.setApplicationMenu(menu)
 }
