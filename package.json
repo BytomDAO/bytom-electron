@@ -50,14 +50,8 @@
       "artifactName": "${name}-${version}-${os}-${arch}.${ext}",
       "extraResources": "bytomd/bytomd-windows_${env.ARCH_VARIABLE}.exe",
       "target": [
-        {
-          "target": "nsis",
-          "arch": "${arch}"
-        },
-        {
-          "target": "zip",
-          "arch": "${arch}"
-        }
+         "nsis",
+         "zip"
       ]
     },
     "linux": {
