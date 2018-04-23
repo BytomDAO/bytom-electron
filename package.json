@@ -1,7 +1,100 @@
 {
   "name": "bytom-wallet",
   "productName": "Bytom Wallet",
-  "version": "0.5.0",
+  "build": {
+    "electronVersion": "1.8.3",
+    "appId": "io.bytom.desktop",
+    "directories": {
+      "buildResources": "./",
+      "output": "desktop"
+    },
+    "files": [
+      "node_modules/**/*",
+      "main.js",
+      "main-process/**/*",
+      "static/**/*",
+      "public/**",
+      "!node_modules/electron/",
+      "!node_modules/electron/**/*"
+    ],
+    "mac": {
+      "icon": "static/images/app-icon/mac/app.icns",
+      "artifactName": "${name}-${version}-${os}.${ext}",
+      "category": "public.app-category.wallet",
+      "extraResources": "bytomd/bytomd-darwin_amd64",
+      "target": [
+        "dmg",
+        "zip"
+      ]
+    },
+    "dmg": {
+      "contents": [
+        {
+          "x": 129,
+          "y": 250
+        },
+        {
+          "x": 410,
+          "y": 247,
+          "type": "link",
+          "path": "/Applications"
+        }
+      ]
+    },
+    "nsis": {
+      "perMachine": true,
+      "oneClick": false
+    },
+    "win": {
+      "icon": "static/images/app-icon/win/app.ico",
+      "artifactName": "${name}-${version}-${os}-${arch}.${ext}",
+      "extraResources": "bytomd/bytomd-windows_${env.ARCH_VARIABLE}.exe",
+      "target": [
+        {
+          "target": "nsis",
+          "arch": "${arch}"
+        },
+        {
+          "target": "zip",
+          "arch": "${arch}"
+        }
+      ]
+    },
+    "linux": {
+      "maintainer": "bytom contributors <zhiting.fly@bytom.io>",
+      "artifactName": "${name}-${version}-${os}-${arch}.${ext}",
+      "target": [
+        {
+          "target": "deb",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "tar.gz",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "desktop": {
+        "Comment": "Bytom",
+        "Exec": "/opt/bytom/bytom %U",
+        "Icon": "bytom",
+        "Name": "Bytom",
+        "Path": "/opt/bytom/",
+        "StartupNotify": "true",
+        "Terminal": "false",
+        "Type": "Application",
+        "Categories": "Finance;Security"
+      },
+      "category": "Finance",
+      "packageCategory": "wallet",
+      "icon": "static/images/app-icon/png/app.png"
+    },
+    "asar": true
+  },
+  "version": "1.0.0",
   "description": "",
   "main": "main.js",
   "scripts": {
@@ -14,11 +107,11 @@
     "start": "hjs-dev-server webpack/webpack.app.js --hot --host 0.0.0.0",
     "generate-component": "babel-node bin/generate.js component",
     "package": "npm-run-all package:* ",
-    "package:mac": "electron-packager . --overwrite --asar.unpackDir=bytomd --platform=darwin --arch=x64 --ignore='bytomd/bytomd-(?!darwin)' --out=desktop --icon=./static/images/app-icon/mac/app.icns",
-    "package:win-32": "electron-packager . --overwrite --asar.unpackDir=bytomd --platform=win32 --arch=ia32 --ignore='bytomd/bytomd-(?!windows_386)' --out=desktop --icon=./static/images/app-icon/win/app.ico",
-    "package:win-64": "electron-packager . --overwrite --asar.unpackDir=bytomd --platform=win32 --arch=x64 --ignore='bytomd/bytomd-(?!windows_amd64)' --out=desktop --icon=./static/images/app-icon/win/app.ico",
-    "package:linux-32": "electron-packager . --overwrite --asar.unpackDir=bytomd --platform=linux --arch=ia32  --ignore='bytomd/bytomd-(?!linux_386)' --out=desktop",
-    "package:linux-64": "electron-packager . --overwrite --asar.unpackDir=bytomd --platform=linux --arch=x64 --ignore='bytomd/bytomd-(?!linux_amd64)' --out=desktop"
+    "package:mac": "electron-builder -m ",
+    "package:win-32": "ARCH_VARIABLE=386 electron-builder --win --ia32",
+    "package:win-64": "ARCH_VARIABLE=amd64 electron-builder --win --x64 ",
+    "package:linux-32": "ARCH_VARIABLE=386 electron-builder -l --ia32",
+    "package:linux-64": "ARCH_VARIABLE=amd64 electron-builder -l --x64"
   },
   "author": "Bytom",
   "license": "AGPL-3.0-only",
@@ -78,6 +171,7 @@
     "command-line-commands": "~1.0.4",
     "css-loader": "0.14.5",
     "electron": "~1.8.3",
+    "electron-builder": "^20.10.0",
     "electron-packager": "^8.6.0",
     "eslint": "~3.7.0",
     "eslint-plugin-react": "~6.4.0",

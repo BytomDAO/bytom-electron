@@ -100,7 +100,7 @@ function initialize () {
 }
 const bytomdPath = process.env.DEV?
   path.join(__dirname, '/bytomd/bytomd-darwin_amd64'):
-  glob.sync( path.join(__dirname, '/bytomd/bytomd*').replace('app.asar', 'app.asar.unpacked'))
+  glob.sync( path.join(__dirname, '../bytomd/bytomd*'))
 
 let bytomdDataPath
 switch (process.platform){

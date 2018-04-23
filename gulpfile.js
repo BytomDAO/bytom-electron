@@ -2,6 +2,7 @@ const path = require('path')
 const gulp = require('gulp')
 const process = require('process')
 const packager = require('electron-packager')
+const builder = require('electron-builder')
 const clean = require('gulp-clean')
 const zip = require('gulp-zip')
 
@@ -16,13 +17,7 @@ let deleteUselessFiles = function (platform, distPath) {
       filesToBeRemoved = [
         '*.html',
         'LICENSE',
-        'version',
-        'pdf.dll',
-        'locales/*.*',
-        // 'snapshot_blob.bin',
-        'd3dcompiler_47.dll',
-        'ui_resources_200_percent.pak',
-        'content_resources_200_percent.pak'
+        'version'
       ]
       break
     case 'darwin':
@@ -37,8 +32,6 @@ let deleteUselessFiles = function (platform, distPath) {
         '*.html',
         'LICENSE',
         'version',
-        'locales/*.*'
-        // 'snapshot_blob.bin'
       ]
       break
   }
@@ -137,6 +130,90 @@ let afterPackage = function (platform, arch, distPath) {
   deleteUselessFiles(platform, distPath)
   compressFiles(platform, arch, distPath)
 }
+
+gulp.task('build-dist', (cb) => {
+  const appPackageJson = _.extend({}, require('../package.json'), {  // eslint-disable-line global-require
+    name: APP_NAME.replace(/\s/, ''),
+    productName: APP_NAME,
+    description: APP_NAME,
+    homepage: 'https://github.com/bytom/dashboard',
+    build: {
+      appId: 'org.bytom.desktopWallet',
+      asar: true,
+      directories: {
+        buildResources: '../build',
+        output: '../dist'
+      },
+      linux: {
+        category: 'WebBrowser',
+        icon: './static/images/app-icon/png/app.png',
+        target: [
+          'zip'
+        ]
+      },
+      win: {
+        target: [
+          'zip'
+        ]
+      },
+      mac: {
+        category: 'public.app-category.productivity',
+      },
+      dmg: {
+        iconSize: 128,
+        contents: [
+          {
+            x: 441,
+            y: 448,
+            type: 'link',
+            path: '/Applications'
+          },
+          {
+            x: 441,
+            y: 142,
+            type: 'file'
+          }
+        ]
+      }
+    }
+  })
+
+  fs.writeFileSync(
+    path.join(__dirname, `../dist_${type}`, 'app', 'package.json'),
+    JSON.stringify(appPackageJson, null, 2), 'utf-8'
+  )
+
+  const targets = []
+  if (options.mac) targets.push(builder.Platform.MAC)
+  if (options.win) targets.push(builder.Platform.WINDOWS)
+  if (options.linux) targets.push(builder.Platform.LINUX)
+
+  builder.build({
+    targets: builder.createTargets(targets, null, 'all'),
+    projectDir: path.join(__dirname, `../dist_${type}`, 'app'),
+    publish: 'never',
+    config: {
+      afterPack(params) {
+        return Q.try(() => {
+          shell.cp(
+            [
+              path.join(__dirname, '..', 'LICENSE'),
+              path.join(__dirname, '..', 'README.md'),
+              path.join(__dirname, '..', 'AUTHORS')
+            ],
+            params.appOutDir
+          )
+        })
+      }
+    }
+  })
+    .catch((err) => {
+      throw new Error(err)
+    })
+    .finally(() => {
+      cb()
+    })
+})
 
 gulp.task('package', function (callback) {
   if (process.platform == 'darwin') {
