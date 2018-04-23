@@ -1,6 +1,6 @@
 {
-  "name": "bytomDesktop",
-  "productName": "Bytom Desktop",
+  "name": "bytom-wallet",
+  "productName": "Bytom Wallet",
   "version": "0.5.0",
   "description": "",
   "main": "main.js",
