@@ -118,11 +118,11 @@ function setBytomMining(event) {
   bytomdMining = spawn( `${bytomdPath}`, ['node', '--web.closed'] )
 
   bytomdMining.stdout.on('data', function(data) {
-    bytomdLog.info(`bytomd mining stdout: ${data}`)
+    bytomdLog.info(`bytomd mining: ${data}`)
   })
 
   bytomdMining.stderr.on('data', function(data) {
-    bytomdLog.info(`bytomd mining stderr: ${data}`)
+    bytomdLog.info(`bytomd mining: ${data}`)
     if(data.includes('msg="Started node"') && event){
       event.sender.send('ConfiguredNetwork','startNode')
     }
@@ -139,11 +139,11 @@ function setBytomInit(event, bytomNetwork) {
   bytomdInit = spawn(`${bytomdPath}`, ['init', '--chain_id',  `${bytomNetwork}`] )
 
   bytomdInit.stdout.on('data', function(data) {
-    bytomdLog.info(`bytomd init stdout: ${data}`)
+    bytomdLog.info(`bytomd init: ${data}`)
   })
 
   bytomdInit.stderr.on('data', function(data) {
-    bytomdLog.info(`bytomd init stderr: ${data}`)
+    bytomdLog.info(`bytomd init: ${data}`)
   })
 
   bytomdInit.on('exit', function (code) {
