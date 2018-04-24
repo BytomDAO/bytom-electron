@@ -1,7 +1,7 @@
 {
   "name": "bytom-wallet",
   "productName": "Bytom Wallet",
-  "version": "0.5.0",
+  "version": "1.0.0",
   "description": "",
   "main": "main.js",
   "scripts": {
@@ -15,8 +15,8 @@
     "generate-component": "babel-node bin/generate.js component",
     "package": "npm-run-all package:* ",
     "package:mac": "electron-packager . --overwrite --asar.unpackDir=bytomd --platform=darwin --arch=x64 --ignore='bytomd/bytomd-(?!darwin)' --out=desktop --icon=./static/images/app-icon/mac/app.icns --appCopyright='Copyright © 2018 Bytom'",
-    "package:win-32": "electron-packager . --overwrite --asar.unpackDir=bytomd --platform=win32 --arch=ia32 --ignore='bytomd/bytomd-(?!windows_386)' --out=desktop --icon=./static/images/app-icon/win/app.ico --appCopyright='Copyright © 2018 Bytom'",
-    "package:win-64": "electron-packager . --overwrite --asar.unpackDir=bytomd --platform=win32 --arch=x64 --ignore='bytomd/bytomd-(?!windows_amd64)' --out=desktop --icon=./static/images/app-icon/win/app.ico --appCopyright='Copyright © 2018 Bytom'",
+    "package:win-32": "electron-packager . --win32metadata.ProductName='Bytom Wallet' --win32metadata.OriginalFilename='Bytom Wallet.exe' --win32metadata.FileDescription='Bytom Wallet' --overwrite --asar.unpackDir=bytomd --platform=win32 --arch=ia32 --ignore='bytomd/bytomd-(?!windows_386)' --out=desktop --icon=./static/images/app-icon/win/app.ico --appCopyright='Copyright © 2018 Bytom'",
+    "package:win-64": "electron-packager . --win32metadata.ProductName='Bytom Wallet' --win32metadata.OriginalFilename='Bytom Wallet.exe' --win32metadata.FileDescription='Bytom Wallet' --overwrite --asar.unpackDir=bytomd --platform=win32 --arch=x64 --ignore='bytomd/bytomd-(?!windows_amd64)' --out=desktop --icon=./static/images/app-icon/win/app.ico --appCopyright='Copyright © 2018 Bytom'",
     "package:linux-32": "electron-packager . --overwrite --asar.unpackDir=bytomd --platform=linux --arch=ia32  --ignore='bytomd/bytomd-(?!linux_386)' --out=desktop --appCopyright='Copyright © 2018 Bytom'",
     "package:linux-64": "electron-packager . --overwrite --asar.unpackDir=bytomd --platform=linux --arch=x64 --ignore='bytomd/bytomd-(?!linux_amd64)' --out=desktop --appCopyright='Copyright © 2018 Bytom'"
   },
