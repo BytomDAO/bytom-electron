@@ -19,13 +19,10 @@
     ],
     "mac": {
       "icon": "static/images/app-icon/mac/app.icns",
-      "artifactName": "${name}-${version}-${os}.${ext}",
+      "artifactName": "${name}-desktop-${version}-${os}.${ext}",
       "category": "public.app-category.wallet",
       "extraResources": "bytomd/bytomd-darwin_amd64",
-      "target": [
-        "dmg",
-        "zip"
-      ]
+      "target": "dmg"
     },
     "dmg": {
       "contents": [
@@ -47,32 +44,16 @@
     },
     "win": {
       "icon": "static/images/app-icon/win/app.ico",
-      "artifactName": "${name}-${version}-${os}-${arch}.${ext}",
+      "artifactName": "${name}-desktop-${version}-${os}-${arch}.${ext}",
       "extraResources": "bytomd/bytomd-windows_${env.ARCH_VARIABLE}.exe",
-      "target": [
-         "nsis",
-         "zip"
-      ]
+      "target":  "zip"
     },
     "linux": {
       "maintainer": "bytom contributors <zhiting.fly@bytom.io>",
-      "artifactName": "${name}-${version}-${os}-${arch}.${ext}",
+      "artifactName": "${name}-desktop-${version}-${os}-${arch}.${ext}",
+      "executableName": "Bytom Wallet",
       "extraResources": "bytomd/bytomd-linux_${env.ARCH_VARIABLE}",
-      "target": [
-      "deb",
-       "tar.gz"
-      ],
-      "desktop": {
-        "Comment": "Bytom",
-        "Exec": "/opt/bytom/bytom %U",
-        "Icon": "bytom",
-        "Name": "Bytom",
-        "Path": "/opt/bytom/",
-        "StartupNotify": "true",
-        "Terminal": "false",
-        "Type": "Application",
-        "Categories": "Finance;Security"
-      },
+      "target": "zip",
       "category": "Finance",
       "packageCategory": "wallet",
       "icon": "static/images/app-icon/png/app.png"
@@ -80,7 +61,7 @@
     "asar": true
   },
   "version": "1.0.0",
-  "description": "",
+  "description": "Bytom Wallet Desktop",
   "main": "main.js",
   "scripts": {
     "build:dll": "node ./bin/dependencies.js",
