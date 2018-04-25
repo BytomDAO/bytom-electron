@@ -72,7 +72,7 @@
     "lint": "eslint \"src/**\"",
     "start": "hjs-dev-server webpack/webpack.app.js --hot --host 0.0.0.0",
     "generate-component": "babel-node bin/generate.js component",
-    "package": "npm-run-all package:* ",
+    "package": "npm run build-electron && npm-run-all package:* ",
     "package:mac": "electron-builder -m ",
     "package:win-32": "ARCH_VARIABLE=386 electron-builder --win --ia32",
     "package:win-64": "ARCH_VARIABLE=amd64 electron-builder --win --x64 ",
