@@ -4,7 +4,6 @@ const glob = require('glob')
 const url = require('url')
 const path = require('path')
 const fs = require('fs')
-const toml = require('toml')
 const logger = require('./main-process/logger')
 const log = logger.create('main')
 const bytomdLog = logger.create('bytomd')
@@ -13,6 +12,7 @@ let win, bytomdInit, bytomdMining
 
 global.fileExist = false
 global.mining = {isMining: false}
+let startnode = false
 
 function initialize () {
 
@@ -47,6 +47,11 @@ function initialize () {
       shell.openExternal(url)
     })
 
+    win.webContents.on('did-finish-load', function () {
+      if(startnode){
+        win.webContents.send('ConfiguredNetwork', 'startNode')
+      }
+    })
 
     win.on('closed', () => {
       win = null
@@ -123,8 +128,14 @@ function setBytomMining(event) {
 
   bytomdMining.stderr.on('data', function(data) {
     bytomdLog.info(`bytomd mining: ${data}`)
-    if(data.includes('msg="Started node"') && event){
-      event.sender.send('ConfiguredNetwork','startNode')
+    if(data.includes('msg="Started node"')) {
+      if(event){
+        event.sender.send('ConfiguredNetwork', 'startNode')
+      }
+      else {
+        startnode = true
+        win.webContents.send('ConfiguredNetwork', 'startNode')
+      }
     }
   })
 
@@ -159,29 +170,16 @@ function setBytomInit(event, bytomNetwork) {
 
 function bytomd(){
   const filePath = path.join(`${bytomdDataPath}/config.toml`)
-
-  fs.stat(`${filePath}`, function(err) {
-    if(err == null) {
-      log.info('Bytomd Network has been inited')
-      global.fileExist = true
-      setBytomMining()
-
-      let genesisFile = fs.readFileSync(filePath)
-      genesisFile = toml.parse(genesisFile)
-
-      global.networkStatus = genesisFile.chain_id
-
-    } else if(err.code == 'ENOENT') {
-      //wait for the int network call
-      log.info('Init Bytomd Network')
-      ipcMain.on('bytomdInitNetwork', (event, arg) => {
-        setBytomInit( event,  arg )
-        global.networkStatus = arg
-      })
-    } else {
-      log.error('Some other error: ', err.code)
-    }
-  })
+  if (fs.existsSync(filePath)) {
+    log.info('Bytomd Network has been inited')
+    global.fileExist = true
+    setBytomMining()
+  }else {
+    log.info('Init Bytomd Network...')
+    ipcMain.on('bytomdInitNetwork', (event, arg) => {
+      setBytomInit( event,  arg )
+    })
+  }
 }
 
 // Require each JS file in the main-process dir

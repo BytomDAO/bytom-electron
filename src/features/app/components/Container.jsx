@@ -51,15 +51,16 @@ class Container extends React.Component {
       })
       window.ipcRenderer.on('ConfiguredNetwork', (event, arg) => {
         if(arg === 'startNode'){
-          Object.keys(this.props.flashMessages).forEach(key => {
-            delete this.props.flashMessages[key]
+          this.props.fetchInfo().then(() => {
+            this.props.showRoot()
+            this.props.redirectRoot(this.props)
+            this.props.fetchAccountItem().then(resp => {
+              if (resp.data.length == 0) {
+                this.setState({noAccountItem: true})
+              }
+            })
           })
-          this.props.showRoot()
-          this.props.fetchAccountItem().then(resp => {
-            if (resp.data.length == 0) {
-              this.setState({noAccountItem: true})
-            }
-          })
+          setInterval(() => this.props.fetchInfo(), CORE_POLLING_TIME)
         }
         if(arg === 'init'){
           this.props.updateConfiguredStatus()
@@ -70,25 +71,11 @@ class Container extends React.Component {
         this.props.updateMiningState(isMining)
       })
     }
-
-    this.props.fetchAccountItem().then(resp => {
-      if (resp.data.length == 0) {
-        this.setState({noAccountItem: true})
-      }
-    })
     if(this.props.lang === 'zh'){
       moment.locale('zh-cn')
     }else{
       moment.locale(this.props.lang)
     }
-  }
-
-  componentWillMount() {
-    this.props.fetchInfo().then(() => {
-      this.redirectRoot(this.props)
-    })
-
-    setInterval(() => this.props.fetchInfo(), CORE_POLLING_TIME)
   }
 
   componentWillReceiveProps(nextProps) {
