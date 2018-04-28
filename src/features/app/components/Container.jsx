@@ -52,13 +52,12 @@ class Container extends React.Component {
       window.ipcRenderer.on('ConfiguredNetwork', (event, arg) => {
         if(arg === 'startNode'){
           this.props.fetchInfo().then(() => {
-            this.props.showRoot()
-            this.props.redirectRoot(this.props)
             this.props.fetchAccountItem().then(resp => {
               if (resp.data.length == 0) {
                 this.setState({noAccountItem: true})
               }
             })
+            this.props.showRoot()
           })
           setInterval(() => this.props.fetchInfo(), CORE_POLLING_TIME)
         }
