@@ -22,7 +22,7 @@
       "artifactName": "${name}-desktop-${version}-${os}.${ext}",
       "category": "public.app-category.wallet",
       "extraResources": "bytomd/bytomd-darwin_amd64",
-      "target": "dmg"
+      "target": "zip"
     },
     "dmg": {
       "contents": [
@@ -60,7 +60,7 @@
     },
     "asar": true
   },
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Bytom Wallet Desktop",
   "main": "main.js",
   "scripts": {
