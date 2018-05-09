@@ -74,10 +74,10 @@ class Index extends React.Component {
                     {...typeProps}
                     value='mainnet' />
               <div className={`${styles.choice} ${styles.join}`}>
-                <span className={styles.choice_title}>{lang === 'zh' ? '加入 Bytom 主网' : 'Join the Bytom Main Net'}</span>
+                <span className={styles.choice_title}>{lang === 'zh' ? '加入 Bytom 主网' : 'Join the Bytom Mainnet'}</span>
 
                 <p>
-                  {lang === 'zh' ? '连接 Bytom Core 到 Bytom 主网' : 'Connect this Bytom Core to the Bytom MainNet.'}
+                  {lang === 'zh' ? '普通用户选择加入。这是实际的Bytom网络，包含真实的交易信息。' : 'For common users to enter. Mainnet is the production network, that carry real Bytom transactions.'}
                 </p>
               </div>
             </label>
@@ -93,7 +93,7 @@ class Index extends React.Component {
                   <span className={styles.choice_title}>{lang === 'zh' ? '加入 Bytom 测试网络' : 'Join the Bytom Testnet' }</span>
 
                   <p>
-                    {lang === 'zh' ? '连接 Bytom Core 到 Bytom 测试网' : 'Connect this Bytom Core to the Bytom Testnet.' }
+                    {lang === 'zh' ? '开发者选择加入。这是Bytom的测试网络，用于Bytom的相关测试。' : 'For developers or bytom testers to enter. Testnet is an alternative Bytom blockchain, and to be used for testing.' }
                   </p>
               </div>
             </label>
