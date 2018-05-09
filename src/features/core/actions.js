@@ -44,6 +44,8 @@ const fetchCoreInfo = (options = {}) => {
 //todo: change the function later
 const registerKey = (data) => {
   return (dispatch) => {
+    if (typeof data.keyAlias == 'string')  data.keyAlias = data.keyAlias.trim()
+
     const keyData = {
       'alias': data.keyAlias,
       'password': data.password
@@ -54,12 +56,12 @@ const registerKey = (data) => {
           throw new Error(resp.msg)
         }
 
+        if (typeof data.accountAlias == 'string')  data.accountAlias = data.accountAlias.trim()
         const accountData = {
           'root_xpubs':[resp.data.xpub],
           'quorum':1,
           'alias': data.accountAlias}
 
-        dispatch({type: 'CREATE_REGISTER_KEY', data})
         chainClient().accounts.create(accountData)
           .then((resp) => {
             if (resp.status === 'fail') {
