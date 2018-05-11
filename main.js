@@ -128,7 +128,7 @@ function setBytomMining(event) {
 
   bytomdMining.stderr.on('data', function(data) {
     bytomdLog.info(`bytomd mining: ${data}`)
-    if(data.includes('msg="Started node"')) {
+    if(data.includes('msg="Start node')) {
       if(event){
         event.sender.send('ConfiguredNetwork', 'startNode')
       }
