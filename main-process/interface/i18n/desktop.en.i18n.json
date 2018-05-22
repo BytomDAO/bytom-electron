@@ -1,0 +1,58 @@
+{
+    "desktop": {
+        "global":{
+            "ok": "OK"
+        },
+        "applicationMenu": {
+            "app": {
+                "label": "__app__",
+                "about": "About __app__",
+                "checkForUpdates": "Check for updates...",
+                "services": "Services",
+                "hide": "Hide __app__",
+                "hideOthers": "Hide others",
+                "showAll": "Show all",
+                "quit": "Quit __app__"
+            },
+            "account":{
+                "label": "Account",
+                "new": "new Account"
+            },
+            "edit": {
+                "label": "Edit",
+                "undo": "Undo",
+                "redo": "Redo",
+                "cut": "Cut",
+                "copy": "Copy",
+                "paste": "Paste",
+                "selectAll": "Select all"
+            },
+            "view": {
+                "label": "View",
+                "fullscreen": "Toggle full screen",
+                "languages": "Language",
+                "default": "Default",
+                "langCodes": {
+                    "en": "English",
+                    "zh": "中文"
+                },
+                "btmAmountUnit": "BTM Amount Unit",
+                "advNav" : "Advanced Navigation"
+            },
+            "develop": {
+                "label": "Develop",
+                "devTools": "Toggle developer tools",
+                "fullScreen": "Toggle full screen",
+                "logFiles": "Show log files",
+                "startMining": "⛏ Start mining",
+                "stopMining": "⛏ Stop mining"
+            },
+            "help": {
+                "label": "Help",
+                "bytomWiki": "Troubleshooting and Help",
+                "reportBug": "Report an issue on Github",
+                "version": "Versions"
+            }
+        }
+    }
+}

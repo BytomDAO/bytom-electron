@@ -1,5 +1,5 @@
 import { combineReducers } from 'redux'
-import { testnetUrl } from 'utility/environment'
+import { testnetUrl, mode } from 'utility/environment'
 import moment from 'moment'
 import { DeltaSampler } from 'utility/time'
 
@@ -28,8 +28,10 @@ const configKnown = (state = false, action) => {
   return state
 }
 
-export const configured = (state, action) =>
-  coreConfigReducer('isConfigured', state, false, action)
+// export const configured = (state, action) =>
+//   coreConfigReducer('isConfigured', state, false, action)
+
+
 export const configuredAt = (state, action) => {
   let value = coreConfigReducer('configuredAt', state, '', action)
   if (action.type == 'UPDATE_CORE_INFO' && value != '') {
@@ -204,6 +206,21 @@ export const btmAmountUnit = (state = 'BTM' , action) => {
   return state
 }
 
+let configuredState = false
+if(window.remote){
+  configuredState = window.remote.getGlobal('fileExist')
+}
+export const configured = (state = configuredState, action) => {
+  if( mode === 'electron'){
+    if (action.type == 'SET_CONFIGURED') {
+      return true
+    }
+    return state
+  }else{
+    return true
+  }
+}
+
 const defaultLang = window.navigator.language.startsWith('zh') ? 'zh' : 'en'
 const lang = (state = defaultLang, action) => {
   if (action.type === 'UPDATE_CORE_LANGUAGE') {
@@ -214,6 +231,11 @@ const lang = (state = defaultLang, action) => {
 
 const mingStatus = (state = false, action) => {
   if (action.type == 'UPDATE_CORE_INFO') {
+    if(window.remote && window.remote.getGlobal('mining').isMining!= action.param.data.mining){
+      window.remote.getGlobal('mining').isMining = action.param.data.mining
+      window.ipcRenderer.send('refresh-menu')
+    }
+
     return action.param.data.mining
   }
   return state

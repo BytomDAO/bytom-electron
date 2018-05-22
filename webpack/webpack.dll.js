@@ -18,9 +18,11 @@ const pkg = require(join(process.cwd(), 'package.json'))
 
 const outputPath = join(process.cwd(), 'node_modules/dashboard-dlls')
 
+const dllException = ['log4js', 'electron-settings', 'glob', 'toml']
+
 const config = require('./webpack.base')({
   context: process.cwd(),
-  entry: {dependencies: Object.keys(pkg.dependencies)},
+  entry: {dependencies: Object.keys(pkg.dependencies).filter(dependency => !dllException.includes(dependency))},
   devtool: 'eval',
   output: {
     filename: '[name].dll.js',

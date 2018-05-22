@@ -1,0 +1,54 @@
+{
+    "desktop": {
+        "global":{
+            "ok": "确定"
+        },
+        "applicationMenu": {
+            "app": {
+                "label": "__app__",
+                "about": "关于__app__",
+                "checkForUpdates": "检测更新...",
+                "services": "服务",
+                "hide": "隐藏 __app__",
+                "hideOthers": "隐藏 其它",
+                "showAll": "显示 全部",
+                "quit": "退出__app__"
+            },
+            "account":{
+                "label": "账户",
+                "new": "新建账户"
+            },
+            "edit": {
+                "label": "编辑",
+                "undo": "撤销",
+                "redo": "重做",
+                "cut": "剪切",
+                "copy": "复制",
+                "paste": "粘帖",
+                "selectAll": "全选"
+            },
+            "view": {
+                "label": "视图",
+                "fullscreen": "全屏切换",
+                "languages": "语言",
+                "default": "Default",
+                "btmAmountUnit": "BTM数量单位",
+                "advNav" : "高级导航"
+            },
+            "develop": {
+                "label": "开发",
+                "devTools": "切换开发者工具",
+                "fullScreen": "切换全屏",
+                "logFiles": "显示日志文件",
+                "startMining": "⛏ 开启挖矿",
+                "stopMining": "⛏ 停止挖矿"
+            },
+            "help": {
+                "label": "帮助",
+                "bytomWiki": "排除故障和帮助",
+                "reportBug": "在Github上提交issue",
+                "version": "版本号"
+            }
+        }
+    }
+}

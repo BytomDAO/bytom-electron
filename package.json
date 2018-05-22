@@ -1,17 +1,86 @@
 {
-  "name": "dashboard",
-  "version": "1.0.0",
-  "description": "",
+  "name": "bytom-wallet",
+  "productName": "Bytom Wallet",
+  "build": {
+    "electronVersion": "1.8.3",
+    "appId": "io.bytom.desktop",
+    "directories": {
+      "buildResources": "./",
+      "output": "desktop"
+    },
+    "files": [
+      "node_modules/**/*",
+      "main.js",
+      "main-process/**/*",
+      "static/**/*",
+      "public/**",
+      "!node_modules/electron/",
+      "!node_modules/electron/**/*"
+    ],
+    "mac": {
+      "icon": "static/images/app-icon/mac/app.icns",
+      "artifactName": "${name}-desktop-${version}-${os}.${ext}",
+      "category": "public.app-category.wallet",
+      "extraResources": "bytomd/bytomd-darwin_amd64",
+      "target": "zip"
+    },
+    "dmg": {
+      "contents": [
+        {
+          "x": 129,
+          "y": 250
+        },
+        {
+          "x": 410,
+          "y": 247,
+          "type": "link",
+          "path": "/Applications"
+        }
+      ]
+    },
+    "nsis": {
+      "perMachine": true,
+      "oneClick": false
+    },
+    "win": {
+      "icon": "static/images/app-icon/win/app.ico",
+      "artifactName": "${name}-desktop-${version}-${os}-${arch}.${ext}",
+      "extraResources": "bytomd/bytomd-windows_${env.ARCH_VARIABLE}.exe",
+      "target": "zip"
+    },
+    "linux": {
+      "maintainer": "bytom contributors <zhiting.fly@bytom.io>",
+      "artifactName": "${name}-desktop-${version}-${os}-${arch}.${ext}",
+      "executableName": "Bytom Wallet",
+      "extraResources": "bytomd/bytomd-linux_${env.ARCH_VARIABLE}",
+      "target": "zip",
+      "category": "Finance",
+      "packageCategory": "wallet",
+      "icon": "static/images/app-icon/png/app.png"
+    },
+    "asar": true
+  },
+  "version": "1.0.2",
+  "description": "Bytom Wallet Desktop",
+  "main": "main.js",
   "scripts": {
     "build:dll": "node ./bin/dependencies.js",
     "postinstall": "npm run build:dll",
-    "build": "NODE_ENV=production webpack --config webpack/webpack.app.js",
+    "electron-dev": "DEV_URL=http://localhost:3000/index.html  electron --inspect=5858 main.js .",
+    "build": "NODE_ENV=production webpack --config webpack/webpack.app.js ",
+    "build-electron": "NODE_ENV=production MODE=electron webpack --config webpack/webpack.app.js ",
     "lint": "eslint \"src/**\"",
     "start": "hjs-dev-server webpack/webpack.app.js --hot --host 0.0.0.0",
-    "generate-component": "babel-node bin/generate.js component"
+    "generate-component": "babel-node bin/generate.js component",
+    "package": "npm run build-electron && npm-run-all package:* ",
+    "package:mac": "electron-builder -m ",
+    "package:win-32": "ARCH_VARIABLE=386 electron-builder --win --ia32",
+    "package:win-64": "ARCH_VARIABLE=amd64 electron-builder --win --x64 ",
+    "package:linux-32": "ARCH_VARIABLE=386 electron-builder -l --ia32",
+    "package:linux-64": "ARCH_VARIABLE=amd64 electron-builder -l --x64"
   },
-  "author": "Chain",
-  "license": "",
+  "author": "Bytom",
+  "license": "AGPL-3.0-only",
   "browserslist": [
     "> 1%",
     "last 3 versions",
@@ -24,7 +93,11 @@
     "babel-polyfill": "~6.16.0",
     "bootstrap-sass": "~3.3.7",
     "classnames": "~2.2.5",
+    "electron-settings": "~3.1.4",
+    "glob": "~7.1.2",
+    "i18next": "~10.5.1",
     "lodash": "~4.17.4",
+    "log4js": "^2.5.3",
     "moment": "~2.14.1",
     "moment-timezone": "~0.5.5",
     "pluralize": "~3.0.0",
@@ -44,7 +117,8 @@
     "redux-form": "~5.3.2",
     "redux-thunk": "~2.1.0",
     "reselect": "^3.0.0",
-    "sha.js": "^2.4.8"
+    "sha.js": "^2.4.8",
+    "toml": "~2.3.3"
   },
   "devDependencies": {
     "autoprefixer": "~6.7.7",
@@ -63,6 +137,8 @@
     "command-line-args": "~3.0.1",
     "command-line-commands": "~1.0.4",
     "css-loader": "0.14.5",
+    "electron": "~1.8.3",
+    "electron-builder": "^20.10.0",
     "eslint": "~3.7.0",
     "eslint-plugin-react": "~6.4.0",
     "file-loader": "~0.9.0",
@@ -71,6 +147,7 @@
     "mocha": "~2.2.0",
     "nock": "~4.0.0",
     "node-sass": "~3.8.0",
+    "npm-run-all": "^4.1.2",
     "postcss-loader": "~1.1.0",
     "react-hot-loader": "~1.3.0",
     "resolve-url-loader": "~1.6.0",

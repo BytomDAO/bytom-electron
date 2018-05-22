@@ -1,10 +1,10 @@
 import { reduxForm } from 'redux-form'
-import { ErrorBanner, SubmitIndicator, TextField } from 'features/shared/components'
+import { ErrorBanner, SubmitIndicator } from 'features/shared/components'
 import pick from 'lodash/pick'
 import actions from 'actions'
 import React from 'react'
 import styles from './Index.scss'
-import { docsRoot } from 'utility/environment'
+import {connect} from 'react-redux'
 
 class Index extends React.Component {
   constructor(props) {
@@ -13,25 +13,7 @@ class Index extends React.Component {
     this.submitWithValidation = this.submitWithValidation.bind(this)
   }
 
-  showNewFields() {
-    return this.props.fields.type.value === 'new'
-  }
-
-  showJoinFields() {
-    return this.props.fields.type.value === 'join'
-  }
-
-  showTestnetFields() {
-    return this.props.fields.type.value === 'testnet'
-  }
-
   submitWithValidation(data) {
-    if (data.generatorUrl && !data.blockchainId) {
-      return new Promise((_, reject) => reject({
-        _error: 'You must specify a blockchain ID to connect to a network'
-      }))
-    }
-
     return new Promise((resolve, reject) => {
       this.props.submitForm(data)
         .catch((err) => reject({type: err}))
@@ -41,23 +23,16 @@ class Index extends React.Component {
   render() {
     const {
       fields: {
-        type,
-        generatorUrl,
-        generatorAccessToken,
-        blockchainId
+        type
       },
       handleSubmit,
-      submitting,
+      submitting
     } = this.props
 
-    const typeChange = (event) => {
-      const value = type.onChange(event).value
+    const lang = this.props.lang
 
-      if (value != 'join') {
-        generatorUrl.onChange('')
-        generatorAccessToken.onChange('')
-        blockchainId.onChange('')
-      }
+    const typeChange = (event) => {
+      type.onChange(event).value
     }
 
     const typeProps = {
@@ -75,53 +50,34 @@ class Index extends React.Component {
         key='configSubmit'
         type='submit'
         className={`btn btn-primary btn-lg ${styles.submit}`}
-        disabled={submitting}>
-          &nbsp;{this.showNewFields() ? 'Create' : 'Join'} network
+        disabled={ !type.value || submitting}>
+          &nbsp;{lang === 'zh' ? '加入网络' :'Joining network'}
       </button>
     ]
 
     if (submitting) {
       configSubmit.push(<SubmitIndicator
-        text={this.showNewFields() ? 'Creating network...' : 'Joining network...'}
+        text={lang === 'zh' ? '加入网络...' :'Joining network...'}
       />)
     }
 
     return (
-      <form onSubmit={handleSubmit(this.submitWithValidation)}>
-        <h2 className={styles.title}>Configure Chain Core</h2>
+      <form  onSubmit={handleSubmit(this.submitWithValidation)} >
+        <h2 className={styles.title}>{lang === 'zh' ? '配置 Bytom Core' : 'Configure Bytom Core' }</h2>
 
         <div className={styles.choices}>
-          <div className={styles.choice_wrapper}>
-            <label>
-              <input className={styles.choice_radio_button}
-                    type='radio'
-                    {...typeProps}
-                    value='new'
-                    disabled={!this.props.mockhsm} />
-              <div className={`${styles.choice} ${styles.new} ` + (this.props.mockhsm ? '' : styles.disabled)}>
-                <span className={styles.choice_title}>Create new blockchain network</span>
-
-                {this.props.mockhsm &&
-                  <p>Start a new blockchain network with this Chain Core as the block generator.</p>
-                }
-                {!this.props.mockhsm &&
-                  <p>This core is compiled without a MockHSM. Use <code>corectl</code> to configure as a generator.</p>
-                }
-              </div>
-            </label>
-          </div>
 
           <div className={styles.choice_wrapper}>
             <label>
               <input className={styles.choice_radio_button}
                     type='radio'
                     {...typeProps}
-                    value='join' />
+                    value='mainnet' />
               <div className={`${styles.choice} ${styles.join}`}>
-                <span className={styles.choice_title}>Join existing blockchain network</span>
+                <span className={styles.choice_title}>{lang === 'zh' ? '加入 Bytom 主网' : 'Join the Bytom Mainnet'}</span>
 
                 <p>
-                  Connect this Chain Core to an existing blockchain network.
+                  {lang === 'zh' ? '普通用户选择加入。这是实际的Bytom网络，包含真实的交易信息。' : 'For common users to enter. Mainnet is the production network, that carry real Bytom transactions.'}
                 </p>
               </div>
             </label>
@@ -134,77 +90,40 @@ class Index extends React.Component {
                     {...typeProps}
                     value='testnet' />
               <div className={`${styles.choice} ${styles.testnet}`}>
-                  <span className={styles.choice_title}>Join the Chain Testnet</span>
+                  <span className={styles.choice_title}>{lang === 'zh' ? '加入 Bytom 测试网络' : 'Join the Bytom Testnet' }</span>
 
                   <p>
-                    Connect this Chain Core to the Chain Testnet. <strong>Data will be reset every week.</strong>
+                    {lang === 'zh' ? '开发者选择加入。这是Bytom的测试网络，用于Bytom的相关测试。' : 'For developers or bytom testers to enter. Testnet is an alternative Bytom blockchain, and to be used for testing.' }
                   </p>
               </div>
             </label>
           </div>
         </div>
 
-        <div className={styles.choices}>
-          <div>
-            {this.showNewFields() && <span className={styles.submitWrapper}>{configSubmit}</span>}
-          </div>
-
-          <div>
-            {this.showJoinFields() && <div className={styles.joinFields}>
-              <TextField
-                title='Block Generator URL'
-                placeholder='https://<block-generator-host>'
-                fieldProps={generatorUrl} />
-              <TextField
-                title='Blockchain ID'
-                placeholder='896a800000000000000'
-                fieldProps={blockchainId} />
-              <TextField
-                title={[
-                  'Cross-core Access Token',
-                  <a href={`${docsRoot}/core/learn-more/authentication-and-authorization`} target='_blank'>
-                    <small className={styles.infoLink}>
-                      <span className='glyphicon glyphicon-info-sign'></span>
-                    </small>
-                  </a>]}
-                placeholder='token-id:9e5f139755366add8c76'
-                fieldProps={generatorAccessToken} />
-
-              {configSubmit}
-            </div>}
-          </div>
-
-          <div>
-            {this.showTestnetFields() &&
-              <span className={styles.submitWrapper}>{configSubmit}</span>
-            }
-          </div>
-        </div>
-      </form>
+        {type.value &&<div className={`${styles.choices} ${styles.flexCenter}`}>
+          <div> {configSubmit} </div>
+        </div>}
+       </form>
     )
   }
 }
-
-const mapStateToProps = state => ({
-  mockhsm: state.core.mockhsm,
-})
 
 const mapDispatchToProps = (dispatch) => ({
   submitForm: (data) => dispatch(actions.configuration.submitConfiguration(data))
 })
 
+const mapStateToProps = (state) => ({
+  lang: state.core.lang
+})
+
 const config = {
   form: 'coreConfigurationForm',
   fields: [
-    'type',
-    'generatorUrl',
-    'generatorAccessToken',
-    'blockchainId'
+    'type'
   ]
 }
 
-export default reduxForm(
-  config,
+export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(Index)
+)(reduxForm(config)(Index))

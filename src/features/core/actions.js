@@ -4,6 +4,7 @@ const updateInfo = (param) => ({type: 'UPDATE_CORE_INFO', param})
 const setClientToken = (token) => ({type: 'SET_CLIENT_TOKEN', token})
 const clearSession = ({ type: 'USER_LOG_OUT' })
 const updateBTMAmountUnit = (param) => ({type: 'UPDATE_BTM_AMOUNT_UNIT', param})
+const updateConfiguredStatus = ({ type: 'SET_CONFIGURED' })
 const updateLang = (param) => ({type: 'UPDATE_CORE_LANGUAGE', lang:param})
 
 const updateMiningState = (param) => {
@@ -90,6 +91,7 @@ let actions = {
   updateInfo,
   updateBTMAmountUnit,
   updateLang,
+  updateConfiguredStatus,
   updateMiningState,
   fetchCoreInfo,
   clearSession,

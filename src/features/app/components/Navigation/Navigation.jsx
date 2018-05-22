@@ -4,6 +4,7 @@ import {Link} from 'react-router'
 import styles from './Navigation.scss'
 import {navIcon} from '../../utils'
 import Sync from '../Sync/Sync'
+import appAction from '../../../app/actions'
 import {docsRoot} from '../../../../utility/environment'
 
 class Navigation extends React.Component {
@@ -11,6 +12,14 @@ class Navigation extends React.Component {
     super(props)
 
     this.openTutorial = this.openTutorial.bind(this)
+  }
+
+  componentDidMount() {
+    if(window.ipcRenderer){
+      window.ipcRenderer.on('toggleNavState', (event, arg) => {
+        arg === 'advance'? this.props.showNavAdvanced() : this.props.hideNavAdvanced()
+      })
+    }
   }
 
   openTutorial(event) {
@@ -112,6 +121,8 @@ export default connect(
     }
   },
   (dispatch) => ({
+    showNavAdvanced: () => dispatch(appAction.showNavAdvanced),
+    hideNavAdvanced: () => dispatch(appAction.hideNavAdvanced),
     openTutorial: () => dispatch({type: 'OPEN_TUTORIAL'}),
     setLang: (event) => {
       dispatch({

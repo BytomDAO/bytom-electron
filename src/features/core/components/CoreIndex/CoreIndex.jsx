@@ -6,7 +6,6 @@ import React from 'react'
 import styles from './CoreIndex.scss'
 import actions from 'actions'
 
-
 class CoreIndex extends React.Component {
   constructor(props) {
     super(props)

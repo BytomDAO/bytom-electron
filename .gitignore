@@ -1,7 +1,9 @@
 node_modules
+bytomd
 npm-debug.log
 .env
 public
+desktop
 errorShots
 .idea
 .DS_Store
