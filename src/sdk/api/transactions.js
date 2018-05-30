@@ -9,6 +9,8 @@ function checkForError(resp) {
       errors.formatErrMsg(resp, ''),
       {body: resp}
     )
+  }else if (resp.status === 'fail') {
+    throw new Error(resp.msg)
   }
   return resp
 }
@@ -65,7 +67,9 @@ const transactionsAPI = (client) => {
   )
 
   return {
-    query: (params, cb) => shared.query(client, 'transactions', '/list-transactions', params, {cb}),
+    query: (params, cb) => shared.query(client, 'transactions', '/list-transactions',
+      Object.assign({}, params, {detail: true}),
+      {cb}),
 
     queryAll: (params, processor, cb) => shared.queryAll(client, 'transactions', params, processor, cb),
 
@@ -79,9 +83,9 @@ const transactionsAPI = (client) => {
       }
 
       return shared.tryCallback(
-        client.request('/build-transaction', builder, true),
+        client.request('/build-transaction', builder),
         cb
-      )
+      ).then(resp => checkForError(resp))
     },
 
     buildBatch: (builderBlocks, cb) => {
@@ -100,14 +104,16 @@ const transactionsAPI = (client) => {
     },
 
     sign: (template, cb) => finalize(template)
-      .then(finalized => client.signer.sign(finalized, cb)),
+      .then(finalized => client.request('/sign-transaction', finalized ).then(resp => checkForError(resp)),
+        cb
+      ),
 
     signBatch: (templates, cb) => finalizeBatch(templates)
       // TODO: merge batch errors from finalizeBatch
       .then(finalized => client.signer.signBatch(finalized.successes, cb)),
 
     submit: (signed, cb) => shared.tryCallback(
-      client.request('/submit-transaction', {transactions: [signed]}).then(resp => checkForError(resp[0])),
+      client.request('/submit-transaction', {'raw_transaction': signed}).then(resp => checkForError(resp)),
       cb
     ),
 
