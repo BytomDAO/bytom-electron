@@ -123,7 +123,6 @@ export default connect(
   (dispatch) => ({
     showNavAdvanced: () => dispatch(appAction.showNavAdvanced),
     hideNavAdvanced: () => dispatch(appAction.hideNavAdvanced),
-    openTutorial: () => dispatch({type: 'OPEN_TUTORIAL'}),
     setLang: (event) => {
       dispatch({
         type: 'UPDATE_CORE_LANGUAGE',
