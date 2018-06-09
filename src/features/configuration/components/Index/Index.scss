@@ -41,7 +41,7 @@
   border-radius: $border-radius-base;
   cursor: pointer;
   min-height: 100%;
-  padding: 20px 65px;
+  padding: 20px $grid-gutter-width;
   padding-top: 110px;
   text-align: center;
 

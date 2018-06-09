@@ -106,10 +106,10 @@ class Index extends React.Component {
                      {...typeProps}
                      value='solonet' />
               <div className={`${styles.choice} ${styles.new}`}>
-                <span className={styles.choice_title}>{lang === 'zh' ? '加入 Bytom 单机网络' : 'Join the Bytom Solonet' }</span>
+                <span className={styles.choice_title}>{lang === 'zh' ? '创建 Bytom 单机网络' : 'Create the Bytom Soloent' }</span>
 
                 <p>
-                  {lang === 'zh' ? '开发者选择加入。这是Bytom的单机网络，用于Bytom的相关测试。' : 'For developers or bytom testers to enter. Solonet is local to your own computer, and to be used for testing.' }
+                  {lang === 'zh' ? '创建一个沙盒私有网络供用户运行和测试功能。' : 'For users/developers to run and test wallet\'s new function. Solonet is a private sandbox blockchain network.' }
                 </p>
               </div>
             </label>
