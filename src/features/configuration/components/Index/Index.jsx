@@ -98,6 +98,22 @@ class Index extends React.Component {
               </div>
             </label>
           </div>
+
+          <div className={styles.choice_wrapper}>
+            <label>
+              <input className={styles.choice_radio_button}
+                     type='radio'
+                     {...typeProps}
+                     value='solonet' />
+              <div className={`${styles.choice} ${styles.new}`}>
+                <span className={styles.choice_title}>{lang === 'zh' ? '创建 Bytom 单机网络' : 'Create the Bytom Soloent' }</span>
+
+                <p>
+                  {lang === 'zh' ? '创建一个沙盒私有网络供用户运行和测试功能。' : 'For users/developers to run and test wallet\'s new function. Solonet is a private sandbox blockchain network.' }
+                </p>
+              </div>
+            </label>
+          </div>
         </div>
 
         {type.value &&<div className={`${styles.choices} ${styles.flexCenter}`}>

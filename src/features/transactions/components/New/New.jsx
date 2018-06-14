@@ -4,14 +4,13 @@ import { connect } from 'react-redux'
 import styles from './New.scss'
 import actions from 'actions'
 import componentClassNames from 'utility/componentClassNames'
+import { btmID } from 'utility/environment'
 import { normalizeBTMAmountUnit, converIntToDec } from 'utility/buildInOutDisplay'
 import Tutorial from 'features/tutorial/components/Tutorial'
 import NormalTxForm from './NormalTransactionForm'
 import AdvancedTxForm from './AdvancedTransactionForm'
 import { withRouter } from 'react-router'
 import {getValues} from 'redux-form'
-
-const btmID = 'ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff'
 
 class Form extends React.Component {
   constructor(props) {
@@ -35,7 +34,7 @@ class Form extends React.Component {
     }
     this.props.router.setRouteLeaveHook(this.props.route, (nextLocation) => {
       if (!(this.handleFormEmpty() || nextLocation.state))
-        return 'Your work is not saved! Are you sure you want to leave?'
+        return this.props.lang === 'zh'? '交易表格有未完成内容，你确定要离开么？' : 'Your work is not saved! Are you sure you want to leave?'
     })
   }
 
@@ -75,7 +74,7 @@ class Form extends React.Component {
     e.preventDefault()
     const showAdTx = (type === 'advanced')
     if ( this.state.showAdvanceTx === showAdTx ||
-      ( !this.handleFormEmpty() && !window.confirm('Your work is not saved! Are you sure you want to leave?') )){
+      ( !this.handleFormEmpty() && !window.confirm(this.props.lang === 'zh'? '交易表格有未完成内容，你确定要离开么？' :'Your work is not saved! Are you sure you want to leave?') )){
       return
     }
     this.setState({ showAdvanceTx: showAdTx })
@@ -166,7 +165,7 @@ class Form extends React.Component {
             />}
 
           </div>
-          <Tutorial types={['TutorialForm']} />
+          <Tutorial types={['TutorialForm']} advTx={this.state.showAdvanceTx}/>
         </div>
       </div>
     )

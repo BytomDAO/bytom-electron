@@ -12,7 +12,7 @@
   justify-content: space-between;
 
   > div {
-    width: 50%;
+    width: 30%;
     min-height: 100%;
   }
 }
@@ -27,8 +27,6 @@
     min-height:100%;
     font-weight: normal;
     width: 100%;
-    margin: 0px 10px;
-    //padding-right: 10px;
   }
 }
 
@@ -43,7 +41,7 @@
   border-radius: $border-radius-base;
   cursor: pointer;
   min-height: 100%;
-  padding: 20px 65px;
+  padding: 20px $grid-gutter-width;
   padding-top: 110px;
   text-align: center;
 
