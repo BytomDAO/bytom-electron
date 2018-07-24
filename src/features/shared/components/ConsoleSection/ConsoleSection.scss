@@ -1,0 +1,26 @@
+.main{
+  height: 100%;
+}
+
+.reactConsoleContainer {
+  box-sizing: border-box;
+  height: calc(100% - 116px);
+  padding: 30px;
+  overflow: scroll;
+  background-color: $background-content-color;
+}
+
+.input {
+  height: 65px;
+  border: none;
+  color: $text-strong-color;
+  padding: 10px 12px;
+  width: 750px;
+}
+
+.inputBox{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-top: solid 1px $border-color;
+}
