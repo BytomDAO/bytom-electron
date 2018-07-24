@@ -60,7 +60,7 @@
     },
     "asar": true
   },
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Bytom Wallet Desktop",
   "main": "main.js",
   "scripts": {
