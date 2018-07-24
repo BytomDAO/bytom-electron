@@ -95,7 +95,7 @@ class Navigation extends React.Component {
         <ul className={styles.navigation}>
           <li className={styles.navigationTitle}>{lang === 'zh' ? '开发者' : 'Developer' }</li>
           <li>
-            <a href='/equity' target='_blank'>
+            <a href='http://localhost:9888/equity' target='_blank'>
               {navIcon('transaction', styles)}
               {lang === 'zh' ? 'Equity 合约' : 'Equity Contract'}
             </a>
