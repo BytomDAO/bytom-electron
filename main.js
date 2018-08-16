@@ -4,7 +4,7 @@ const glob = require('glob')
 const url = require('url')
 const path = require('path')
 const fs = require('fs')
-const logger = require('./main-process/logger')
+const logger = require('./modules/logger')
 const log = logger.create('main')
 const bytomdLog = logger.create('bytomd')
 
