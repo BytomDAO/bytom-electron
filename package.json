@@ -11,7 +11,7 @@
     "files": [
       "node_modules/**/*",
       "main.js",
-      "main-process/**/*",
+      "modules/**/*",
       "static/**/*",
       "public/**",
       "!node_modules/electron/",
