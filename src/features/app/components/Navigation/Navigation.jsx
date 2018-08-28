@@ -5,7 +5,7 @@ import styles from './Navigation.scss'
 import {navIcon} from '../../utils'
 import Sync from '../Sync/Sync'
 import appAction from '../../../app/actions'
-import {docsRoot} from '../../../../utility/environment'
+import {docsRoot, releaseUrl} from '../../../../utility/environment'
 
 class Navigation extends React.Component {
   constructor(props) {
@@ -31,12 +31,17 @@ class Navigation extends React.Component {
     const lang = this.props.lang
     return (
       <div className={styles.main}>
+        {this.props.update && <div className={`${styles.updateWarning} ${styles.smallFont}`}>
+          <a href={releaseUrl} target='_blank'>
+            <img src={require('images/warning.svg')} className={styles.warningIcon} />
+            {this.props.newVersionCode}{lang === 'zh'? '版本更新': ' update available'}
+          </a>
+        </div>}
         <ul className={styles.navigation}>
           <li className={styles.navigationTitle}>{lang === 'zh' ? '核心数据' : 'core data'}</li>
           <li>
             <Link to='/transactions' activeClassName={styles.active}>
               {navIcon('transaction', styles)}
-              {}
               {lang === 'zh' ? '交易' : 'Transactions'}
             </Link>
           </li>
@@ -62,14 +67,12 @@ class Navigation extends React.Component {
 
         <ul className={styles.navigation}>
           <li className={styles.navigationTitle}>{lang === 'zh' ? '服务' : 'services' }</li>
-          {this.props.mockhsm &&
           <li>
             <Link to='/keys' activeClassName={styles.active}>
               {navIcon('mockhsm', styles)}
               {lang === 'zh' ? '密钥' : 'Keys'}
             </Link>
           </li>
-          }
         </ul>
 
         { this.props.showNavAdvance && <ul className={styles.navigation}>
@@ -92,6 +95,16 @@ class Navigation extends React.Component {
           </li>
         </ul>
 
+        <ul className={styles.navigation}>
+          <li className={styles.navigationTitle}>{lang === 'zh' ? '开发者' : 'Developer' }</li>
+          <li>
+            <a href='http://localhost:9888/equity' target='_blank'>
+              {navIcon('transaction', styles)}
+              {lang === 'zh' ? 'Equity 合约' : 'Equity Contract'}
+            </a>
+          </li>
+        </ul>
+
         <Sync
           lang={lang}
         />
@@ -103,20 +116,12 @@ class Navigation extends React.Component {
 
 export default connect(
   state => {
-    let docVersion = ''
-
-    const versionComponents = state.core.version.match('^([0-9]\\.[0-9])\\.')
-    if (versionComponents != null) {
-      docVersion = versionComponents[1]
-    }
-
     return {
+      newVersionCode: state.core.newVersionCode,
+      update: state.core.update,
       coreData: state.core.coreData,
       routing: state.routing, // required for <Link>s to update active state on navigation
-      showSync: state.core.configured && !state.core.generator,
       lang: state.core.lang,
-      mockhsm: true,
-      docVersion,
       showNavAdvance: state.app.navAdvancedState === 'advance'
     }
   },

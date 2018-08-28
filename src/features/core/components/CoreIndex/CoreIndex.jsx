@@ -1,7 +1,7 @@
 import { connect } from 'react-redux'
 import {DropdownButton, MenuItem} from 'react-bootstrap'
 import componentClassNames from 'utility/componentClassNames'
-import { PageContent, PageTitle } from 'features/shared/components'
+import { PageContent, PageTitle, ConsoleSection } from 'features/shared/components'
 import React from 'react'
 import styles from './CoreIndex.scss'
 import actions from 'actions'
@@ -15,6 +15,7 @@ class CoreIndex extends React.Component {
     this.handleMiningState = this.handleMiningState.bind(this)
     this.handleAdvancedOptionChange = this.handleAdvancedOptionChange.bind(this)
     this.changeBTMamount = this.changeBTMamount.bind(this)
+    this.consolePopup = this.consolePopup.bind(this)
   }
 
   componentDidMount() {
@@ -48,6 +49,16 @@ class CoreIndex extends React.Component {
     }
   }
 
+  consolePopup(e) {
+    e.preventDefault()
+    this.props.showModal(
+      <ConsoleSection
+        cmd={this.props.cmd}
+        lang={this.props.core.lang}
+      />
+    )
+  }
+
   render() {
     let navState = this.props.navAdvancedState === 'advance'
     let miningState = this.props.core.mingStatus
@@ -63,7 +74,7 @@ class CoreIndex extends React.Component {
             <tbody>
             <tr className={styles.row}>
               <td className={styles.row_label}>{lang === 'zh' ? '核心版本号' : 'Core Versions'}:</td>
-              <td><code>{coreData? coreData['version'] : null}</code></td>
+              <td><code>{coreData? coreData['versionInfo']['version']: null}</code></td>
             </tr>
             <tr className={styles.row}>
               <td className={styles.row_label}>{lang === 'zh' ? '语言' : 'Language'}:</td>
@@ -174,7 +185,14 @@ class CoreIndex extends React.Component {
 
     return (
       <div className={componentClassNames(this, 'flex-container', styles.mainContainer)}>
-        <PageTitle title={lang === 'zh' ? '核心状态' :'Core Status'} />
+        <PageTitle
+          title={lang === 'zh' ? '核心状态' :'Core Status'}
+          actions={[
+            <button className='btn btn-link' onClick={this.consolePopup}>
+              <img src={require('images/console-window.svg')}/>
+            </button>
+          ]}
+        />
 
         <PageContent>
           <div className={`${styles.flex}`}>
@@ -196,7 +214,18 @@ const mapDispatchToProps = (dispatch) => ({
   showNavAdvanced: () => dispatch(actions.app.showNavAdvanced),
   hideNavAdvanced: () => dispatch(actions.app.hideNavAdvanced),
   uptdateBtmAmountUnit: (param) => dispatch(actions.core.updateBTMAmountUnit(param)),
-  updateMiningState: (param) => dispatch(actions.core.updateMiningState(param))
+  updateMiningState: (param) => dispatch(actions.core.updateMiningState(param)),
+  showModal: (body) => dispatch(actions.app.showModal(
+    body,
+    actions.app.hideModal,
+    null,
+    {
+      box: true,
+      wide: true,
+      noCloseBtn: true
+    }
+  )),
+  cmd: (data) => dispatch(actions.app.cmd(data))
 })
 
 export default connect(

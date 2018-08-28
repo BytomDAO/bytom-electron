@@ -21,7 +21,7 @@ const mappings = {
   spentOutputId: 'Spent Output ID',
   refData: 'Reference Data',
   sourceId: 'Source ID',
-  sourcePos: 'Source Postion',
+  sourcePos: 'Source Position',
   issuanceProgram: 'Issuance Program',
   isLocal: 'Local?',
   referenceData: 'Reference Data',
@@ -157,7 +157,7 @@ const addZeroToDecimalPos = (src,pos) => {
 }
 
 const formatIntNumToPosDecimal = (neu,pos) => {
-  if(neu != null ){
+  if(neu != null && neu !== ''){
     let neuString = neu.toString()
     let neuLength = neuString.length
     if(neuLength <= pos){

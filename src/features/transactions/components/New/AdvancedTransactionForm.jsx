@@ -2,16 +2,18 @@ import {
   BaseNew,
   FormSection,
   FieldLabel,
-  TextField,
   SubmitIndicator,
-  ErrorBanner
+  ErrorBanner,
+  PasswordField
 } from 'features/shared/components'
+import TransactionDetails from './MultiSignTransactionDetails/TransactionDetails'
 import {DropdownButton, MenuItem} from 'react-bootstrap'
 import {reduxForm} from 'redux-form'
 import ActionItem from './FormActionItem'
 import React from 'react'
 import styles from './New.scss'
 import disableAutocomplete from 'utility/disableAutocomplete'
+import actions from 'actions'
 
 class AdvancedTxForm extends React.Component {
   constructor(props) {
@@ -89,7 +91,8 @@ class AdvancedTxForm extends React.Component {
 
     return (
       <form onSubmit={handleSubmit(this.submitWithValidation)} {...disableAutocomplete}
-            onKeyDown={(e) => { this.props.handleKeyDown(e, handleSubmit(this.submitWithValidation), this.disableSubmit(actions)) }}>
+            // onKeyDown={(e) => { this.props.handleKeyDown(e, handleSubmit(this.submitWithValidation), this.disableSubmit(actions)) }}
+      >
 
         <FormSection title='Actions'>
           {actions.map((action, index) =>
@@ -136,11 +139,13 @@ class AdvancedTxForm extends React.Component {
         {this.state.showAdvanced &&
         <FormSection title={lang === 'zh' ? '高级选项' : 'Advanced Options'}>
           <div>
-            <TextField
-              title={lang === 'zh' ? '带签名交易' : 'To sign transaction'}
-              placeholder={lang === 'zh' ? '在这里复制交易 HEX ...' : 'Paste transaction hex here...'}
+            <TransactionDetails
+              lang={lang}
               fieldProps={signTransaction}
-              autoFocus={true}/>
+              decode={this.props.decode}
+              transaction={this.props.decodedTx}
+              showJsonModal={this.props.showJsonModal}
+            />
 
             <FieldLabel>{lang === 'zh' ? '交易构建类型' : 'Transaction Build Type'}</FieldLabel>
             <table className={styles.submitTable}>
@@ -178,8 +183,10 @@ class AdvancedTxForm extends React.Component {
 
         {(actions.length > 0 || this.state.showAdvanced) && <FormSection>
             <label className={styles.title}>{lang === 'zh' ? '密码' : 'Password'}</label>
-            <TextField placeholder={lang === 'zh' ? '请输入密码' : 'Please enter the password'} fieldProps={password}
-                       autoFocus={false} type={'password'}/>
+            <PasswordField
+              placeholder={lang === 'zh' ? '请输入密码' : 'Please enter the password'}
+              fieldProps={password}
+            />
           </FormSection>}
 
           <FormSection className={styles.submitSection}>
@@ -229,8 +236,20 @@ const validate = (values, props) => {
 }
 
 export default BaseNew.connect(
-  BaseNew.mapStateToProps('transaction'),
-  BaseNew.mapDispatchToProps('transaction'),
+  (state, ownProps) => ({
+    ...BaseNew.mapStateToProps('transaction')(state, ownProps),
+    decodedTx: state.transaction.decodedTx
+  }),
+  (dispatch) => ({
+    ...BaseNew.mapDispatchToProps('transaction')(dispatch),
+    decode: (transaction) => dispatch( actions.transaction.decode(transaction)),
+    showJsonModal: (body) => dispatch(actions.app.showModal(
+      body,
+      actions.app.hideModal,
+      null,
+      { wide: true }
+    )),
+  }),
   reduxForm({
     form: 'AdvancedTransactionForm',
     fields: [

@@ -24,5 +24,17 @@
     "semi": ["error", "never"],
     "react/jsx-uses-react": "error",
     "react/jsx-uses-vars": "error"
+  },
+  "globals": {
+    "i18n": true,
+    "beforeEach": true,
+    "document": true,
+    "Promise": true,
+    "require": true,
+    "global": true,
+    "store": true,
+    "exports": true,
+    "module": true,
+    "process": true
   }
 }

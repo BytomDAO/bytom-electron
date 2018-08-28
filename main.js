@@ -1,18 +1,24 @@
+require('babel-register')
+require('events').EventEmitter.defaultMaxListeners = 100
 const {app, BrowserWindow, ipcMain, shell} = require('electron')
 const spawn = require('child_process').spawn
 const glob = require('glob')
 const url = require('url')
 const path = require('path')
 const fs = require('fs')
-const logger = require('./main-process/logger')
+const logger = require('./modules/logger')
 const log = logger.create('main')
 const bytomdLog = logger.create('bytomd')
+const Settings = require('./modules/settings')
+
 
 let win, bytomdInit, bytomdMining
 
 global.fileExist = false
 global.mining = {isMining: false}
 let startnode = false
+
+Settings.init()
 
 function initialize () {
 
@@ -25,7 +31,7 @@ function initialize () {
       height: 768,
       'webPreferences': {
         'webSecurity': !process.env.DEV_URL,
-        'preload': path.join(__dirname, '/main-process/preload.js')
+        'preload': path.join(__dirname, '/modules/preload.js')
       },
       icon: icon_path
     })
@@ -103,24 +109,9 @@ function initialize () {
     }
   })
 }
-const bytomdPath = process.env.DEV?
-  path.join(__dirname, '/bytomd/bytomd-darwin_amd64'):
-  glob.sync( path.join(__dirname, '../bytomd/bytomd*'))
-
-let bytomdDataPath
-switch (process.platform){
-  case 'win32':
-    bytomdDataPath = `${app.getPath('appData')}/Bytom`
-    break
-  case 'darwin':
-    bytomdDataPath = `${app.getPath('home')}/Library/Bytom`
-    break
-  case 'linux':
-    bytomdDataPath = `${app.getPath('home')}/.bytom`
-}
 
 function setBytomMining(event) {
-  bytomdMining = spawn( `${bytomdPath}`, ['node', '--web.closed'] )
+  bytomdMining = spawn( `${Settings.bytomdPath}`, ['node', '--web.closed'] )
 
   bytomdMining.stdout.on('data', function(data) {
     bytomdLog.info(`bytomd mining: ${data}`)
@@ -147,7 +138,7 @@ function setBytomMining(event) {
 
 function setBytomInit(event, bytomNetwork) {
   // Init bytomd
-  bytomdInit = spawn(`${bytomdPath}`, ['init', '--chain_id',  `${bytomNetwork}`] )
+  bytomdInit = spawn(`${Settings.bytomdPath}`, ['init', '--chain_id',  `${bytomNetwork}`] )
 
   bytomdInit.stdout.on('data', function(data) {
     bytomdLog.info(`bytomd init: ${data}`)
@@ -159,7 +150,9 @@ function setBytomInit(event, bytomNetwork) {
 
   bytomdInit.on('exit', function (code) {
     event.sender.send('ConfiguredNetwork','init')
-    setBytomMining(event)
+      .then(() =>
+        setBytomMining(event)
+      )
     bytomdLog.info('bytom init exited with code ' + code)
   })
 
@@ -169,7 +162,7 @@ function setBytomInit(event, bytomNetwork) {
 }
 
 function bytomd(){
-  const filePath = path.join(`${bytomdDataPath}/config.toml`)
+  const filePath = path.join(`${Settings.bytomdDataPath}/config.toml`)
   if (fs.existsSync(filePath)) {
     log.info('Bytomd Network has been inited')
     global.fileExist = true
@@ -184,7 +177,7 @@ function bytomd(){
 
 // Require each JS file in the main-process dir
 function loadMenu () {
-  const files = glob.sync(path.join(__dirname, 'main-process/menus/*.js'))
+  const files = glob.sync(path.join(__dirname, 'modules/menus/*.js'))
   files.forEach((file) => { require(file) })
 }
 

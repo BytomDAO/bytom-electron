@@ -11,7 +11,7 @@
     "files": [
       "node_modules/**/*",
       "main.js",
-      "main-process/**/*",
+      "modules/**/*",
       "static/**/*",
       "public/**",
       "!node_modules/electron/",
@@ -60,7 +60,7 @@
     },
     "asar": true
   },
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Bytom Wallet Desktop",
   "main": "main.js",
   "scripts": {
@@ -143,7 +143,6 @@
     "file-loader": "~0.9.0",
     "hjs-webpack": "~8.4.0",
     "json-loader": "~0.5.4",
-    "mocha": "~2.2.0",
     "nock": "~4.0.0",
     "node-sass": "~3.8.0",
     "npm-run-all": "^4.1.2",
