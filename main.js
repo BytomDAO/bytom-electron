@@ -150,9 +150,7 @@ function setBytomInit(event, bytomNetwork) {
 
   bytomdInit.on('exit', function (code) {
     event.sender.send('ConfiguredNetwork','init')
-      .then(() =>
-        setBytomMining(event)
-      )
+    setBytomMining(event)
     bytomdLog.info('bytom init exited with code ' + code)
   })
 
