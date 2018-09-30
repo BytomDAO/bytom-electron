@@ -1,7 +1,8 @@
 const { app } = require('electron')
 const path = require('path')
+const glob = require('glob')
 
-import logger from './logger'
+// import logger from './logger'
 
 let instance = null
 
@@ -15,10 +16,10 @@ class Settings {
   }
 
   init() {
-    const logLevel = { logLevel: 'info' }
-    const logFolder = { logFolder: path.join(this.userDataPath, 'logs') }
-    const loggerOptions = Object.assign('info', logLevel, logFolder)
-    logger.setup(loggerOptions)
+    // const logLevel = { logLevel: 'info' }
+    // const logFolder = { logFolder: path.join(this.userDataPath, 'logs') }
+    // const loggerOptions = Object.assign('info', logLevel, logFolder)
+    // logger.setup(loggerOptions)
   }
 
   get userDataPath() {
@@ -37,7 +38,7 @@ class Settings {
   get bytomdPath() {
     return process.env.DEV?
       path.join(__dirname, '../bytomd/bytomd-darwin_amd64'):
-      glob.sync( path.join(__dirname, '../bytomd/bytomd*'))
+      glob.sync( path.join(__dirname, '../../bytomd/bytomd*'))
   }
 
   get bytomdDataPath(){
