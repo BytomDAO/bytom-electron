@@ -47,7 +47,7 @@ class Settings {
         bytomdDataPath = `${app.getPath('appData')}/Bytom`
         break
       case 'darwin':
-        bytomdDataPath = `${app.getPath('home')}/Library/Bytom`
+        bytomdDataPath = `${app.getPath('home')}/Library/Application Support/Bytom`
         break
       case 'linux':
         bytomdDataPath = `${app.getPath('home')}/.bytom`
