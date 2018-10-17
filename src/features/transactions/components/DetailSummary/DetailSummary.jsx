@@ -3,13 +3,7 @@ import { Link } from 'react-router'
 import { converIntToDec } from 'utility/buildInOutDisplay'
 import { btmID } from 'utility/environment'
 import styles from './DetailSummary.scss'
-
-const INOUT_TYPES_ZH = {
-  issue: '创建资产',
-  sent: '支出',
-  received: '收入',
-  retire: '销毁资产',
-}
+import {withNamespaces} from 'react-i18next'
 
 class DetailSummary extends React.Component {
   normalizeInouts(inouts) {
@@ -58,7 +52,7 @@ class DetailSummary extends React.Component {
     const summary = this.normalizeInouts(inouts)
 
     const items = []
-    const lang = this.props.lang
+    const t = this.props.t
 
     const normalizeBtmAmountUnit = (assetID, amount, btmAmountUnit) => {
       //normalize BTM Amount
@@ -87,8 +81,26 @@ class DetailSummary extends React.Component {
         const assetAlias = asset.alias ==='BTM'? this.props.btmAmountUnit: asset.alias
         if (accountId !== 'external') {
           if(account['spend']> account['control'] && account['spend'] > 0){
-            const amount = account['spend']- account['control']
-            const type = asset.retire >= amount? 'retire': 'sent'
+            let type,
+              amount = account['spend']- account['control']
+
+            if(asset.retire === 0 ){
+              type = 'sent'
+            }else if(asset.retire >= amount ){
+              type = 'retire'
+            }else {
+              type = 'retire'
+              const gas = amount - asset.retire
+              amount = asset.retire
+              items.push({
+                type: 'sent',
+                amount: normalizeBtmAmountUnit(assetId, gas, this.props.btmAmountUnit),
+                asset: assetAlias ? assetAlias : <code className={styles.rawId}>{assetId}</code>,
+                assetId: assetId,
+                account: account.alias ? account.alias : <code className={styles.rawId}>{accountId}</code>,
+                accountId: accountId,
+              })
+            }
             items.push({
               type: type,
               amount: asset.decimals? converIntToDec(amount, asset.decimals) : normalizeBtmAmountUnit(assetId, amount, this.props.btmAmountUnit),
@@ -129,13 +141,13 @@ class DetailSummary extends React.Component {
             {/*<td className={styles.colLabel}><img src={require(`images/transactions/${isCoinbase?'coinbase':item.type}.svg`)}/></td>*/}
             {
               !isCoinbase && <td className={styles.colAction}>
-                <img src={require(`images/transactions/${item.type}.svg`)}/> {lang==='zh'? INOUT_TYPES_ZH[item.type] : item.type}
+                <img src={require(`images/transactions/${item.type}.svg`)}/> {t(`transaction.type.${item.type}`)}
                 </td>
             }
             {
               isCoinbase && <td className={styles.colAction}>
-                <img src={require('images/transactions/coinbase.svg')}/> {lang==='zh'? '挖矿收入':'coinbase'}
-                {!mature && <small className={styles.immature}>{ lang === 'zh' ? '未成熟' : 'immature' }</small>}
+                <img src={require('images/transactions/coinbase.svg')}/> {t('transaction.type.coinbase')}
+                {!mature && <small className={styles.immature}>{ t('transaction.type.immature') }</small>}
               </td>
             }
 
@@ -162,4 +174,4 @@ class DetailSummary extends React.Component {
   }
 }
 
-export default DetailSummary
+export default withNamespaces('translations') ( DetailSummary )
