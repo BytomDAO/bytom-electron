@@ -221,14 +221,6 @@ export const configured = (state = configuredState, action) => {
   }
 }
 
-const defaultLang = window.navigator.language.startsWith('zh') ? 'zh' : 'en'
-const lang = (state = defaultLang, action) => {
-  if (action.type === 'UPDATE_CORE_LANGUAGE') {
-    return action.lang || ''
-  }
-  return state
-}
-
 const mingStatus = (state = false, action) => {
   if (action.type == 'UPDATE_CORE_INFO') {
     if(window.remote && window.remote.getGlobal('mining').isMining!= action.param.data.mining){
@@ -316,6 +308,5 @@ export default combineReducers({
   update,
   validToken,
   version,
-  lang,
   btmAmountUnit
 })
