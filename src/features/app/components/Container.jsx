@@ -3,6 +3,7 @@ import { connect } from 'react-redux'
 import actions from 'actions'
 import { Main, Config, Login, Loading, Register ,Modal } from './'
 import moment from 'moment'
+import { withI18n } from 'react-i18next'
 
 const CORE_POLLING_TIME = 2 * 1000
 
@@ -70,10 +71,10 @@ class Container extends React.Component {
         this.props.updateMiningState(isMining)
       })
     }
-    if(this.props.lang === 'zh'){
+    if(this.props.lng === 'zh'){
       moment.locale('zh-cn')
     }else{
-      moment.locale(this.props.lang)
+      moment.locale(this.props.lng)
     }
   }
 
@@ -84,16 +85,20 @@ class Container extends React.Component {
         nextProps.location.pathname != this.props.location.pathname) {
       this.redirectRoot(nextProps)
     }
-    if(nextProps.lang === 'zh'){
-      moment.locale('zh-cn')
-    }else{
-      moment.locale(nextProps.lang)
-    }
   }
 
   render() {
     let layout
     const lang = this.props.lang
+
+    const { i18n } = this.props
+    i18n.on('languageChanged', function(lng) {
+      if(lng === 'zh'){
+        moment.locale('zh-cn')
+      }else{
+        moment.locale(lng)
+      }
+    })
 
     if (!this.props.authOk) {
       layout = <Login/>
@@ -130,7 +135,6 @@ export default connect(
     onTestnet: state.core.onTestnet,
     flashMessages: state.app.flashMessages,
     accountInit: state.core.accountInit,
-    lang: state.core.lang
   }),
   (dispatch) => ({
     fetchInfo: options => dispatch(actions.core.fetchCoreInfo(options)),
@@ -143,4 +147,4 @@ export default connect(
     markFlashDisplayed: (key) => dispatch(actions.app.displayedFlash(key)),
     fetchAccountItem: () => dispatch(actions.account.fetchItems())
   })
-)(Container)
+)( withI18n() (Container) )

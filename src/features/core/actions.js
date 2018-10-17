@@ -5,7 +5,6 @@ const setClientToken = (token) => ({type: 'SET_CLIENT_TOKEN', token})
 const clearSession = ({ type: 'USER_LOG_OUT' })
 const updateBTMAmountUnit = (param) => ({type: 'UPDATE_BTM_AMOUNT_UNIT', param})
 const updateConfiguredStatus = ({ type: 'SET_CONFIGURED' })
-const updateLang = (param) => ({type: 'UPDATE_CORE_LANGUAGE', lang:param})
 
 const updateMiningState = (param) => {
   return (dispatch) => {
@@ -53,7 +52,7 @@ const registerKey = (data) => {
     return chainClient().mockHsm.keys.create(keyData)
       .then((resp) => {
         if (resp.status === 'fail') {
-          throw new Error(resp.msg)
+          throw resp
         }
 
         if (typeof data.accountAlias == 'string')  data.accountAlias = data.accountAlias.trim()
@@ -65,7 +64,7 @@ const registerKey = (data) => {
         chainClient().accounts.create(accountData)
           .then((resp) => {
             if (resp.status === 'fail') {
-              throw new Error(resp.msg)
+              throw resp
             }
 
             if(resp.status === 'success') {
@@ -90,7 +89,6 @@ let actions = {
   setClientToken,
   updateInfo,
   updateBTMAmountUnit,
-  updateLang,
   updateConfiguredStatus,
   updateMiningState,
   fetchCoreInfo,
