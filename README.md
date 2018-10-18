@@ -17,7 +17,7 @@ npm install
 ```
 
 ##### Add Bytomd Deamon
-Add a folder named `bytomd` under the root folder. Put all the bytomd files into teh folder.
+Add a folder named `bytomd` under the root folder. Put all the bytomd files into that folder.
 ```
 bytom-electron
 │   README.md
