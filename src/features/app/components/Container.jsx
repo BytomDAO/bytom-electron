@@ -47,9 +47,6 @@ class Container extends React.Component {
       window.ipcRenderer.on('btmAmountUnitState', (event, arg) => {
         this.props.uptdateBtmAmountUnit(arg)
       })
-      window.ipcRenderer.on('lang', (event, arg) => {
-        this.props.uptdateLang(arg)
-      })
       window.ipcRenderer.on('ConfiguredNetwork', (event, arg) => {
         if(arg === 'startNode'){
           this.props.fetchInfo().then(() => {
@@ -89,9 +86,7 @@ class Container extends React.Component {
 
   render() {
     let layout
-    const lang = this.props.lang
-
-    const { i18n } = this.props
+    const { t, i18n } = this.props
     i18n.on('languageChanged', function(lng) {
       if(lng === 'zh'){
         moment.locale('zh-cn')
@@ -105,7 +100,7 @@ class Container extends React.Component {
     } else if (!this.props.configured) {
       layout = <Config>{this.props.children}</Config>
     } else if (!this.props.configKnown) {
-      return <Loading>{lang === 'zh'?  '正在连接到Bytom Core...' : 'Connecting to Bytom Core...'}</Loading>
+      return <Loading>{t('welcome.connect')}</Loading>
     } else if (!this.props.accountInit && this.state.noAccountItem){
       layout = <Register>{this.props.children}</Register>
     } else{
@@ -142,7 +137,6 @@ export default connect(
     showRoot: () => dispatch(actions.app.showRoot),
     showConfiguration: () => dispatch(actions.app.showConfiguration()),
     uptdateBtmAmountUnit: (param) => dispatch(actions.core.updateBTMAmountUnit(param)),
-    uptdateLang: (param) => dispatch(actions.core.updateLang(param)),
     updateConfiguredStatus: () => dispatch(actions.core.updateConfiguredStatus),
     markFlashDisplayed: (key) => dispatch(actions.app.displayedFlash(key)),
     fetchAccountItem: () => dispatch(actions.account.fetchItems())
