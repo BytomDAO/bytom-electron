@@ -16,7 +16,21 @@ Install dependencies:
 npm install
 ```
 
-Create a bytomd folder in the main directory. put the bytomd core into this folder.
+##### Add Bytomd Deamon
+Add a folder named `bytomd` under the root folder. Put all the bytomd files into teh folder.
+```
+bytom-electron
+│   README.md
+│
+└───bytomd
+│   │   bytomd-darwin_amd64
+│   │   bytomd-linux_386
+│   │   bytomd-linux_amd64
+│   │   bytomd-windows_386.exe
+│   │   bytomd-windows_amd64.exe
+│   │  
+``` 
+
 
 To developer the bytom electron app, run the script.
 ```
