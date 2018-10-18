@@ -47,6 +47,9 @@ class Container extends React.Component {
       window.ipcRenderer.on('btmAmountUnitState', (event, arg) => {
         this.props.uptdateBtmAmountUnit(arg)
       })
+      window.ipcRenderer.on('lang', (event, arg) => {
+        this.props.i18n.changeLanguage(arg)
+      })
       window.ipcRenderer.on('ConfiguredNetwork', (event, arg) => {
         if(arg === 'startNode'){
           this.props.fetchInfo().then(() => {

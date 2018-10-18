@@ -31,7 +31,6 @@ export const exportState = (store) => () => {
   const browserSetting = {
     core:{
       btmAmountUnit: state.core.btmAmountUnit,
-      lang: state.core.lang
     },
     app:{
       navAdvancedState : state.app.navAdvancedState,
@@ -41,6 +40,7 @@ export const exportState = (store) => () => {
   try {
     localStorage.setItem('reduxState', JSON.stringify(exportable))
     settings.set('browserSetting', browserSetting)
+    settings.set('lang',window.localStorage.getItem('i18nextLng'))
   } catch (err) { /* localstorage not available */ }
 }
 

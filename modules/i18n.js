@@ -3,19 +3,23 @@ The i18n module, loads the language files and initializes i18next
 
 @module i18n
 */
-const fs = require('fs')
 const i18n = require('i18next')
+const extend = require('lodash/extend')
 
-let i18nConf = fs.readFileSync(`${__dirname}/interface/project-tap.i18n`)
-i18nConf = JSON.parse(i18nConf)
+const LanguageDetector = require('i18next-browser-languagedetector')
+
+
+const supported_languages = ['en', 'zh']
 
 const resources = {
-  dev: { translation: require('./interface/i18n/desktop.en.i18n.json') },
+  dev: { translations: require('./interface/i18n/desktop.en.i18n.json') },
 }
 
 // add supported languages
-i18nConf.supported_languages.forEach((lang) => {
-  resources[lang] = { translation: require(`./interface/i18n/desktop.${lang}.i18n.json`) }
+supported_languages.forEach((lang) => {
+  const desktopTranslations = require(`./interface/i18n/desktop.${lang}.i18n.json`)
+  const uiTranslations = require(`../src/locales/${lang}/translation.json`)
+  resources[lang] = { translations: extend(desktopTranslations, uiTranslations) }
 })
 
 /**
@@ -41,12 +45,29 @@ i18n.getBestMatchedLangCode = (langCode) => {
   return bestMatchedCode
 }
 
-i18n.init({
-  lng:   global.language || 'en',
-  fallbackLng: 'en',
+i18n.use(LanguageDetector).init({
+  lng:   global.language,
+  fallbackLng:  'en',
   resources,
-  interpolation: { prefix: '__', suffix: '__' },
-})
+  interpolation: {
+    escapeValue: false, // not needed for react!!
+    prefix: '__',
+    suffix: '__'
+  },
+  debug: false,
 
+  ns: ['translations'],
+  defaultNS: 'translations',
+
+  detection: {
+    // order and from where user language should be detected
+    order: ['localStorage', 'querystring', 'cookie',  'navigator', 'htmlTag', 'path', 'subdomain']
+  },
+
+  react: {
+    wait: true,
+    bindStore: false
+  }
+})
 
 module.exports = i18n
