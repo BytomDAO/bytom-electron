@@ -305,6 +305,18 @@
     "repeatPlaceHolder":"请重复输入密钥密码...",
     "errorTitle":"初始化错误"
   },
+  "welcome":{
+    "connect":"正在连接到Bytom Core...",
+    "join":"加入网络",
+    "joining":"加入网络...",
+    "title":"配置 Bytom Core",
+    "mainnetTitle":"加入 Bytom 主网",
+    "mainnetMsg":"普通用户选择加入。这是实际的Bytom网络，包含真实的交易信息。",
+    "testnetTitle":"加入 Bytom 测试网络",
+    "testnetMsg":"开发者选择加入。这是Bytom的测试网络，用于Bytom的相关测试。",
+    "solonetTitle":"创建 Bytom 单机网络",
+    "solonetMsg":"创建一个沙盒私有网络供用户运行和测试功能。"
+  },
   "backup":{
     "title":"备份与恢复",
     "backup":"备份",

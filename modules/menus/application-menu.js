@@ -1,6 +1,6 @@
 const { Menu, app, shell, ipcMain, dialog , nativeImage} = require('electron')
 const settings = require('electron-settings')
-global.language = settings.get('browserSetting.core.lang') || app.getLocale()
+global.language = settings.get('lang') || app.getLocale()
 const i18n = require('../i18n.js')
 global.i18n = i18n
 const path = require('path')
@@ -130,7 +130,7 @@ let menuTempl = function () {
 
   // LANGUAGE (VIEW)
   const defaultLanguage = i18n.getBestMatchedLangCode(app.getLocale())
-  let currentLanguage = settings.get('browserSetting.core.lang') || defaultLanguage
+  let currentLanguage = settings.get('lang') || defaultLanguage
   const LanguageMenu = [{
     label: i18n.t('desktop.applicationMenu.view.default'),
     type: 'checkbox',
@@ -148,7 +148,7 @@ let menuTempl = function () {
   },{
     label: i18n.t('desktop.applicationMenu.view.langCodes.zh'),
     type: 'checkbox',
-    checked: currentLanguage === 'zh',
+    checked:  currentLanguage.substring(0,2) == 'zh' ,
     click: (item, focusedWindow) => {
       if (focusedWindow) {
         i18n.changeLanguage('zh', (err, t) => {
@@ -162,7 +162,7 @@ let menuTempl = function () {
   },{
     label: i18n.t('desktop.applicationMenu.view.langCodes.en'),
     type: 'checkbox',
-    checked: currentLanguage === 'en',
+    checked: currentLanguage == 'en',
     click: (item, focusedWindow) => {
       if (focusedWindow) {
         i18n.changeLanguage('en', (err, t) => {
@@ -361,7 +361,7 @@ settings.watch('browserSetting.core.btmAmountUnit', newValue => {
   menu.items[3].submenu.items[0].submenu.items[2].checked = ( btmAmountUnit === 'NEU' )
 })
 
-settings.watch('browserSetting.core.lang', newValue => {
+settings.watch('lang', newValue => {
   i18n.changeLanguage(newValue, (err, t) => {
     if (err) return log.error('i18n: something went wrong loading', err)
     createMenu()
