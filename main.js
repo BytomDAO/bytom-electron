@@ -11,8 +11,9 @@ const log = logger.create('main')
 const bytomdLog = logger.create('bytomd')
 const Settings = require('./modules/settings')
 
+const net = require('net')
 
-let win, bytomdInit, bytomdMining
+let win, bytomdInit, bytomdNode
 
 global.fileExist = false
 global.mining = {isMining: false}
@@ -94,15 +95,15 @@ function initialize () {
       bytomdInit.kill('SIGINT')
       log.info('Kill bytomd Init command...')
     }
-    if(bytomdMining){
-      bytomdMining.kill('SIGINT')
+    if(bytomdNode){
+      bytomdNode.kill('SIGINT')
       const killTimeout = setTimeout(() => {
-        bytomdMining.kill('SIGKILL')
+        bytomdNode.kill('SIGKILL')
       }, 8000 /* 8 seconds */)
 
-      bytomdMining.once('close', () => {
+      bytomdNode.once('close', () => {
         clearTimeout(killTimeout)
-        bytomdMining = null
+        bytomdNode = null
       })
 
       log.info('Kill bytomd Mining command...')
@@ -110,28 +111,34 @@ function initialize () {
   })
 }
 
-function setBytomMining(event) {
-  bytomdMining = spawn( `${Settings.bytomdPath}`, ['node', '--web.closed'] )
+function setBytomNode() {
+  bytomdNode = spawn( `${Settings.bytomdPath}`, ['node', '--web.closed'] )
 
-  bytomdMining.stdout.on('data', function(data) {
-    bytomdLog.info(`bytomd mining: ${data}`)
+  function checkPort () {
+    setTimeout(function () {
+      portInUse(9888, function(returnValue) {
+        if (!returnValue) {
+          checkPort()
+        }else{
+          startnode = true
+          win.webContents.send('ConfiguredNetwork', 'startNode')
+        }
+      })
+    }, 500)
+  }
+
+  checkPort()
+
+  bytomdNode.stdout.on('data', function(data) {
+    bytomdLog.info(`bytomd node: ${data}`)
   })
 
-  bytomdMining.stderr.on('data', function(data) {
-    bytomdLog.info(`bytomd mining: ${data}`)
-    if(data.includes('msg="Start node')) {
-      if(event){
-        event.sender.send('ConfiguredNetwork', 'startNode')
-      }
-      else {
-        startnode = true
-        win.webContents.send('ConfiguredNetwork', 'startNode')
-      }
-    }
+  bytomdNode.stderr.on('data', function(data) {
+    bytomdLog.info(`bytomd node: ${data}`)
   })
 
-  bytomdMining.on('exit', function (code) {
-    bytomdLog.info('bytom Mining exited with code ' + code)
+  bytomdNode.on('exit', function (code) {
+    bytomdLog.info('bytom Node exited with code ' + code)
     app.quit()
   })
 }
@@ -150,7 +157,7 @@ function setBytomInit(event, bytomNetwork) {
 
   bytomdInit.on('exit', function (code) {
     event.sender.send('ConfiguredNetwork','init')
-    setBytomMining(event)
+    setBytomNode()
     bytomdLog.info('bytom init exited with code ' + code)
   })
 
@@ -164,7 +171,7 @@ function bytomd(){
   if (fs.existsSync(filePath)) {
     log.info('Bytomd Network has been inited')
     global.fileExist = true
-    setBytomMining()
+    setBytomNode()
   }else {
     log.info('Init Bytomd Network...')
     ipcMain.on('bytomdInitNetwork', (event, arg) => {
@@ -183,6 +190,22 @@ function setupConfigure(){
   const logFolder = {logFolder: path.join(app.getPath('userData'), 'logs')}
   const loggerOptions = Object.assign(logFolder)
   logger.setup(loggerOptions)
+}
+
+function portInUse(port, callback) {
+  const server = net.createServer(function(socket) {
+    socket.write('Echo server\r\n')
+    socket.pipe(socket)
+  })
+
+  server.listen(port, '0.0.0.0')
+  server.on('error', function (e) {
+    callback(true)
+  })
+  server.on('listening', function (e) {
+    server.close()
+    callback(false)
+  })
 }
 
 // Handle Squirrel on Windows startup events
