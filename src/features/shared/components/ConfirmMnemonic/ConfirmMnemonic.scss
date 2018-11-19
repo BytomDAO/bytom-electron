@@ -12,10 +12,12 @@
 }
 
 .seedWord{
-  width: 121px;
+  width: 22%;
   height: 36px;
   margin: 5px 10px 5px 0;
-  text-align: center;
+  &, input{
+    text-align: center;
+  }
 }
 
 .seedArea{
@@ -23,3 +25,8 @@
   flex-wrap: wrap;
   margin-bottom: $gutter-size/2;
 }
+
+.container{
+  width: 540px;
+}
+
