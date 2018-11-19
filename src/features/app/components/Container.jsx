@@ -1,7 +1,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import actions from 'actions'
-import { Main, Config, Login, Loading, Register ,Modal } from './'
+import { Main, Config, Login, Loading, Modal } from './'
 import moment from 'moment'
 import { withI18n } from 'react-i18next'
 
@@ -10,11 +10,11 @@ const CORE_POLLING_TIME = 2 * 1000
 class Container extends React.Component {
   constructor(props) {
     super(props)
-    if(props.location.pathname.includes('index.html')) {
-      this.redirectRoot(props)
-    }
     this.state = {
       noAccountItem: false
+    }
+    if(props.location.pathname.includes('index.html')) {
+      this.redirectRoot(props)
     }
     this.redirectRoot = this.redirectRoot.bind(this)
   }
@@ -23,22 +23,28 @@ class Container extends React.Component {
     const {
       authOk,
       configured,
-      location
+      location,
+      accountInit
     } = props
 
     if (!authOk) {
       return
     }
 
-    if (configured) {
+    if(!configured){
+      this.props.showConfiguration()
+    }else if(!accountInit && this.state.noAccountItem){
+      this.props.showInitialization()
+    }else {
       if (location.pathname === '/' ||
-          location.pathname.indexOf('configuration') >= 0 || location.pathname.includes('index.html')) {
+        location.pathname.indexOf('configuration') >= 0 ||
+        location.pathname.includes('index.html') ||
+        location.pathname.indexOf('initialization') >= 0) {
         this.props.showRoot()
       }
-    } else {
-      this.props.showConfiguration()
     }
   }
+
   componentDidMount() {
     if(window.ipcRenderer){
       window.ipcRenderer.on('redirect', (event, arg) => {
@@ -53,9 +59,10 @@ class Container extends React.Component {
       window.ipcRenderer.on('ConfiguredNetwork', (event, arg) => {
         if(arg === 'startNode'){
           this.props.fetchInfo().then(() => {
-            this.props.fetchAccountItem().then(resp => {
+            this.props.fetchKeyItem().then(resp => {
               if (resp.data.length == 0) {
                 this.setState({noAccountItem: true})
+                this.props.showInitialization()
               }
             })
             this.props.showRoot()
@@ -71,6 +78,12 @@ class Container extends React.Component {
         this.props.updateMiningState(isMining)
       })
     }
+    this.props.fetchKeyItem().then(resp => {
+      if (resp.data.length == 0) {
+        this.setState({noAccountItem: true})
+        this.redirectRoot(this.props)
+      }
+    })
     if(this.props.lng === 'zh'){
       moment.locale('zh-cn')
     }else{
@@ -79,8 +92,7 @@ class Container extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.authOk != this.props.authOk ||
-        nextProps.configKnown != this.props.configKnown ||
+    if (nextProps.accountInit != this.props.accountInit ||
         nextProps.configured != this.props.configured ||
         nextProps.location.pathname != this.props.location.pathname) {
       this.redirectRoot(nextProps)
@@ -105,7 +117,7 @@ class Container extends React.Component {
     } else if (!this.props.configKnown) {
       return <Loading>{t('welcome.connect')}</Loading>
     } else if (!this.props.accountInit && this.state.noAccountItem){
-      layout = <Register>{this.props.children}</Register>
+      layout = <Config>{this.props.children}</Config>
     } else{
       layout = <Main>{this.props.children}</Main>
     }
@@ -141,7 +153,7 @@ export default connect(
     showConfiguration: () => dispatch(actions.app.showConfiguration()),
     uptdateBtmAmountUnit: (param) => dispatch(actions.core.updateBTMAmountUnit(param)),
     updateConfiguredStatus: () => dispatch(actions.core.updateConfiguredStatus),
-    markFlashDisplayed: (key) => dispatch(actions.app.displayedFlash(key)),
-    fetchAccountItem: () => dispatch(actions.account.fetchItems())
+    showInitialization: () => dispatch(actions.app.showInitialization()),
+    fetchKeyItem: () => dispatch(actions.key.fetchItems())
   })
 )( withI18n() (Container) )

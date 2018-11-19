@@ -46,9 +46,7 @@ export const flashMessages = (state = {}, action) => {
     }
 
     case 'CREATED_TOKEN_WITH_GRANT': {
-      return newSuccess(state, <p>
-        Access token has been created successfully.
-      </p>)
+      return newSuccess(state, 'CREATED_TOKEN_WITH_GRANT')
     }
 
     case 'CREATED_X509_GRANT': {
@@ -83,9 +81,11 @@ export const flashMessages = (state = {}, action) => {
     }
 
     case 'UPDATED_ACCOUNT': {
-      return newSuccess(state, <p>
-          Updated account tags.
-        </p>)
+      return newSuccess(state, 'UPDATED_ACCOUNT')
+    }
+
+    case 'UPDATED_KEY': {
+      return newSuccess(state, 'UPDATED_KEY')
     }
 
     case 'UPDATED_ASSET': {

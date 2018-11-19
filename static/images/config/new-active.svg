@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="400 0 180 180">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 180 180">
   <defs>
     <style>
       .cls-1 {
@@ -6,25 +6,36 @@
       }
 
       .cls-2 {
+        fill: none;
+      }
+
+      .cls-3 {
         fill: #b9f4ee;
       }
 
-      .cls-3, .cls-4 {
-        stroke: none;
+      .cls-3, .cls-4, .cls-5 {
+        fill-rule: evenodd;
       }
 
       .cls-4 {
         fill: #00bfaa;
       }
+
+      .cls-5 {
+        fill: #d0faf6;
+      }
     </style>
     <clipPath id="clip-new-active">
-      <rect x="400" width="180" height="180"/>
+      <rect width="180" height="180"/>
     </clipPath>
   </defs>
   <g id="new-active" class="cls-1">
-    <g id="Path_1" data-name="Path 1" class="cls-2" transform="translate(418 7)">
-      <path class="cls-3" d="M 71.94799041748047 163.9500122070312 L 2 123.540153503418 L 2 42.71916580200195 L 71.94799041748047 2.309344530105591 L 142 42.72000503540039 L 142 123.5393142700195 L 71.94799041748047 163.9500122070312 Z"/>
-      <path class="cls-4" d="M 71.94870758056641 161.6406707763672 L 140 122.3841247558594 L 140 43.87521362304688 L 71.94870758056641 4.618674755096436 L 4 43.87351608276367 L 4 122.3858184814453 L 71.94870758056641 161.6406707763672 M 71.94725036621094 166.2593383789062 L 0 124.6944961547852 L 0 41.56484603881836 L 71.94725036621094 -5.81054700887762e-06 L 144 41.56484603881836 L 144 124.6944961547852 L 71.94725036621094 166.2593383789062 Z"/>
+    <g id="new">
+      <rect id="Rectangle_3739" data-name="Rectangle 3739" class="cls-2" width="180" height="180"/>
+      <path id="Path_5170" data-name="Path 5170" class="cls-3" d="M76.352-171.606l-72.746,42v84l72.746,42,72.746-42v-84Z" transform="translate(13.394 177.606)"/>
+      <path id="Path_5171" data-name="Path 5171" class="cls-4" d="M149.1-129.606v84l-72.746,42-72.746-42v-84l72.746-42ZM7.606-127.3v79.381L76.352-8.224,145.1-47.915V-127.3L76.352-166.987Z" transform="translate(13.394 177.606)"/>
+      <path id="Path_5172" data-name="Path 5172" class="cls-5" d="M76.352-110.306,56.693-98.956v22.7l19.659,11.35L96.01-76.256v-22.7Z" transform="translate(13.394 177.606)"/>
+      <path id="Path_5173" data-name="Path 5173" class="cls-4" d="M96.01-98.956v22.7L76.352-64.906,56.693-76.256v-22.7l19.659-11.35ZM60.693-96.646v18.081l15.659,9.041L92.01-78.565V-96.646l-15.659-9.041Z" transform="translate(13.394 177.606)"/>
     </g>
   </g>
 </svg>

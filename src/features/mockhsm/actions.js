@@ -1,4 +1,4 @@
-import { baseListActions, baseCreateActions } from 'features/shared/actions'
+import { baseListActions, baseCreateActions, baseUpdateActions } from 'features/shared/actions'
 import { chainClient } from 'utility/environment'
 import {push} from 'react-router-redux'
 
@@ -13,6 +13,25 @@ const create = baseCreateActions(type, {
   className: 'Key',
   clientApi,
 })
+
+const update = baseUpdateActions(type, {
+  className: 'Key',
+  clientApi,
+})
+
+create.submitForm = (data) => function (dispatch) {
+  if (typeof data.alias == 'string')  data.alias = data.alias.trim()
+
+  return clientApi().create(data)
+    .then((resp) => {
+      if (resp.status === 'fail') {
+        throw resp
+      }
+
+      dispatch({type: 'NEW_KEY', data: resp.data.mnemonic})
+      dispatch( push('/keys/mnemonic') )
+    })
+}
 
 const resetPassword = {
   submitResetForm: (params) => {
@@ -66,10 +85,17 @@ const createExport =  (arg, fileName) => (dispatch) => {
   })
 }
 
+const createSuccess = ()=> (dispatch) =>{
+  dispatch(create.created())
+  dispatch(push('/keys'))
+}
+
 export default {
   ...create,
   ...list,
+  ...update,
   ...resetPassword,
   checkPassword,
-  createExport
+  createExport,
+  createSuccess
 }

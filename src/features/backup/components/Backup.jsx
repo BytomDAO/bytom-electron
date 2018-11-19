@@ -1,9 +1,7 @@
 import React from 'react'
-import componentClassNames from 'utility/componentClassNames'
-import {PageContent, PageTitle} from 'features/shared/components'
+import { connect } from 'react-redux'
+import { RestoreKeystore, RestoreMnemonic, PageContent, PageTitle, ErrorBanner} from 'features/shared/components'
 import styles from './Backup.scss'
-import {connect} from 'react-redux'
-import {chainClient} from 'utility/environment'
 import actions from 'actions'
 import {withNamespaces} from 'react-i18next'
 
@@ -11,8 +9,13 @@ class Backup extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      value: null
+      value: null,
+      error: null
     }
+
+    this.mnemonicPopup = this.mnemonicPopup.bind(this)
+    this.keystorePopup = this.keystorePopup.bind(this)
+    this.submitWithValidation = this.submitWithValidation.bind(this)
   }
 
   setValue(event) {
@@ -21,61 +24,49 @@ class Backup extends React.Component {
     })
   }
 
-  backup() {
-    chainClient().backUp.backup()
-      .then(resp => {
-        const date = new Date()
-        const dateStr = date.toLocaleDateString().split(' ')[0]
-        const timestamp = date.getTime()
-        const fileName = ['bytom-wallet-backup-', dateStr, timestamp].join('-')
+  mnemonicPopup(e) {
+    e.preventDefault()
+    this.props.showModal(
+      <RestoreMnemonic success={this.props.success}/>
+    )
+  }
 
-        let element = document.createElement('a')
-        element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(JSON.stringify(resp.data)))
-        element.setAttribute('download', fileName)
-        element.style.display = 'none'
-        document.body.appendChild(element)
-        element.click()
+  keystorePopup(e){
+    e.preventDefault()
+    this.props.showModal(
+      <RestoreKeystore success={this.props.success}/>
+    )
+  }
 
-        document.body.removeChild(element)
+  submitWithValidation() {
+    this.props.backup()
+      .then(()=>{
+        this.setState({
+          error: null
+        })
       })
-      .catch(err => { throw {_error: err} })
-  }
-
-  handleFileChange(event) {
-    const files = event.target.files
-    if (files.length <= 0) {
-      this.setState({key: null})
-      return
-    }
-
-    const fileReader = new FileReader()
-    fileReader.onload = fileLoadedEvent => {
-      const backupData = JSON.parse(fileLoadedEvent.target.result)
-      this.props.restoreFile(backupData)
-    }
-    fileReader.readAsText(files[0], 'UTF-8')
-
-    const fileElement = document.getElementById('bytom-restore-file-upload')
-    fileElement.value = ''
-  }
-
-  restore() {
-    const element = document.getElementById('bytom-restore-file-upload')
-    element.click()
+      .catch((err) => {
+        this.setState({
+          error: err
+        })
+      })
   }
 
   render() {
-    const t = this.props.t
+    const {t} = this.props
 
-    const newButton = <button className={`btn btn-primary btn-lg ${styles.submit}`} onClick={this.backup.bind(this)}>
+    const {error} = this.state
+
+    const newButton = <button className={`btn btn-primary btn-lg ${styles.submit}`} onClick={() => this.submitWithValidation()}>
       {t('backup.download')}
     </button>
-    const restoreButton = <button className={`btn btn-primary btn-lg ${styles.submit}`} onClick={this.restore.bind(this)}>
+    const restoreKeystoreButton = <button className={`btn btn-primary btn-lg ${styles.submit}`} onClick={this.keystorePopup}>
       {t('backup.selectFile')}
     </button>
-    // const rescanButton = <button className={`btn btn-primary btn-lg ${styles.submit}`}  onClick={() => this.props.rescan()}>
-    //   {lang === 'zh' ? '重新扫描' : 'Rescan'}
-    // </button>
+
+    const restoreMnemonicButton = <button className={`btn btn-primary btn-lg ${styles.submit}`} onClick={this.mnemonicPopup}>
+      {t('backup.restore')}
+    </button>
 
     return (
       <div className='flex-container'>
@@ -104,11 +95,26 @@ class Backup extends React.Component {
                   <input className={styles.choice_radio_button}
                          type='radio'
                          name='type'
-                         value='restore' />
-                  <div className={`${styles.choice} ${styles.restore}`}>
-                    <span className={styles.choice_title}>{t('backup.restore')}</span>
+                         value='restoreKeystore' />
+                  <div className={`${styles.choice} ${styles.restoreKeystore}`}>
+                    <span className={styles.choice_title}>{t('backup.restoreKeystore')}</span>
                     <p>
-                      {t('backup.restoreDescription')}
+                      {t('backup.restoreKeystoreDescription')}
+                    </p>
+                  </div>
+                </label>
+              </div>
+
+              <div className={styles.choice_wrapper}>
+                <label>
+                  <input className={styles.choice_radio_button}
+                         type='radio'
+                         name='type'
+                         value='restoreMnemonic' />
+                  <div className={`${styles.choice} ${styles.restoreMnemonic}`}>
+                    <span className={styles.choice_title}>{t('backup.restoreMnemonic')}</span>
+                    <p>
+                      {t('backup.restoreMnemonicDescription')}
                     </p>
                   </div>
                 </label>
@@ -119,21 +125,27 @@ class Backup extends React.Component {
               <div>
                 {
                   this.state.value === 'backup'
-                  &&<span className={styles.submitWrapper}>{newButton}</span>
+                  &&[<div className={styles.submitWrapper}>{error && <ErrorBanner error={error} />}</div>,
+                    <span className={styles.submitWrapper}>{newButton}</span>]
                 }
               </div>
 
               <div>
                 {
-                  this.state.value === 'restore'
+                  this.state.value === 'restoreKeystore'
                   &&
-                    <span className={styles.submitWrapper}>{restoreButton}</span>
+                    <span className={styles.submitWrapper}>{restoreKeystoreButton}</span>
                 }
-                <input id='bytom-restore-file-upload' type='file'
-                       style={{'display': 'none', 'alignItems': 'center', 'fontSize': '12px'}}
-                       onChange={this.handleFileChange.bind(this)}/>
+              </div>
+
+              <div>
+                {
+                  this.state.value === 'restoreMnemonic'
+                  &&  <span className={styles.submitWrapper}>{restoreMnemonicButton}</span>
+                }
               </div>
             </div>
+
           </div>
 
         </PageContent>
@@ -142,18 +154,22 @@ class Backup extends React.Component {
   }
 }
 
-const mapStateToProps = (state) => ({
-  core: state.core,
-  navAdvancedState: state.app.navAdvancedState,
-})
+const mapStateToProps = () => ({})
 
 const mapDispatchToProps = (dispatch) => ({
   backup: () => dispatch(actions.backUp.backup()),
-  rescan: () => dispatch(actions.backUp.rescan()),
-  restoreFile: (backUpFile) => dispatch(actions.backUp.restore(backUpFile)),
+  success: () => dispatch(actions.backUp.success()),
+  showModal: (body) => dispatch(actions.app.showModal(
+    body,
+    actions.app.hideModal,
+    null,
+    {
+      noCloseBtn: true
+    }
+  ))
 })
 
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)( withNamespaces('translations') (Backup) )
+)(withNamespaces('translations') (Backup))

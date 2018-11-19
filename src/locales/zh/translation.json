@@ -24,7 +24,9 @@
     "page":"页面",
     "close":"关闭",
     "errorCode":"错误代码：",
-    "requestId":"请求ID："
+    "requestId":"请求ID：",
+    "cancel": "返回",
+    "continue":"继续"
   },
   "crumbName":{
     "transaction": "交易",
@@ -187,7 +189,9 @@
     "passwordRequired":"密码是必须项",
     "tryPassword":"密码校验",
     "resetPassword":"重置密码",
-    "tryPPlaceholder":"请输入校验密码"
+    "tryPPlaceholder":"请输入校验密码",
+    "editAlias":"编辑密钥别名",
+    "alias":"密钥别名"
   },
   "account":{
     "account":"账户",
@@ -207,7 +211,10 @@
       "quorumHint":"传输所需的密钥数",
       "aliasWarning":"账户别名是必须项",
       "keyWarning":"请输入或选择密钥"
-    }
+    },
+    "editAlias":"编辑账户别名",
+    "alias":"账户别名",
+    "aliasPlaceholder":"请输入账户别名"
   },
   "transaction":{
     "transaction":"交易",
@@ -303,7 +310,12 @@
     "keyPlaceholder":"请输入密钥别名...",
     "passwordPlaceholder":"请输入密钥密码...",
     "repeatPlaceHolder":"请重复输入密钥密码...",
-    "errorTitle":"初始化错误"
+    "errorTitle":"初始化错误",
+    "mnemonic":"助记词",
+    "mnemonicRequire":"助记词是必须项",
+    "create": "新建钱包",
+    "createDescription":"这个选项将生成默认的挖矿账户和默认密钥。 助记词将会在此生成，您可以选择保留助记词或者跳过。 注意： 助记词只生成一次， 请将密码，助记词妥善保存",
+    "welcome":"欢迎来到__network__"
   },
   "welcome":{
     "connect":"正在连接到Bytom Core...",
@@ -321,10 +333,22 @@
     "title":"备份与恢复",
     "backup":"备份",
     "backupDescription":"这个选项备份所有本地数据，包括账户，资产和余额。 请妥善保管你的备份文件。",
-    "restore":"恢复",
-    "restoreDescription":"这个选项将从文件中恢复钱包数据。 如果你的钱包余额显示不正确，请点击扫描钱包的按钮。",
+    "restoreKeystore":"从Keystore文件恢复",
+    "restoreKeystoreDescription":"这个选项将从文件中恢复钱包数据。 如果你的钱包余额显示不正确，请点击扫描钱包的按钮。",
+    "restoreMnemonic":"通过助记词恢复",
+    "restoreMnemonicDescription":"这个选项将通过助记词恢复密钥相关的数据。 如果你的钱包余额显示不正确，请点击扫描钱包的按钮。",
     "download":"下载备份",
-    "selectFile":"选择备份文件"
+    "selectFile":"选择备份文件",
+    "restore":"恢复"
+  },
+  "mnemonic":{
+    "backup":"备份助记词",
+    "backupMessage":"助记词用于恢复密钥相关的信息。 请将它准确的抄写到纸上，并存放在的安全的地方。",
+    "continue":"我已抄写助记词",
+    "skip": "跳过备份",
+    "confirmTitle":"请重复输入钱包助记词",
+    "confirm": "验证助记词",
+    "confirmMessage":"填写缺失的文字以验证你已经抄写下助记词。"
   },
   "notFound":{
     "title":"页面找不到",
@@ -536,7 +560,10 @@
     "RESET_PASSWORD_KEY": "密钥密码已经重置成功。",
     "CREATE_REGISTER_ACCOUNT": "默认账户和密钥已经初始化成功。",
     "RESTORE_SUCCESS":"钱包已经成功恢复。",
-    "UPDATED_ASSET":"资产别名更改成功。"
+    "UPDATED_ASSET":"资产别名更改成功。",
+    "UPDATED_ACCOUNT":"账户别名更改成功。",
+    "UPDATED_KEY":"密钥别名更改成功。",
+    "CREATED_TOKEN_WITH_GRANT":"访问令牌创建成功。"
   },
   "btmError":{
     "BTM000": "非比原标准错误",
