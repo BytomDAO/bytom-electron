@@ -18,7 +18,7 @@ const resources = {
 // add supported languages
 supported_languages.forEach((lang) => {
   const desktopTranslations = require(`./interface/i18n/desktop.${lang}.i18n.json`)
-  const uiTranslations = require(`../src/locales/${lang}/translation.json`)
+  const uiTranslations = require(`./interface/locales/${lang}/translation.json`)
   resources[lang] = { translations: extend(desktopTranslations, uiTranslations) }
 })
 

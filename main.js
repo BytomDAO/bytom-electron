@@ -54,11 +54,11 @@ function initialize () {
       shell.openExternal(url)
     })
 
-    // win.webContents.on('did-finish-load', function () {
-    //   if(startnode){
-    //     win.webContents.send('ConfiguredNetwork', 'startNode')
-    //   }
-    // })
+    win.webContents.on('did-finish-load', function () {
+      if(startnode){
+        win.webContents.send('ConfiguredNetwork', 'startNode')
+      }
+    })
 
     win.on('closed', () => {
       win = null
@@ -111,23 +111,8 @@ function initialize () {
   })
 }
 
-function setBytomNode() {
+function setBytomNode(event) {
   bytomdNode = spawn( `${Settings.bytomdPath}`, ['node', '--web.closed'] )
-
-  function checkPort () {
-    setTimeout(function () {
-      portInUse(9888, function(returnValue) {
-        if (!returnValue) {
-          checkPort()
-        }else{
-          // startnode = true
-          win.webContents.send('ConfiguredNetwork', 'startNode')
-        }
-      })
-    }, 1000)
-  }
-
-  checkPort()
 
   bytomdNode.stdout.on('data', function(data) {
     bytomdLog.info(`bytomd node: ${data}`)
@@ -135,11 +120,20 @@ function setBytomNode() {
 
   bytomdNode.stderr.on('data', function(data) {
     bytomdLog.info(`bytomd node: ${data}`)
-  })
+    if (data.includes('msg="start node')) {
+      if (event) {
+        event.sender.send('ConfiguredNetwork', 'startNode')
+      }
+      else {
+        startnode = true
+        win.webContents.send('ConfiguredNetwork', 'startNode')
+      }
+    }
 
-  bytomdNode.on('exit', function (code) {
-    bytomdLog.info('bytom Node exited with code ' + code)
-    app.quit()
+    bytomdNode.on('exit', function (code) {
+      bytomdLog.info('bytom Node exited with code ' + code)
+      app.quit()
+    })
   })
 }
 
@@ -157,7 +151,7 @@ function setBytomInit(event, bytomNetwork) {
 
   bytomdInit.on('exit', function (code) {
     event.sender.send('ConfiguredNetwork','init')
-    setBytomNode()
+    setBytomNode(event)
     bytomdLog.info('bytom init exited with code ' + code)
   })
 
@@ -192,21 +186,6 @@ function setupConfigure(){
   logger.setup(loggerOptions)
 }
 
-function portInUse(port, callback) {
-  const server = net.createServer(function(socket) {
-    socket.write('Echo server\r\n')
-    socket.pipe(socket)
-  })
-
-  server.listen(port, '0.0.0.0')
-  server.on('error', function (e) {
-    callback(true)
-  })
-  server.on('listening', function (e) {
-    server.close()
-    callback(false)
-  })
-}
 
 // Handle Squirrel on Windows startup events
 switch (process.argv[1]) {
