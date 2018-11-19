@@ -54,11 +54,11 @@ function initialize () {
       shell.openExternal(url)
     })
 
-    win.webContents.on('did-finish-load', function () {
-      if(startnode){
-        win.webContents.send('ConfiguredNetwork', 'startNode')
-      }
-    })
+    // win.webContents.on('did-finish-load', function () {
+    //   if(startnode){
+    //     win.webContents.send('ConfiguredNetwork', 'startNode')
+    //   }
+    // })
 
     win.on('closed', () => {
       win = null
@@ -120,11 +120,11 @@ function setBytomNode() {
         if (!returnValue) {
           checkPort()
         }else{
-          startnode = true
+          // startnode = true
           win.webContents.send('ConfiguredNetwork', 'startNode')
         }
       })
-    }, 500)
+    }, 1000)
   }
 
   checkPort()
