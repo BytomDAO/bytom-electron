@@ -26,7 +26,9 @@
     "errorCode":"错误代码：",
     "requestId":"请求ID：",
     "cancel": "返回",
-    "continue":"继续"
+    "continue":"继续",
+    "next":"向后",
+    "previous":"向前"
   },
   "crumbName":{
     "transaction": "交易",
@@ -54,7 +56,8 @@
     "newKey":"新建密钥",
     "newToken":"新建访问令牌",
     "newAsset":"新建资产",
-    "resetPassword":"重置密钥密码"
+    "resetPassword":"重置密钥密码",
+    "peer":"节点信息"
   },
   "form":{
     "detail": "详情",
@@ -262,7 +265,15 @@
       "showDetails":"展示交易内容",
       "transactionContent":"交易内容",
       "normalView":"普通展示",
-      "jsonView":"Json格式"
+      "jsonView":"Json格式",
+      "generated":{
+        "title":"生成的交易",
+        "lead":"请将下面的JSON交易发送给其他账户进行签名：",
+        "qrBtnText":"二维码",
+        "signatureQrBtnText":"Signature二维码",
+        "qrModalLabel":"Json转换成为下面的二维码。 请用手机扫描二维码。",
+        "qrModalLabels":"Json被分成了__size__个不同的字段， 并转换成二维码。 请用手机扫描二维码并拼接。"
+      }
     }
   },
   "balances":{
@@ -340,6 +351,10 @@
     "download":"下载备份",
     "selectFile":"选择备份文件",
     "restore":"恢复"
+  },
+  "peers":{
+    "formTitle": ["远程地址", "高度", "Ping", "时长", "总字节"],
+    "disconnect" : "断开"
   },
   "mnemonic":{
     "backup":"备份助记词",
