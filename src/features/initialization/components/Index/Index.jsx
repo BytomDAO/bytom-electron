@@ -113,5 +113,5 @@ class Index extends React.Component {
 export default withNamespaces('translations') (connect(
   (state) => ({
     coreData:state.core.coreData
-  }),
+  })
 )(Index))

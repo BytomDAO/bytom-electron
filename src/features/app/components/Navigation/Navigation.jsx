@@ -100,7 +100,7 @@ class Navigation extends React.Component {
         <ul className={styles.navigation}>
           <li className={styles.navigationTitle}>{ t('crumbName.developer') }</li>
           <li>
-            <a href='/equity' target='_blank'>
+            <a href='http://localhost:9888/equity' target='_blank'>
               {navIcon('transaction', styles)}
               { t('crumbName.equity')}
             </a>
