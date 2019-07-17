@@ -7,6 +7,13 @@
 
   td {
     vertical-align: top;
+    word-break: break-all;
+    word-wrap: break-word;
+  }
+}
+.actionBtn{
+  img{
+    margin-bottom: 3px;
   }
 }
 
@@ -56,12 +63,12 @@
 
 .left {
   padding-left: 0;
-  width: 50%;
+  width: 67%;
 }
 
 .right {
   border-left: 1px solid $border-color;
-  width: 50%;
+  width: 33%;
 }
 
 .replication_lag {
@@ -89,6 +96,9 @@
 
 .mainContainer {
   background-color: $background-color;
+  padding: 0 $gutter-size;
+  display: flex;
+  flex-direction: row;
 }
 
 code {

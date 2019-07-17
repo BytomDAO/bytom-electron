@@ -81,6 +81,10 @@ class CoreIndex extends React.Component {
               <td>{t('languageFull')}</td>
             </tr>
             <tr className={styles.row}>
+              <td className={styles.row_label}>{t('coreIndex.nodeXpub')}:</td>
+              <td><code>{String(coreData['nodeXpub'])}</code></td>
+            </tr>
+            <tr className={styles.row}>
               <td colSpan={2}><hr /></td>
             </tr>
             <tr className={styles.row}>
@@ -184,7 +188,7 @@ class CoreIndex extends React.Component {
     )
 
     return (
-      <div className={componentClassNames(this, 'flex-container', styles.mainContainer)}>
+      <div className={componentClassNames(this, 'flex-container')}>
         <PageTitle
           title={t('coreIndex.coreStatus')}
           actions={[
@@ -195,7 +199,7 @@ class CoreIndex extends React.Component {
         />
 
         <PageContent>
-          <div className={`${styles.flex}`}>
+          <div className={`${styles.flex} ${styles.mainContainer}`}>
             {configBlock}
             {networkStatusBlock}
           </div>

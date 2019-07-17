@@ -23,7 +23,8 @@ class NormalTxForm extends React.Component {
     this.connection = chainClient().connection
     this.state = {
       estimateGas:null,
-      counter: 1
+      counter: 1,
+      displayGas: true
     }
 
     this.submitWithValidation = this.submitWithValidation.bind(this)
@@ -32,7 +33,7 @@ class NormalTxForm extends React.Component {
   }
 
   disableSubmit() {
-    return !(this.state.estimateGas)
+    return (this.state.displayGas && !this.state.estimateGas)
   }
 
   submitWithValidation(data) {
@@ -113,25 +114,19 @@ class NormalTxForm extends React.Component {
     const actions = normalTxActionBuilder(transaction, Math.pow(10, 7), 'amount.value' )
 
     const body = {actions, ttl: 1}
-    this.connection.request('/build-transaction', body).then(resp => {
-      if (resp.status === 'fail') {
-        this.setState({estimateGas: null})
-        const errorMsg =  resp.code && i18n.exists(`btmError.${resp.code}`) && t(`btmError.${resp.code}`) || resp.msg
-        this.props.showError(new Error(errorMsg))
-        return
-      }
-
-      return this.connection.request('/estimate-transaction-gas', {
-        transactionTemplate: resp.data
-      }).then(resp => {
-        if (resp.status === 'fail') {
-          this.setState({estimateGas: null})
-          const errorMsg =  resp.code && i18n.exists(`btmError.${resp.code}`) && t(`btmError.${resp.code}`) || resp.msg
-          this.props.showError(new Error(errorMsg))
-          return
+    this.props.buildTransaction(body).then(resp => {
+      return this.props.estimateGasFee(resp.data).then(resp => {
+        const gas = resp.data.totalNeu
+        if(gas === 0){
+          this.setState({displayGas:false})
+        }else{
+          this.setState({estimateGas: Math.ceil(gas/100000)*100000, displayGas:true})
         }
-        this.setState({estimateGas: Math.ceil(resp.data.totalNeu/100000)*100000})
       })
+    }).catch(err =>{
+      this.setState({estimateGas: null, address: null})
+      const errorMsg =  err.code && i18n.exists(`btmError.${err.code}`) && t(`btmError.${err.code}`) || err.msg
+      this.props.showError(new Error(errorMsg))
     })
   }
 
@@ -160,86 +155,87 @@ class NormalTxForm extends React.Component {
 
     const showBtmAmountUnit = (assetAlias.value === 'BTM' || assetId.value === btmID)
 
-    return (
-          <TxContainer
-            error={error}
-            onSubmit={e => this.confirmedTransaction(e, assetDecimal)}
-            submitting={submitting}
-            submitLabel= {submitLabel}
-            disabled={this.disableSubmit()}
-            className={styles.container}
-          >
-          <div className={styles.borderBottom}>
-            <label className={styles.title}>{t('transaction.normal.from')}</label>
-            <div className={`${styles.mainBox} `}>
-              <ObjectSelectorField
-                key='account-selector-field'
-                keyIndex='normaltx-account'
-                title={t('form.account')}
-                aliasField={Autocomplete.AccountAlias}
-                fieldProps={{
-                  id: accountId,
-                  alias: accountAlias
-                }}
+    return <TxContainer
+      error={error}
+      onSubmit={e => this.confirmedTransaction(e, assetDecimal)}
+      submitting={submitting}
+      submitLabel={submitLabel}
+      disabled={this.disableSubmit()}
+      className={styles.container}
+    >
+      <div className={styles.borderBottom}>
+        <label className={styles.title}>{t('transaction.normal.from')}</label>
+        <div className={`${styles.mainBox} `}>
+          <ObjectSelectorField
+            key='account-selector-field'
+            keyIndex='normaltx-account'
+            title={t('form.account')}
+            aliasField={Autocomplete.AccountAlias}
+            fieldProps={{
+              id: accountId,
+              alias: accountAlias
+            }}
+            disabled
+          />
+          <div>
+            <ObjectSelectorField
+              key='asset-selector-field'
+              keyIndex='normaltx-asset'
+              title={t('form.asset')}
+              aliasField={Autocomplete.AssetAlias}
+              fieldProps={{
+                id: assetId,
+                alias: assetAlias
+              }}
+            />
+            {showAvailableBalance && availableBalance &&
+            <small className={styles.balanceHint}>{t('transaction.normal.availableBalance')} {availableBalance}</small>}
+          </div>
+        </div>
+
+        <label className={styles.title}>{t('transaction.normal.to')}</label>
+
+        <div className={styles.mainBox}>
+          {receivers.map((receiver, index) =>
+            <div
+              className={this.props.tutorialVisible ? styles.tutorialItem : styles.subjectField}
+              key={receiver.id.value}>
+              <TextField title={t('form.address')} fieldProps={{
+                ...receiver.address,
+                onBlur: (e) => {
+                  receiver.address.onBlur(e)
+                  this.estimateNormalTransactionGas()
+                },
+              }}/>
+
+              <AmountField
+                isBTM={showBtmAmountUnit}
+                title={t('form.amount')}
+                fieldProps={receiver.amount}
+                decimal={assetDecimal}
               />
-              <div>
-                <ObjectSelectorField
-                  key='asset-selector-field'
-                  keyIndex='normaltx-asset'
-                  title={ t('form.asset')}
-                  aliasField={Autocomplete.AssetAlias}
-                  fieldProps={{
-                    id: assetId,
-                    alias: assetAlias
-                  }}
-                />
-                {showAvailableBalance && availableBalance &&
-                <small className={styles.balanceHint}>{t('transaction.normal.availableBalance')} {availableBalance}</small>}
-              </div>
-            </div>
 
-            <label className={styles.title}>{t('transaction.normal.to')}</label>
-
-            <div className={styles.mainBox}>
-            {receivers.map((receiver, index) =>
-              <div
-                className={this.props.tutorialVisible? styles.tutorialItem: styles.subjectField}
-                key={receiver.id.value}>
-                <TextField title={t('form.address')} fieldProps={{
-                  ...receiver.address,
-                  onBlur: (e) => {
-                    receiver.address.onBlur(e)
-                    this.estimateNormalTransactionGas()
-                  },
-                }}/>
-
-                <AmountField
-                  isBTM={showBtmAmountUnit}
-                  title={t('form.amount')}
-                  fieldProps={receiver.amount}
-                  decimal={assetDecimal}
-                />
-
-                <button
-                  className={`btn btn-danger btn-xs ${styles.deleteButton}`}
-                  tabIndex='-1'
-                  type='button'
-                  onClick={() => this.removeReceiverItem(index)}
-                >
-                  {t('commonWords.remove')}
-                </button>
-              </div>
-            )}
               <button
+                className={`btn btn-danger btn-xs ${styles.deleteButton}`}
+                tabIndex='-1'
                 type='button'
-                className='btn btn-default'
-                onClick={this.addReceiverItem}
+                onClick={() => this.removeReceiverItem(index)}
               >
-                {t('commonWords.addField')}
+                {t('commonWords.remove')}
               </button>
             </div>
+          )}
+          <button
+            type='button'
+            className='btn btn-default'
+            onClick={this.addReceiverItem}
+          >
+            {t('commonWords.addField')}
+          </button>
+        </div>
 
-            <label className={styles.title}>{t('transaction.normal.selectFee')}</label>
+        { this.state.displayGas &&
+          [<label className={styles.title}>{t('transaction.normal.selectFee')}</label>,
             <div className={styles.txFeeBox}>
               <GasField
                 gas={this.state.estimateGas}
@@ -247,10 +243,9 @@ class NormalTxForm extends React.Component {
                 btmAmountUnit={this.props.btmAmountUnit}
               />
               <span className={styles.feeDescription}> {t('transaction.normal.feeDescription')}</span>
-            </div>
-          </div>
-        </TxContainer>
-    )
+            </div>]}
+      </div>
+    </TxContainer>
   }
 }
 
@@ -307,8 +302,29 @@ const mapDispatchToProps = (dispatch) => ({
       noCloseBtn: true
     }
   )),
+  estimateGasFee: actions.transaction.estimateGas,
+  buildTransaction: actions.transaction.buildTransaction,
   ...BaseNew.mapDispatchToProps('transaction')(dispatch)
 })
+
+const initialValues = (state, ownProps) => {
+  const account = state.account.currentAccount
+  if (account) {
+    return {
+      initialValues: {
+        accountAlias: account,
+        accountId:'',
+        gasLevel: '1',
+        receivers:[{
+          id: 0,
+          amount:'',
+          address:''
+        }]
+      }
+    }
+  }
+  return {}
+}
 
 export default withNamespaces('translations') (BaseNew.connect(
   BaseNew.mapStateToProps('transaction'),
@@ -328,14 +344,6 @@ export default withNamespaces('translations') (BaseNew.connect(
     asyncValidate,
     asyncBlurFields: ['receivers[].address'],
     validate,
-    touchOnChange: true,
-    initialValues: {
-      gasLevel: '1',
-      receivers:[{
-        id: 0,
-        amount:'',
-        address:''
-      }]
-    },
-  })(NormalTxForm)
+    touchOnChange: true
+  }, initialValues)(NormalTxForm)
 ))

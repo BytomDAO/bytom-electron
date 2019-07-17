@@ -7,7 +7,7 @@ import { useRouterHistory } from 'react-router'
 import { createHistory } from 'history'
 
 let apiHost, basename
-apiHost = process.env.API_URL || 'http://localhost:9888'
+apiHost = process.env.API_URL || 'http://localhost:9889'
 basename = ''
 
 export const chainClient = () => new chainSdk.Client({
@@ -27,8 +27,10 @@ export const btmID = 'ffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
 export const pageSize = 25
 export const UTXOpageSize = 10
 
+export const federationApiHost = `${window.location.protocol}//${window.location.hostname}:9886`
+
 export const testnetInfoUrl = process.env.TESTNET_INFO_URL || 'https://testnet-info.chain.com'
 export const testnetUrl = process.env.TESTNET_GENERATOR_URL || 'https://testnet.chain.com'
-export const docsRoot = 'https://github.com/bytom/bytom/wiki'
+export const docsRoot = 'https://github.com/Bytom/vapor/wiki'
 
-export const releaseUrl = 'https://github.com/Bytom/bytom/releases'
+export const releaseUrl = 'https://github.com/Bytom/vapor/releases'

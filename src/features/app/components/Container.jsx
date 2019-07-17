@@ -10,9 +10,6 @@ const CORE_POLLING_TIME = 2 * 1000
 class Container extends React.Component {
   constructor(props) {
     super(props)
-    this.state = {
-      noAccountItem: false
-    }
     if(props.location.pathname.includes('index.html')) {
       this.redirectRoot(props)
     }
@@ -33,7 +30,7 @@ class Container extends React.Component {
 
     if(!configured){
       this.props.showConfiguration()
-    }else if(!accountInit && this.state.noAccountItem){
+    }else if(!accountInit){
       this.props.showInitialization()
     }else {
       if (location.pathname === '/' ||
@@ -78,17 +75,46 @@ class Container extends React.Component {
         this.props.updateMiningState(isMining)
       })
     }
-    this.props.fetchKeyItem().then(resp => {
-      if (resp.data.length == 0) {
-        this.setState({noAccountItem: true})
-        this.redirectRoot(this.props)
-      }
-    })
     if(this.props.lng === 'zh'){
       moment.locale('zh-cn')
     }else{
       moment.locale(this.props.lng)
     }
+  }
+
+  componentWillMount() {
+    this.props.fetchAccountItem().then(resp => {
+      const promise = new Promise((resolve, reject) => {
+        if (resp.data.length == 0) {
+          this.props.switchAccount('')
+          resolve()
+        }else{
+          const aliasArray = resp.data.map(account => account.alias)
+          if(!aliasArray.includes(this.props.currentAccount) ){
+            this.props.setDefaultAccount().then(()=>{
+              resolve()
+            })
+          }else{
+            resolve()
+          }
+        }
+      })
+
+      return promise.then(()=>{
+        return this.props.fetchKeyItem().then(resp => {
+          if (resp.data.length == 0) {
+            this.props.updateAccountInit(false)
+          }else{
+            this.props.updateAccountInit(true)
+          }
+          return this.props.fetchInfo().then(() => {
+            this.redirectRoot(this.props)
+          })
+        })
+      })
+    })
+
+    setInterval(() => this.props.fetchInfo(), CORE_POLLING_TIME)
   }
 
   componentWillReceiveProps(nextProps) {
@@ -97,11 +123,12 @@ class Container extends React.Component {
         nextProps.location.pathname != this.props.location.pathname) {
       this.redirectRoot(nextProps)
     }
+
   }
 
   render() {
     let layout
-    const { t, i18n } = this.props
+    const { i18n, t } = this.props
     i18n.on('languageChanged', function(lng) {
       if(lng === 'zh'){
         moment.locale('zh-cn')
@@ -116,7 +143,7 @@ class Container extends React.Component {
       layout = <Config>{this.props.children}</Config>
     } else if (!this.props.configKnown) {
       return <Loading>{t('welcome.connect')}</Loading>
-    } else if (!this.props.accountInit && this.state.noAccountItem){
+    } else if (!this.props.accountInit){
       layout = <Config>{this.props.children}</Config>
     } else{
       layout = <Main>{this.props.children}</Main>
@@ -142,9 +169,9 @@ export default connect(
     authOk: !state.core.requireClientToken || state.core.validToken,
     configKnown: state.core.configKnown,
     configured: state.core.configured,
-    onTestnet: state.core.onTestnet,
     flashMessages: state.app.flashMessages,
     accountInit: state.core.accountInit,
+    currentAccount: state.account.currentAccount
   }),
   (dispatch) => ({
     fetchInfo: options => dispatch(actions.core.fetchCoreInfo(options)),
@@ -154,6 +181,10 @@ export default connect(
     uptdateBtmAmountUnit: (param) => dispatch(actions.core.updateBTMAmountUnit(param)),
     updateConfiguredStatus: () => dispatch(actions.core.updateConfiguredStatus),
     showInitialization: () => dispatch(actions.app.showInitialization()),
-    fetchKeyItem: () => dispatch(actions.key.fetchItems())
+    updateAccountInit: (param) => dispatch(actions.app.updateAccountInit(param)),
+    fetchKeyItem: () => dispatch(actions.key.fetchItems()),
+    fetchAccountItem: () => dispatch(actions.account.fetchItems()),
+    setDefaultAccount:() => dispatch(actions.account.setDefaultAccount()),
+    switchAccount:(alias) => dispatch(actions.account.switchAccount(alias))
   })
 )( withI18n() (Container) )
