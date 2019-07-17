@@ -1,4 +1,4 @@
-const bytomCLI = (client) => {
+const vaporCLI = (client) => {
 
   return {
     request: (params) => {
@@ -82,4 +82,4 @@ const bytomCLI = (client) => {
   }
 }
 
-module.exports = bytomCLI
+module.exports = vaporCLI

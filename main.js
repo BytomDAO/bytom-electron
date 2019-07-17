@@ -8,12 +8,12 @@ const path = require('path')
 const fs = require('fs')
 const logger = require('./modules/logger')
 const log = logger.create('main')
-const bytomdLog = logger.create('bytomd')
+const vapordLog = logger.create('vapord')
 const Settings = require('./modules/settings')
 
 const net = require('net')
 
-let win, bytomdInit, bytomdNode
+let win, vapordInit, vapordNode
 
 global.fileExist = false
 global.mining = {isMining: false}
@@ -72,7 +72,7 @@ function initialize () {
 
     setupConfigure()
 
-    bytomd()
+    vapord()
 
     createWindow()
   })
@@ -91,35 +91,35 @@ function initialize () {
   })
 
   app.on('before-quit', () => {
-    if(bytomdInit){
-      bytomdInit.kill('SIGINT')
-      log.info('Kill bytomd Init command...')
+    if(vapordInit){
+      vapordInit.kill('SIGINT')
+      log.info('Kill vapord Init command...')
     }
-    if(bytomdNode){
-      bytomdNode.kill('SIGINT')
+    if(vapordNode){
+      vapordNode.kill('SIGINT')
       const killTimeout = setTimeout(() => {
-        bytomdNode.kill('SIGKILL')
+        vapordNode.kill('SIGKILL')
       }, 8000 /* 8 seconds */)
 
-      bytomdNode.once('close', () => {
+      vapordNode.once('close', () => {
         clearTimeout(killTimeout)
-        bytomdNode = null
+        vapordNode = null
       })
 
-      log.info('Kill bytomd Mining command...')
+      log.info('Kill vapord Mining command...')
     }
   })
 }
 
-function setBytomNode(event) {
-  bytomdNode = spawn( `${Settings.bytomdPath}`, ['node', '--web.closed'] )
+function setVaporNode(event) {
+  vapordNode = spawn( `${Settings.vapordPath}`, ['node', '--web.closed'] )
 
-  bytomdNode.stdout.on('data', function(data) {
-    bytomdLog.info(`bytomd node: ${data}`)
+  vapordNode.stdout.on('data', function(data) {
+    vapordLog.info(`vapord node: ${data}`)
   })
 
-  bytomdNode.stderr.on('data', function(data) {
-    bytomdLog.info(`bytomd node: ${data}`)
+  vapordNode.stderr.on('data', function(data) {
+    vapordLog.info(`vapord node: ${data}`)
     if (data.includes('msg="start node')) {
       if (event) {
         event.sender.send('ConfiguredNetwork', 'startNode')
@@ -130,46 +130,46 @@ function setBytomNode(event) {
       }
     }
 
-    bytomdNode.on('exit', function (code) {
-      bytomdLog.info('bytom Node exited with code ' + code)
+    vapordNode.on('exit', function (code) {
+      vapordLog.info('vapor Node exited with code ' + code)
       app.quit()
     })
   })
 }
 
-function setBytomInit(event, bytomNetwork) {
-  // Init bytomd
-  bytomdInit = spawn(`${Settings.bytomdPath}`, ['init', '--chain_id',  `${bytomNetwork}`] )
+function setVaporInit(event, vaporNetwork) {
+  // Init vapord
+  vapordInit = spawn(`${Settings.vapordPath}`, ['init', '--chain_id',  `${vaporNetwork}`] )
 
-  bytomdInit.stdout.on('data', function(data) {
-    bytomdLog.info(`bytomd init: ${data}`)
+  vapordInit.stdout.on('data', function(data) {
+    vapordLog.info(`vapord init: ${data}`)
   })
 
-  bytomdInit.stderr.on('data', function(data) {
-    bytomdLog.info(`bytomd init: ${data}`)
+  vapordInit.stderr.on('data', function(data) {
+    vapordLog.info(`vapord init: ${data}`)
   })
 
-  bytomdInit.on('exit', function (code) {
+  vapordInit.on('exit', function (code) {
     event.sender.send('ConfiguredNetwork','init')
-    setBytomNode(event)
-    bytomdLog.info('bytom init exited with code ' + code)
+    setVaporNode(event)
+    vapordLog.info('vapor init exited with code ' + code)
   })
 
-  bytomdInit.once('close', () => {
-    bytomdInit = null
+  vapordInit.once('close', () => {
+    vapordInit = null
   })
 }
 
-function bytomd(){
-  const filePath = path.join(`${Settings.bytomdDataPath}/config.toml`)
+function vapord(){
+  const filePath = path.join(`${Settings.vapordDataPath}/config.toml`)
   if (fs.existsSync(filePath)) {
-    log.info('Bytomd Network has been inited')
+    log.info('Vapord Network has been inited')
     global.fileExist = true
-    setBytomNode()
+    setVaporNode()
   }else {
-    log.info('Init Bytomd Network...')
-    ipcMain.on('bytomdInitNetwork', (event, arg) => {
-      setBytomInit( event,  arg )
+    log.info('Init Vapord Network...')
+    ipcMain.on('vapordInitNetwork', (event, arg) => {
+      setVaporInit( event,  arg )
     })
   }
 }

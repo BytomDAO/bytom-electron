@@ -35,23 +35,23 @@ class Settings {
     return app.getPath('home')
   }
 
-  get bytomdPath() {
+  get vapordPath() {
     return process.env.DEV?
-      path.join(__dirname, '../bytomd/bytomd-darwin_amd64'):
-      glob.sync( path.join(__dirname, '../../bytomd/bytomd*'))
+      path.join(__dirname, '../vapord/vapord-darwin_amd64'):
+      glob.sync( path.join(__dirname, '../../vapord/vapord*'))
   }
 
-  get bytomdDataPath(){
-    let bytomdDataPath
+  get vapordDataPath(){
+    let vapordDataPath
     switch (process.platform){
       case 'win32':
-        bytomdDataPath = `${app.getPath('appData')}/Bytom`
+        vapordDataPath = `${app.getPath('appData')}/Vapor`
         break
       case 'darwin':
-        bytomdDataPath = `${app.getPath('home')}/Library/Application Support/Bytom`
+        vapordDataPath = `${app.getPath('home')}/Library/Application Support/Vapor`
         break
       case 'linux':
-        bytomdDataPath = `${app.getPath('home')}/.bytom`
+        vapordDataPath = `${app.getPath('home')}/.bytom`
     }
     return bytomdDataPath
   }

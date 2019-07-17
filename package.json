@@ -1,9 +1,9 @@
 {
-  "name": "bytom-wallet",
-  "productName": "Bytom Wallet",
+  "name": "vapor-wallet",
+  "productName": "Vapor Wallet",
   "build": {
     "electronVersion": "1.8.3",
-    "appId": "io.bytom.desktop",
+    "appId": "io.vapor.desktop",
     "directories": {
       "buildResources": "./",
       "output": "desktop"
@@ -21,7 +21,7 @@
       "icon": "static/images/app-icon/mac/app.icns",
       "artifactName": "${name}-desktop-${version}-${os}.${ext}",
       "category": "public.app-category.wallet",
-      "extraResources": "bytomd/bytomd-darwin_amd64",
+      "extraResources": "vapord/vapord-darwin_amd64",
       "target": "zip"
     },
     "dmg": {
@@ -45,14 +45,14 @@
     "win": {
       "icon": "static/images/app-icon/win/app.ico",
       "artifactName": "${name}-desktop-${version}-${os}-${arch}.${ext}",
-      "extraResources": "bytomd/bytomd-windows_${env.ARCH_VARIABLE}.exe",
+      "extraResources": "vapord/vapord-windows_${env.ARCH_VARIABLE}.exe",
       "target": "zip"
     },
     "linux": {
-      "maintainer": "bytom contributors <zhiting.fly@bytom.io>",
+      "maintainer": "vapor contributors <zhiting.fly@bytom.io>",
       "artifactName": "${name}-desktop-${version}-${os}-${arch}.${ext}",
-      "executableName": "Bytom Wallet",
-      "extraResources": "bytomd/bytomd-linux_${env.ARCH_VARIABLE}",
+      "executableName": "Vapor Wallet",
+      "extraResources": "vapord/vapord-linux_${env.ARCH_VARIABLE}",
       "target": "zip",
       "category": "Finance",
       "packageCategory": "wallet",
@@ -61,7 +61,7 @@
     "asar": true
   },
   "version": "1.0.9",
-  "description": "Bytom Wallet Desktop",
+  "description": "Vapor Wallet Desktop",
   "main": "main.js",
   "scripts": {
     "build:dll": "node ./bin/dependencies.js",

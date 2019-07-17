@@ -409,15 +409,15 @@
     "welcome":"Welcome to Vapor __network__"
   },
   "welcome":{
-    "connect":"Connecting to Bytom Core...",
+    "connect":"Connecting to Vapor Core...",
     "join":"Joining network",
     "joining":"Joining network...",
-    "title":"Configure Bytom Core",
-    "mainnetTitle":"Join the Bytom Mainnet",
-    "mainnetMsg":"For common users to enter. Mainnet is the production network, that carry real Bytom transactions.",
-    "testnetTitle":"Join the Bytom Testnet",
-    "testnetMsg":"For developers or bytom testers to enter. Testnet is an alternative Bytom blockchain, and to be used for testing.",
-    "solonetTitle":"Create the Bytom Soloent",
+    "title":"Configure Vapor Core",
+    "mainnetTitle":"Join the Vapor Mainnet",
+    "mainnetMsg":"For common users to enter. Mainnet is the production network, that carry real Vapor transactions.",
+    "testnetTitle":"Join the Vapor Testnet",
+    "testnetMsg":"For developers or vapor testers to enter. Testnet is an alternative Vapor blockchain, and to be used for testing.",
+    "solonetTitle":"Create the Vapor Soloent",
     "solonetMsg":"For users/developers to run and test wallet's new function. Solonet is a private sandbox blockchain network."
   },
   "backup":{

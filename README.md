@@ -1,4 +1,4 @@
-# Bytom Dashboard
+# Vapor Dashboard
 
 ## Development
 
@@ -16,23 +16,23 @@ Install dependencies:
 npm install
 ```
 
-##### Add Bytomd Deamon
-Add a folder named `bytomd` under the root folder. Put all the bytomd files into that folder.
+##### Add Vapord Deamon
+Add a folder named `vapord` under the root folder. Put all the vapord files into that folder.
 ```
-bytom-electron
+vapor-electron
 │   README.md
 │
-└───bytomd
-│   │   bytomd-darwin_amd64
-│   │   bytomd-linux_386
-│   │   bytomd-linux_amd64
-│   │   bytomd-windows_386.exe
-│   │   bytomd-windows_amd64.exe
+└───vapord
+│   │   vapord-darwin_amd64
+│   │   vapord-linux_386
+│   │   vapord-linux_amd64
+│   │   vapord-windows_386.exe
+│   │   vapord-windows_amd64.exe
 │   │  
 ``` 
 
 
-To developer the bytom electron app, run the script.
+To developer the vapor electron app, run the script.
 ```
 DEV=ture electron .
 ```

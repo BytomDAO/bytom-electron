@@ -26,15 +26,15 @@ exports.setup = function (options) {
         type: 'file',
         filename: `${logFolder}/electron/menu.log`
       },
-      bytomd: {
+      vapord: {
         type: 'file',
-        filename: `${logFolder}/bytomd/bytomd.log`
+        filename: `${logFolder}/vapord/vapord.log`
       }
     },
     categories: {
       default: { appenders: [ 'out', 'all', 'main' ], level },
       menu: { appenders: [ 'out', 'all', 'menu' ], level },
-      bytomd: { appenders: [ 'out', 'all', 'bytomd' ], level }
+      vapord: { appenders: [ 'out', 'all', 'vapord' ], level }
     }
   }
 

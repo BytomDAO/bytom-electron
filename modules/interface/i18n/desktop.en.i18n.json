@@ -49,7 +49,7 @@
             },
             "help": {
                 "label": "Help",
-                "bytomWiki": "Troubleshooting and Help",
+                "vaporWiki": "Troubleshooting and Help",
                 "reportBug": "Report an issue on Github",
                 "version": "Versions"
             }

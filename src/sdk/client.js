@@ -5,7 +5,7 @@ const accountsAPI = require('./api/accounts')
 const assetsAPI = require('./api/assets')
 const backUpAPI = require('./api/backUp')
 const balancesAPI = require('./api/balances')
-const bytomCLI = require('./api/bytomCLI')
+const vaporCLI = require('./api/vaporCLI')
 const configAPI = require('./api/config')
 const federationAPI = require('./api/federations')
 const hsmSigner = require('./api/hsmSigner')
@@ -41,7 +41,7 @@ class Client {
 
     this.balances = balancesAPI(this)
 
-    this.bytomCli = bytomCLI(this)
+    this.vaporCli = vaporCLI(this)
 
     this.config = configAPI(this)
 

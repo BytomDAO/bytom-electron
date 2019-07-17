@@ -262,7 +262,7 @@ let menuTempl = function () {
     label: i18n.t('desktop.applicationMenu.develop.logFiles'),
     click() {
       try {
-        shell.showItemInFolder(path.join(app.getPath('userData'), 'logs', 'bytomd', 'bytomd.log'))
+        shell.showItemInFolder(path.join(app.getPath('userData'), 'logs', 'vapord', 'vapord.log'))
       } catch (error) {
         log.error(error)
       }
@@ -312,14 +312,14 @@ let menuTempl = function () {
   }
 
   helpMenu.push({
-    label: i18n.t('desktop.applicationMenu.help.bytomWiki'),
+    label: i18n.t('desktop.applicationMenu.help.vaporWiki'),
     click() {
-      shell.openExternal('https://github.com/bytom/bytom/wiki')
+      shell.openExternal('https://github.com/bytom/vapor/wiki')
     },
   }, {
     label: i18n.t('desktop.applicationMenu.help.reportBug'),
     click() {
-      shell.openExternal('https://github.com/bytom/bytom/issues')
+      shell.openExternal('https://github.com/bytom/vapor/issues')
     },
   })
 

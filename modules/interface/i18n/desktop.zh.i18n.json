@@ -45,7 +45,7 @@
             },
             "help": {
                 "label": "帮助",
-                "bytomWiki": "排除故障和帮助",
+                "vaporWiki": "排除故障和帮助",
                 "reportBug": "在Github上提交issue",
                 "version": "版本号"
             }

@@ -43,7 +43,7 @@ const actions = {
     }
   },
   cmd: (data) => () => {
-    return chainClient().bytomCli.request(data)
+    return chainClient().vaporCli.request(data)
   }
 }
 
