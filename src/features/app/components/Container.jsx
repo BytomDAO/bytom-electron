@@ -64,6 +64,37 @@ class Container extends React.Component {
             })
             this.props.showRoot()
           })
+          this.props.fetchAccountItem().then(resp => {
+            const promise = new Promise((resolve, reject) => {
+              if (resp.data.length == 0) {
+                this.props.switchAccount('')
+                resolve()
+              }else{
+                const aliasArray = resp.data.map(account => account.alias)
+                if(!aliasArray.includes(this.props.currentAccount) ){
+                  this.props.setDefaultAccount().then(()=>{
+                    resolve()
+                  })
+                }else{
+                  resolve()
+                }
+              }
+            })
+
+            return promise.then(()=>{
+              return this.props.fetchKeyItem().then(resp => {
+                if (resp.data.length == 0) {
+                  this.props.updateAccountInit(false)
+                }else{
+                  this.props.updateAccountInit(true)
+                }
+                return this.props.fetchInfo().then(() => {
+                  this.redirectRoot(this.props)
+                })
+              })
+            })
+          })
+          
           setInterval(() => this.props.fetchInfo(), CORE_POLLING_TIME)
         }
         if(arg === 'init'){
@@ -75,46 +106,12 @@ class Container extends React.Component {
         this.props.updateMiningState(isMining)
       })
     }
+
     if(this.props.lng === 'zh'){
       moment.locale('zh-cn')
     }else{
       moment.locale(this.props.lng)
     }
-  }
-
-  componentWillMount() {
-    this.props.fetchAccountItem().then(resp => {
-      const promise = new Promise((resolve, reject) => {
-        if (resp.data.length == 0) {
-          this.props.switchAccount('')
-          resolve()
-        }else{
-          const aliasArray = resp.data.map(account => account.alias)
-          if(!aliasArray.includes(this.props.currentAccount) ){
-            this.props.setDefaultAccount().then(()=>{
-              resolve()
-            })
-          }else{
-            resolve()
-          }
-        }
-      })
-
-      return promise.then(()=>{
-        return this.props.fetchKeyItem().then(resp => {
-          if (resp.data.length == 0) {
-            this.props.updateAccountInit(false)
-          }else{
-            this.props.updateAccountInit(true)
-          }
-          return this.props.fetchInfo().then(() => {
-            this.redirectRoot(this.props)
-          })
-        })
-      })
-    })
-
-    setInterval(() => this.props.fetchInfo(), CORE_POLLING_TIME)
   }
 
   componentWillReceiveProps(nextProps) {
