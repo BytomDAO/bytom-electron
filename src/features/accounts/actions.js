@@ -2,6 +2,7 @@ import { chainClient } from 'utility/environment'
 import { baseCreateActions, baseUpdateActions, baseListActions } from 'features/shared/actions'
 import {push} from 'react-router-redux'
 import action from 'actions'
+import uuid from 'uuid'
 
 const type = 'account'
 
@@ -50,7 +51,7 @@ const createAccount = (data) => {
     if (typeof data.alias == 'string')  data.alias = data.alias.trim()
 
     const keyData = {
-      'alias': `${data.alias}Key`,
+      'alias': `${data.alias}Key-${uuid.v4()}`,
       'password': data.password
     }
 
@@ -83,7 +84,12 @@ const createAccount = (data) => {
 
             if(resp.status === 'success') {
               dispatch({type: 'SET_CURRENT_ACCOUNT', account: resp.data.alias})
-              dispatch(createSuccess() )
+              return chainClient().accounts.createAddress({'account_alias':resp.data.alias})
+                .then(() =>{
+                  dispatch(createSuccess() )
+                }).catch((err) => {
+                  throw ( err)
+                })
             }
           })
           .catch((err) => {

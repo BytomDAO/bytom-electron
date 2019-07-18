@@ -6,6 +6,7 @@ import React from 'react'
 import styles from './CoreIndex.scss'
 import actions from 'actions'
 import {withNamespaces} from 'react-i18next'
+import { copyToClipboard } from 'utility/clipboard'
 
 class CoreIndex extends React.Component {
   constructor(props) {
@@ -66,15 +67,14 @@ class CoreIndex extends React.Component {
 
     const t = this.props.t
 
-    let configBlock = (
-      <div className={[styles.left, styles.col].join(' ')}>
-        <div>
-          <h4>{t('coreIndex.configuration')}</h4>
-          <table className={styles.table}>
-            <tbody>
+    let configBlock = <div className={[styles.left, styles.col].join(' ')}>
+      <div>
+        <h4>{t('coreIndex.configuration')}</h4>
+        <table className={styles.table}>
+          <tbody>
             <tr className={styles.row}>
               <td className={styles.row_label}>{t('coreIndex.version')}:</td>
-              <td><code>{coreData? coreData['versionInfo']['version']: null}</code></td>
+              <td><code>{coreData ? coreData['versionInfo']['version'] : null}</code></td>
             </tr>
             <tr className={styles.row}>
               <td className={styles.row_label}>{t('commonWords.language')}:</td>
@@ -82,13 +82,23 @@ class CoreIndex extends React.Component {
             </tr>
             <tr className={styles.row}>
               <td className={styles.row_label}>{t('coreIndex.nodeXpub')}:</td>
-              <td><code>{String(coreData['nodeXpub'])}</code></td>
+              <td className={styles.shorten_value}><code>{String(coreData['nodeXpub'])}</code></td>
+              <td>
+                <button
+                  className={`btn btn-link ${styles.copyButton}`}
+                  onClick={() => copyToClipboard(coreData['nodeXpub'])}
+                >
+                  <img src={require('images/copy.svg')}/>
+                </button>
+              </td>
             </tr>
             <tr className={styles.row}>
-              <td colSpan={2}><hr /></td>
+              <td colSpan={2}>
+                <hr/>
+              </td>
             </tr>
             <tr className={styles.row}>
-              <td className={styles.row_label}>{t('coreIndex.advanced')}: </td>
+              <td className={styles.row_label}>{t('coreIndex.advanced')}:</td>
               <td>
                 <label className={styles.switch}>
                   <input
@@ -101,7 +111,7 @@ class CoreIndex extends React.Component {
               </td>
             </tr>
             <tr className={styles.row}>
-              <td className={styles.row_label}>{t('coreIndex.mining')}: </td>
+              <td className={styles.row_label}>{t('coreIndex.mining')}:</td>
               <td>
                 <label className={styles.switch}>
                   <input
@@ -114,7 +124,7 @@ class CoreIndex extends React.Component {
               </td>
             </tr>
             <tr className={styles.row}>
-              <td className={styles.row_label} >{t('coreIndex.unit')} </td>
+              <td className={styles.row_label}>{t('coreIndex.unit')} </td>
               <td>
                 <DropdownButton
                   bsSize='xsmall'
@@ -128,11 +138,10 @@ class CoreIndex extends React.Component {
                 </DropdownButton>
               </td>
             </tr>
-            </tbody>
-          </table>
-        </div>
+          </tbody>
+        </table>
       </div>
-    )
+    </div>
 
     let requestStatusBlock
 
@@ -145,34 +154,34 @@ class CoreIndex extends React.Component {
           <h4>{t('coreIndex.networkStatus')}</h4>
           <table className={styles.table}>
             <tbody>
-            <tr className={styles.row} key={'core-listening'}>
-              <td className={styles.row_label}> {t('coreIndex.listening')}:</td>
-              <td className={styles.row_value}><code>{(coreData['listening'])? t('coreIndex.connect'): t('coreIndex.disConnect')}</code></td>
-            </tr>
-            <tr className={styles.row} key={'core-syncing'}>
-              <td className={styles.row_label}> {t('coreIndex.syncStatus')}:</td>
-              <td className={styles.row_value}><code>{(coreData['syncing'])? t('coreIndex.synchronizing'): t('coreIndex.synced')}</code></td>
-            </tr>
-            <tr className={styles.row} key={'core-mining'}>
-              <td className={styles.row_label}> {t('coreIndex.miningStatus')}:</td>
-              <td className={styles.row_value}><code>{(coreData['mining'])? t('coreIndex.miningRuning'): t('coreIndex.miningStopped')}</code></td>
-            </tr>
-            <tr className={styles.row} key={'core-peerCount'}>
-              <td className={styles.row_label}> {t('coreIndex.peer')}:</td>
-              <td className={styles.row_value}><code>{String(coreData['peerCount'])}</code></td>
-            </tr>
-            <tr className={styles.row} key={'core-currentBlock'}>
-              <td className={styles.row_label}> {t('coreIndex.currentBlock')}:</td>
-              <td className={styles.row_value}><code>{String(coreData['currentBlock'])}</code></td>
-            </tr>
-            <tr className={styles.row} key={'core-highestBlock'}>
-              <td className={styles.row_label}> {t('coreIndex.highestBlock')}:</td>
-              <td className={styles.row_value}><code>{String(coreData['highestBlock'])}</code></td>
-            </tr>
-            <tr className={styles.row} key={'core-networkID'}>
-              <td className={styles.row_label}> {t('coreIndex.networkId')}:</td>
-              <td className={styles.row_value}><code>{String(coreData['networkId'])}</code></td>
-            </tr>
+              <tr className={styles.row} key={'core-listening'}>
+                <td className={styles.row_label}> {t('coreIndex.listening')}:</td>
+                <td className={styles.row_value}><code>{(coreData['listening'])? t('coreIndex.connect'): t('coreIndex.disConnect')}</code></td>
+              </tr>
+              <tr className={styles.row} key={'core-syncing'}>
+                <td className={styles.row_label}> {t('coreIndex.syncStatus')}:</td>
+                <td className={styles.row_value}><code>{(coreData['syncing'])? t('coreIndex.synchronizing'): t('coreIndex.synced')}</code></td>
+              </tr>
+              <tr className={styles.row} key={'core-mining'}>
+                <td className={styles.row_label}> {t('coreIndex.miningStatus')}:</td>
+                <td className={styles.row_value}><code>{(coreData['mining'])? t('coreIndex.miningRuning'): t('coreIndex.miningStopped')}</code></td>
+              </tr>
+              <tr className={styles.row} key={'core-peerCount'}>
+                <td className={styles.row_label}> {t('coreIndex.peer')}:</td>
+                <td className={styles.row_value}><code>{String(coreData['peerCount'])}</code></td>
+              </tr>
+              <tr className={styles.row} key={'core-currentBlock'}>
+                <td className={styles.row_label}> {t('coreIndex.currentBlock')}:</td>
+                <td className={styles.row_value}><code>{String(coreData['currentBlock'])}</code></td>
+              </tr>
+              <tr className={styles.row} key={'core-highestBlock'}>
+                <td className={styles.row_label}> {t('coreIndex.highestBlock')}:</td>
+                <td className={styles.row_value}><code>{String(coreData['highestBlock'])}</code></td>
+              </tr>
+              <tr className={styles.row} key={'core-networkID'}>
+                <td className={styles.row_label}> {t('coreIndex.networkId')}:</td>
+                <td className={styles.row_value}><code>{String(coreData['networkId'])}</code></td>
+              </tr>
             </tbody>
           </table>
         </div>
@@ -182,7 +191,7 @@ class CoreIndex extends React.Component {
     let networkStatusBlock = (
       <div className={[styles.right, styles.col].join(' ')}>
         {/*<div ref='requestComponent'>*/}
-          {requestStatusBlock}
+        {requestStatusBlock}
         {/*</div>*/}
       </div>
     )
