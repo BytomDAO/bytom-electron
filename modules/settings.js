@@ -53,7 +53,7 @@ class Settings {
       case 'linux':
         vapordDataPath = `${app.getPath('home')}/.bytom`
     }
-    return bytomdDataPath
+    return vapordDataPath
   }
 
   constructUserDataPath(filePath) {
