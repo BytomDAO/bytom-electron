@@ -25,13 +25,6 @@ class Navigation extends React.Component {
         arg === 'advance'? this.props.showNavAdvanced() : this.props.hideNavAdvanced()
       })
     }
-  }
-
-  openTutorial(event) {
-    event.preventDefault()
-    this.props.openTutorial()
-  }
-  componentDidMount() {
     this.props.fetchFederationItem()
       .then(resp =>{
         this.setState({showFed: true})
@@ -39,6 +32,11 @@ class Navigation extends React.Component {
       .catch(e =>{
         this.setState({showFed: false})
       })
+  }
+
+  openTutorial(event) {
+    event.preventDefault()
+    this.props.openTutorial()
   }
 
   render() {

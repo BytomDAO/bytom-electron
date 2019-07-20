@@ -94,7 +94,7 @@ class Container extends React.Component {
               })
             })
           })
-          
+
           setInterval(() => this.props.fetchInfo(), CORE_POLLING_TIME)
         }
         if(arg === 'init'){
