@@ -51,7 +51,7 @@ class Settings {
         vapordDataPath = `${app.getPath('home')}/Library/Application Support/Vapor`
         break
       case 'linux':
-        vapordDataPath = `${app.getPath('home')}/.bytom`
+        vapordDataPath = `${app.getPath('home')}/.vapor`
     }
     return vapordDataPath
   }
