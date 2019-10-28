@@ -11,7 +11,7 @@ const log = logger.create('main')
 const bytomdLog = logger.create('bytomd')
 const Settings = require('./modules/settings')
 
-const net = require('net')
+const tcpPortUsed = require('tcp-port-used');
 
 let win, bytomdInit, bytomdNode
 
@@ -119,8 +119,14 @@ function setBytomNode(event) {
   })
 
   bytomdNode.stderr.on('data', function(data) {
-    bytomdLog.info(`bytomd node: ${data}`)
-    if (data.includes('msg="start node')) {
+    bytomdNode.on('exit', function (code) {
+      bytomdLog.info('bytom Node exited with code ' + code)
+      app.quit()
+    })
+  })
+
+  tcpPortUsed.waitUntilUsed(9888, 500, 20000)
+    .then(function() {
       if (event) {
         event.sender.send('ConfiguredNetwork', 'startNode')
       }
@@ -128,13 +134,9 @@ function setBytomNode(event) {
         startnode = true
         win.webContents.send('ConfiguredNetwork', 'startNode')
       }
-    }
-
-    bytomdNode.on('exit', function (code) {
-      bytomdLog.info('bytom Node exited with code ' + code)
-      app.quit()
-    })
-  })
+    }, function(err) {
+      bytomdLog.info('Error:', err.message);
+    });
 }
 
 function setBytomInit(event, bytomNetwork) {
