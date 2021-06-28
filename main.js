@@ -28,7 +28,7 @@ function initialize () {
 
     const icon_path = path.join(__dirname, '/static/images/app-icon/png/app.png')
     win = new BrowserWindow({
-      width: 1024 + 208,
+      width: 1024 + 238,
       height: 768,
       'webPreferences': {
         'webSecurity': !process.env.DEV_URL,
