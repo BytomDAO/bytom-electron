@@ -30,6 +30,7 @@ function initialize () {
     win = new BrowserWindow({
       width: 1024 + 238,
       height: 768,
+      titleBarStyle: 'hidden',
       'webPreferences': {
         'webSecurity': !process.env.DEV_URL,
         'preload': path.join(__dirname, '/modules/preload.js')
