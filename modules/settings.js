@@ -45,13 +45,13 @@ class Settings {
     let bytomdDataPath
     switch (process.platform){
       case 'win32':
-        bytomdDataPath = `${app.getPath('appData')}/Bytom`
+        bytomdDataPath = `${app.getPath('appData')}/Bytom2`
         break
       case 'darwin':
-        bytomdDataPath = `${app.getPath('home')}/Library/Application Support/Bytom`
+        bytomdDataPath = `${app.getPath('home')}/Library/Application Support/Bytom2`
         break
       case 'linux':
-        bytomdDataPath = `${app.getPath('home')}/.bytom`
+        bytomdDataPath = `${app.getPath('home')}/.bytom2`
     }
     return bytomdDataPath
   }

@@ -113,7 +113,7 @@ function initialize () {
 }
 
 function setBytomNode(event) {
-  bytomdNode = spawn( `${Settings.bytomdPath}`, ['node', '--web.closed'] )
+  bytomdNode = spawn( `${Settings.bytomdPath}`, ['node', '--web.closed', '--home', Settings.bytomdDataPath] )
 
   bytomdNode.stdout.on('data', function(data) {
     bytomdLog.info(`bytomd node: ${data}`)
@@ -142,7 +142,7 @@ function setBytomNode(event) {
 
 function setBytomInit(event, bytomNetwork) {
   // Init bytomd
-  bytomdInit = spawn(`${Settings.bytomdPath}`, ['init', '--chain_id',  `${bytomNetwork}`] )
+  bytomdInit = spawn(`${Settings.bytomdPath}`, ['init', '--chain_id',  `${bytomNetwork}`, '--home', Settings.bytomdDataPath] )
 
   bytomdInit.stdout.on('data', function(data) {
     bytomdLog.info(`bytomd init: ${data}`)

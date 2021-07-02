@@ -1,6 +1,6 @@
 {
   "name": "bytom-wallet",
-  "productName": "Bytom Wallet",
+  "productName": "Bytom Wallet2",
   "build": {
     "electronVersion": "1.8.3",
     "appId": "io.bytom.desktop",
