@@ -30,6 +30,8 @@ function initialize () {
     win = new BrowserWindow({
       width: 1024 + 238,
       height: 768,
+      minHeight: 768,
+      minWidth: 1024,
       titleBarStyle: 'hidden',
       'webPreferences': {
         'webSecurity': !process.env.DEV_URL,
