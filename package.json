@@ -73,9 +73,7 @@
     "generate-component": "babel-node bin/generate.js component",
     "package": "npm-run-all package:* ",
     "package:mac": "electron-builder -m ",
-    "package:win-32": "ARCH_VARIABLE=386 electron-builder --win --ia32",
     "package:win-64": "ARCH_VARIABLE=amd64 electron-builder --win --x64 ",
-    "package:linux-32": "ARCH_VARIABLE=386 electron-builder -l --ia32",
     "package:linux-64": "ARCH_VARIABLE=amd64 electron-builder -l --x64"
   },
   "author": "Bytom",
