@@ -96,7 +96,7 @@
     "i18next": "^11.9.1",
     "i18next-browser-languagedetector": "^2.2.3",
     "lodash": "~4.17.14",
-    "log4js": "^3.0.5",
+    "log4js": "^6.4.0",
     "mem": "^5.1.1",
     "moment": "^2.22.1",
     "moment-timezone": "^0.5.17",
