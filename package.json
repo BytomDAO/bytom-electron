@@ -98,7 +98,7 @@
     "lodash": "~4.17.14",
     "log4js": "^3.0.5",
     "mem": "^5.1.1",
-    "moment": "^2.22.1",
+    "moment": "^2.29.2",
     "moment-timezone": "^0.5.17",
     "net": "^1.0.2",
     "pluralize": "~3.0.0",
