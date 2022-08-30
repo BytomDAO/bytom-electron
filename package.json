@@ -99,7 +99,7 @@
     "log4js": "^3.0.5",
     "mem": "^5.1.1",
     "moment": "^2.22.1",
-    "moment-timezone": "^0.5.17",
+    "moment-timezone": "^0.5.35",
     "net": "^1.0.2",
     "pluralize": "~3.0.0",
     "prop-types": "^15.6.2",
